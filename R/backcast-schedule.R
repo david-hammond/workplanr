@@ -1,32 +1,98 @@
-#' ggplot colours
-#'
-#' @param p a ggplot
-#'
-#'
-#' hi
-#' @export
-backcast <- function(tmp){
+get.schedule <- function(projects, time.estimates, public.holidays){
   require(bizdays)
   require(lubridate)
-
+  require(dplyr)
   cal <- create.calendar("normal", weekdays = c("saturday", "sunday"), 
-                         holidays = plan$holidays$holiday.dates)
-  tmp$start = as.POSIXct(tmp$launch[nrow(tmp)])
-  tmp$end = as.POSIXct(bizdays::offset(tmp$launch[nrow(tmp)], tmp$days[nrow(tmp)], 'normal'))
-  
-  for (i in (nrow(tmp)-1):1){
-    tmp$end[i] = tmp$start[i+1]
-    tmp$start[i] = bizdays::offset(tmp$end[i], -tmp$days[i], 'normal')
+                         holidays = public.holidays$date, 
+                         start.date = min(projects$launch)-180, end.date = max(projects$launch) +180)
+  times = left_join(projects, time.estimates)
+  end = times
+
+  end[, ncol(end)] = offset(end$launch, end$`launch-events`, 'normal')
+  for (i in  rev(names(time.estimates[, -c(1, ncol(time.estimates))]))){
+    end[,i] = offset(end[,(which(names(end) == i)) +1], times[,i], 'normal')
+  }
+  start = times
+  for (i in  names(time.estimates[, -1])){
+    start[,i] = offset(end[,i], -times[,i], 'normal')
   }
 
-  y = tmp[1,]
-  y$phase = "research"
-  y$start = y$kickoff[1]
-  y$end = tmp$start[1]
-  y$days = bizdays(y$start, y$end, 'normal')
-  tmp = rbind(y, tmp) %>% dplyr::select(-c(launch, kickoff))
-  tmp = tmp %>% dplyr::filter(days > 0)
-  tmp = as.data.frame(tmp)
-  return(tmp)
+  schedule = list(start = start, end = end)
+  schedule = lapply(schedule, function(x) x %>% select(-launch) %>%
+                      gather(phase, date, -c(project, probability)) %>%
+                      mutate(phase = factor(phase, names(time.estimates)[-1], ordered = T)))
+  schedule = bind_rows(schedule, .id = "date.type")
+  schedule = schedule %>% select(2:ncol(schedule), 1)
+  schedule$date.type = factor(schedule$date.type, (c("start", "end")), ordered = T)
+  schedule = schedule %>% arrange(project, phase, desc(date), date.type) %>% 
+    select(-date.type)
+  return(schedule)
 }
+
+get.padded.schedule = function(schedule){
+  require(padr)
+  schedule = schedule %>%  
+    pad(group = setdiff(names(schedule), "date"), interval = "day") 
+  return(schedule)
+}
+
+get.assignment.schedule = function(schedule, resources, project.teams, responsibilities){
+  require(dplyr)
+  tmp = responsibilities %>% gather("phase", "needed", -role) %>% 
+    filter(needed == 1) %>% mutate(phase = factor(phase, levels(schedule$phase), ordered = T)) %>%
+    select(-needed)
+  schedule = left_join(schedule, tmp)
+  schedule = left_join(schedule, project.teams)
+  schedule = left_join(schedule, resources)
+  schedule = get.padded.schedule(schedule)
+  return(schedule)
+}
+
+
+
+adjust.schedule.for.leave = function(schedule, leave){
+  require(padr)
+  require(dplyr)
+  tmp = leave %>% gather("date.type", "date", -c(leave.id, staff))
+  tmp = pad(tmp, group=c('leave.id', 'staff')) %>% select(-date.type)
+  schedule = left_join(schedule, tmp)
+  tmp = schedule %>% group_by(project, phase, staff, role) %>% 
+    summarise(total.days = n(), days.on.leave = sum(!is.na(leave.id)), 
+              daily.allocated.work = mean(assigned_capacity)) %>% ungroup() %>% 
+    mutate(leave_adjusted_assigned_capacity = 
+             round((daily.allocated.work*total.days)/(total.days - days.on.leave), 2)) %>%
+    select(project, phase, staff, role, leave_adjusted_assigned_capacity)
+  schedule = left_join(schedule, tmp)
+  pos = !is.finite(schedule$leave_adjusted_assigned_capacity)
+  if(sum(pos) > 0){
+    issues = schedule %>% filter(pos) %>% select(project, phase, staff) %>% 
+      distinct()
+    for (i in 1:nrow(issues)){
+      message = paste("This assignement is impossible due to leave:", 
+                      paste(unlist(issues[i,]), collapse = ", "))
+      sink(file = "log.log", append = T)
+      print(message)
+      sink()
+    }
+  }
+  return(schedule)
+}
+
+create.work.plan = function(resources, projects, time.estimates, public.holidays, 
+                             project.teams, responsibilities, leave){
+  schedule = get.schedule(projects, time.estimates, public.holidays)
+  schedule = get.assignment.schedule(schedule, resources, project.teams, responsibilities)
+  schedule = adjust.schedule.for.leave(schedule, leave)
+  return(schedule)
+}
+
+create.team.plan = function(my.work.plan, resources){
+  require(dplyr)
+  team.workload = my.staff.plan
+  team.workload$assigned = ifelse(is.na(team.workload$staff), "unassigned", "assigned")
+  team.workload = team.workload %>% group_by(date, assigned) %>% 
+    summarise(team.capacity = sum(capacity), assigned.workload = sum(leave_adjusted_assigned_capacity))
+
+}
+
 
