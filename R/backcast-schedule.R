@@ -78,6 +78,13 @@ adjust.schedule.for.leave = function(schedule, leave){
   return(schedule)
 }
 
+#' Creates a randomised project management problem
+#'
+#' @param nothing
+#'
+#'
+#'
+#' @export
 create.work.plan = function(resources, projects, time.estimates, public.holidays, 
                              project.teams, responsibilities, leave){
   schedule = get.schedule(projects, time.estimates, public.holidays)
@@ -85,7 +92,13 @@ create.work.plan = function(resources, projects, time.estimates, public.holidays
   schedule = adjust.schedule.for.leave(schedule, leave)
   return(schedule)
 }
-
+#' Creates a randomised project management problem
+#'
+#' @param nothing
+#'
+#'
+#'
+#' @export
 create.team.plan = function(my.work.plan, resources){
   require(dplyr)
   team.workload = my.staff.plan

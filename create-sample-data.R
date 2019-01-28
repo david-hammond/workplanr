@@ -1,10 +1,3 @@
-#' Creates a randomised project management problem
-#'
-#' @param nothing
-#'
-#'
-#'
-#' @export
 create.random.project = function(){
   resources <<- create.resources()
   projects <<- create.projects()
