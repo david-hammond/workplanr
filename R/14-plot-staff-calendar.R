@@ -26,7 +26,7 @@ plot.staff.calendar = function(plan, leave, public.holidays){
                      expand = c(0,0)) +
     scale_fill_gradientn(colors = myPalette(100), labels = scales::percent, name = "Workload") + 
     labs(x="", y = "", title = toupper("Projected Staff Availability and Leave 2019")) + theme_bw()
-  tasks = my.staff.plan %>% group_by(staff, project) %>% summarise(date = min(date)) %>% 
+  tasks = plan %>% group_by(staff, project) %>% summarise(date = min(date)) %>% 
     ungroup()
   tasks = tasks %>% group_by(staff, date) %>% summarise(project = paste(project, collapse = ", ")) %>%
     ungroup() %>% mutate(available_capacity = 1) 

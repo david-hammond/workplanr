@@ -3,6 +3,5 @@
 S3method(plot,staff.calendar)
 S3method(plot,team.workload)
 export(create.random.project)
-export(create.team.plan)
 export(get.daily.plan)
 export(gg_color_hue)
