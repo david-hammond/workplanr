@@ -63,6 +63,8 @@ adjust.schedule.for.leave = function(schedule, leave){
              round((daily.allocated.work*total.days)/(total.days - days.on.leave), 2)) %>%
     select(project, phase, staff, role, leave_adjusted_assigned_capacity)
   schedule = left_join(schedule, tmp)
+  pos = !is.na(schedule$leave.id)
+  schedule$leave_adjusted_assigned_capacity[pos] = 0
   pos = !is.finite(schedule$leave_adjusted_assigned_capacity)
   if(sum(pos) > 0){
     issues = schedule %>% filter(pos) %>% select(project, phase, staff) %>% 
