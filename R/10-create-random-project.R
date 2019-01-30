@@ -5,7 +5,7 @@
 #'
 #'
 #' @export
-create.random.project = function(){
+create.random.project = function(insert.na = T){
   resources <<- create.resources()
   projects <<- create.projects()
   project.phases <<- create.phases()
@@ -21,8 +21,8 @@ create.random.project = function(){
                                          time.estimates, 
                                          responsibilities,
                                          randomise = T)
-  #project.teams$staff[1:8] = NA
-  #project.teams$assigned_capacity[1:8] = NA
+
+
   daily.plan <<- get.daily.plan(resources, projects, time.estimates, public.holidays, 
                                   project.teams, responsibilities, leave)
   daily.staff.plan <<- get.daily.staff.plan(daily.plan)

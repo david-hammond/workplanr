@@ -23,7 +23,8 @@ assign.staff <- function(tmp, resources){
   return(assignments)
 }
 create.project.teams <- function(resources, projects, roles, time.estimates, 
-                                 responsibilities, randomise = F){
+                                 responsibilities, randomise = F, 
+                                 unassigned.name = "unassigned"){
   require(tidyr)
   require(dplyr)
   require(scales)
@@ -42,6 +43,8 @@ create.project.teams <- function(resources, projects, roles, time.estimates,
     project.team = lapply(project.team, assign.staff, resources)
     project.team = bind_rows(project.team)
   }
-  
+  pos = is.na(project.team$staff)
+  project.team$staff[pos] = unassigned.name
+  project.team$assigned_capacity[pos] = 1
   return(project.team)
 }

@@ -3,5 +3,6 @@
 export(create.random.project)
 export(get.daily.plan)
 export(gg_color_hue)
+export(project.vignette)
 export(staff.calendar)
 export(team.workload)

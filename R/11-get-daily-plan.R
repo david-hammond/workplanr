@@ -57,7 +57,7 @@ adjust.schedule.for.leave = function(schedule, leave){
   tmp = pad(tmp, group=c('leave.id', 'staff')) %>% select(-date.type)
   schedule = left_join(schedule, tmp)
   tmp = schedule %>% group_by(project, phase, staff, role) %>% 
-    summarise(total.days = n(), days.on.leave = sum(!is.na(leave.id)), 
+    summarise(total.days = n(), days.on.leave = sum(!is.na(leave.id), na.rm = T), 
               daily.allocated.work = mean(assigned_capacity)) %>% ungroup() %>% 
     mutate(leave_adjusted_assigned_capacity = 
              round((daily.allocated.work*total.days)/(total.days - days.on.leave), 2)) %>%

@@ -4,7 +4,7 @@
 \alias{create.random.project}
 \title{Creates a randomised project management problem}
 \usage{
-create.random.project()
+create.random.project(insert.na = T)
 }
 \arguments{
 \item{nothing}{}
