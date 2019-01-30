@@ -94,20 +94,3 @@ get.daily.plan = function(resources, projects, time.estimates, public.holidays,
   schedule = adjust.schedule.for.leave(schedule, leave)
   return(schedule)
 }
-#' Creates a randomised project management problem
-#'
-#' @param nothing
-#'
-#'
-#'
-#' @export
-create.team.plan = function(my.work.plan, resources){
-  require(dplyr)
-  team.workload = my.staff.plan
-  team.workload$assigned = ifelse(is.na(team.workload$staff), "unassigned", "assigned")
-  team.workload = team.workload %>% group_by(date, assigned) %>% 
-    summarise(team.capacity = sum(capacity), assigned.workload = sum(leave_adjusted_assigned_capacity))
-
-}
-
-
