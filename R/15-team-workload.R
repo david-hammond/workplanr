@@ -5,7 +5,7 @@
 #'
 #'
 #' @export
-plot.team.workload = function(plan, filename = "./graphs/all-team-capacity-bar-plot.png"){
+team.workload = function(plan, filename = "./graphs/all-team-capacity-bar-plot.png"){
   
   x = plan$resource.allocation.tile.plot
   x$staff = as.character(x$staff)

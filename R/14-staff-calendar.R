@@ -5,7 +5,7 @@
 #'
 #'
 #' @export
-plot.staff.calendar = function(plan, leave, public.holidays){
+staff.calendar = function(plan, leave, public.holidays){
   require(RColorBrewer)
   require(ggrepel)
 
