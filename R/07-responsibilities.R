@@ -5,15 +5,19 @@
 #' @param responsibilities a binary matrix of if role i is in volved in phase j
 #' @return A reference table for responsibilities
 #' @examples 
-#' roles <- c("lead", "researcher", "editor", "design")
-#' phases <- c("research", "drafting", "editing", "design", "print", "events")
+#' data("roles")
+#' data("phases")
 #' responsibilities <- rbind(lead = rep(1, length(phases)), researcher = c(1,1,1,0,0,0), editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
-#' responsibilities <- create_responsibilities(roles, phases, responsibilities)
+#' responsibilities <- set_responsibilities(roles, phases, responsibilities)
 #' @export
-create_responsibilities <- function(roles, phases, responsibilities){ 
+set_responsibilities <- function(roles, phases, responsibilities){ 
+  
   colnames(responsibilities) <- phases
+  
   responsibilities <- data.frame(role = roles, responsibilities)
+  
   .db.save(responsibilities)
+  
   return(responsibilities)
 }
 

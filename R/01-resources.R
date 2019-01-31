@@ -6,9 +6,9 @@
 #' @examples 
 #' staff <- c('Shelby', 'Luis', 'Taishawn', 'Samantha', 'Taylor')
 #' capacity <- c(40,60,100,100,100)
-#' resources <- create_resources(staff, capacity)
+#' resources <- set_resources(staff, capacity)
 #' @export
-create_resources <- function(staff, capacity) {
+set_resources <- function(staff, capacity) {
     
     resources <- data.frame(staff = staff, capacity = capacity)
     

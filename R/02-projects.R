@@ -6,17 +6,16 @@
 #' @param end Expected end date of the project
 #' @return A reference table for projects 
 #' @examples 
-#' library(lubridate)
-#' n <- 3
-#' projects <- LETTERS[1:n]
-#' probability <- sample(c(50, 75, 100), size = n, replace = TRUE)
-#' start <- sample(seq(as.Date(today() + 60), as.Date(today() + 365), by='day'), size = n, replace = FALSE) 
-#' end <- start + sample(c(30,40,50,60), size = n, replace = TRUE)
-#' projects <- create_projects(projects, probability, start, end)
+#' projects <- LETTERS[1:3]
+#' probability <- c(50, 100, 100)
+#' start <- as.Date(c("2019-07-25", "2019-05-17", "2019-09-27")) 
+#' end <- as.Date(c("2019-09-03", "2019-06-16", "2019-10-27"))
+#' projects <- set_projects(projects, probability, start, end)
 #' @export
-create_projects <- function(projects, probability = 1, start, end) {
-    
-    projects <- data.frame(project = projects, probaility = probability, start = start, end = end)
+set_projects <- function(projects, probability = 1, start, end) {
+    require(dplyr)
+  
+    projects <- data.frame(project = projects, probability = probability, start = start, end = end)
     
     projects <- projects %>% arrange(start) %>% mutate(project = factor(project, project, ordered = TRUE))
     

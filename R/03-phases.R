@@ -4,9 +4,10 @@
 #' @return A reference table for phases 
 #' @examples 
 #' phases <- c("research", "drafting", "editing", "design", "print", "events")
-#' phases <- create_phases(phases)
+#' phases <- set_phases(phases)
 #' @export
-create_phases <- function(phases) {
+set_phases <- function(phases) {
+  
     phases <- factor(phases, levels = phases, ordered = TRUE)
     
     .db.save(phases)

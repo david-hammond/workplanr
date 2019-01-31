@@ -4,11 +4,15 @@
 #' @return A reference table for roles
 #' @examples 
 #' roles <- c("lead", "researcher", "editor", "design")
-#' roles <- create_roles(roles)
+#' roles <- set_roles(roles)
 #' @export
-create_roles <- function(roles){
+set_roles <- function(roles){
+  require(dplyr)
+  
   roles <- factor(roles, levels = roles, ordered = TRUE)
+  
   .db.save(roles)
+  
   return(roles)
 }
 

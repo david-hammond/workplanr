@@ -9,8 +9,11 @@
 .db.get = function(db, folder = "./db/"){
   if(!dir.exists(folder)){
     message("Employee database does not exist, please refer to the manual to create")
+    db = NULL
+  }else{
+    fname <- paste0(folder, db, ".RData")
+    load(fname)
+    db = get(db)
   }
-  fname <- paste0(folder, db, ".RData")
-  load(fname)
-  return(get(db))
+  return(db)
 }
