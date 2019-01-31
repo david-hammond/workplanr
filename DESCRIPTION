@@ -13,6 +13,7 @@ Suggests:
   dplyr (>= 0.7.8),
   tidyr (>= 0.8.2),
   lubridate (>= 1.7.4),
-  bizdays (>= 1.0.6)
+  bizdays (>= 1.0.6),
+  padr (>= 0.4.1)
 LazyData: true
 RoxygenNote: 6.1.1
