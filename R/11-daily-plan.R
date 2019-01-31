@@ -15,7 +15,7 @@
 #' data("responsibilities")
 #' data("time_estimates")
 #' data("project_teams")
-#' get_daily_plan(esources, projects, phases, time_estimates, project_teams, responsibilities)
+#' get_daily_plan(resources, projects, phases, time_estimates, project_teams, responsibilities)
 #' @export
 get_daily_plan = function(resources, projects,
                           phases, time_estimates,
@@ -30,7 +30,7 @@ get_daily_plan = function(resources, projects,
    require(bizdays)
    require(lubridate)
    require(tidyr)
-
+   require(dplyr)
    cal <- create.calendar('normal', weekdays = c('saturday', 'sunday'), 
                           start.date = min(projects$end)-180, end.date = max(projects$end) +180)
    times = left_join(projects, time_estimates)
@@ -61,12 +61,15 @@ get_daily_plan = function(resources, projects,
  
 .get_pad_schedule = function(schedule){
   require(padr)
+  require(dplyr)
   schedule = schedule %>%  
   pad(group = setdiff(names(schedule), 'date'), interval = 'day') 
   return(schedule)
 }
 
 .get_assignment_schedule = function(schedule, resources, project_teams, responsibilities){
+  require(tidyr)
+  require(dplyr)
    tmp = responsibilities %>% gather('phase', 'needed', -role) %>% 
      filter(needed == 1) %>%  select(-needed) 
    tmp$phase = factor(tmp$phase, levels = levels(schedule$phase), ordered = T)
