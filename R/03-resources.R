@@ -4,9 +4,8 @@
 #' @param capacity Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week
 #' @return A reference table for staff
 
-set_resources <- function(staff, capacity) {
-  resources <- resc(staff = staff, capacity = capacity)
+set_resources <- function(staff, capacity, dummy_resource = "unassigned") {
+  resources <- resc(staff = c(staff, dummy_resource), capacity = c(capacity, max(capacity)))
   return(resources)
 }
-
 

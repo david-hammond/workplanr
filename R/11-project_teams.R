@@ -15,9 +15,8 @@ set_project_team = function(projects, roles, assigned_staff = NA, assigned_capac
   tmp$assigned_capacity = assigned_capacity
   tmp <- team(project = tmp$project, 
               role = tmp$role, 
-              assigned_staff = tmp$assigned_staff,
+              staff = tmp$assigned_staff,
               assigned_capacity = tmp$assigned_capacity)
-  
   return(tmp)
 }
 

@@ -1,36 +1,46 @@
 #' create a daily list of assignments for each staff
 #'
-#' @param plan Completed object of class workplan
+#' @param plan Complete workplan object
 #' @return A reference table for daily projects schedule
 #' @examples 
+#' library(workplanr)
+#' staff <- c('Shelby', 'Luis', 'Taishawn', 'Samantha', 'Taylor')
+#' capacity <- c(40,60,100,100,100)
+#' projects <- LETTERS[1:3]
+#' probability <- c(50, 100, 100)
+#' start <- as.Date(c("2019-07-25", "2019-05-17", "2019-09-27")) 
+#' end <- as.Date(c("2019-09-03", "2019-06-16", "2019-10-27"))
+#' phases <- c("research", "drafting", "editing", "design", "print", "events")
+#' roles <- c("lead", "researcher", "editor", "design")
+#' wp <- get_workplan(staff, capacity, projects, probability, start, end, phases, roles)
+#' daily_plan <- get_daily_plan(wp)
 #' @export
 get_daily_plan = function(wp){
-
-  schedule = .get_schedule(projects, time_estimates, phases)
-  schedule = .get_assignment_schedule(schedule, resources, 
-                                      project_teams, responsibilities)
+  tmp = as.list(wp)
+  schedule = .get_schedule(tmp)
+  schedule = .get_assignment_schedule(schedule, tmp)
   return(schedule)
 }
 
-.get_schedule <- function(projects, time_estimates, phases){
+.get_schedule <- function(wp){
    cal <- bizdays::create.calendar('normal', weekdays = c('saturday', 'sunday'), 
-                          start.date = min(projects$end)-180, end.date = max(projects$end) +180)
-   times = dplyr::left_join(projects, time_estimates)
+                          start.date = min(wp$projects$end)-180, end.date = max(wp$projects$end) +180)
+   times = dplyr::left_join(wp$projects, wp$time_estimates)
    end = times
  
    end[, ncol(end)] = bizdays::offset(end$end, end[,ncol(end)], 'normal')
-   for (i in  rev(names(time_estimates[, -c(1, ncol(time_estimates))]))){
+   for (i in  rev(names(wp$time_estimates[, -c(1, ncol(wp$time_estimates))]))){
      end[,i] = bizdays::offset(end[,(which(names(end) == i)) +1], times[,i], 'normal')
    }
    start = times
-   for (i in  names(time_estimates[, -1])){
+   for (i in  names(wp$time_estimates[, -1])){
      start[,i] = bizdays::offset(end[,i], -times[,i], 'normal')
    }
  
    schedule = list(start = start, end = end)
    schedule = lapply(schedule, function(x) x %>% dplyr::select(-c(probability, start, end)) %>% 
                        tidyr::gather(phase, date, -c(project)) %>%
-                       dplyr::mutate(phase = factor(phase, phases$phase, ordered = T)))
+                       dplyr::mutate(phase = factor(phase, wp$phases$phase, ordered = T)))
    schedule = dplyr::bind_rows(schedule, .id = 'date.type')
    schedule = schedule %>% 
      tidyr::spread(date.type, date) %>% 
@@ -50,13 +60,13 @@ get_daily_plan = function(wp){
   return(schedule)
 }
 
-.get_assignment_schedule = function(schedule, resources, project_teams, responsibilities){
-   tmp = responsibilities %>% tidyr::gather('phase', 'needed', -role) %>% 
+.get_assignment_schedule = function(schedule, wp){
+   tmp = wp$responsibilities %>% tidyr::gather('phase', 'needed', -role) %>% 
      dplyr::filter(needed == 1) %>%  dplyr::select(-needed) 
    tmp$phase = factor(tmp$phase, levels = levels(schedule$phase), ordered = T)
    schedule = dplyr::left_join(schedule, tmp)
-   schedule = dplyr::left_join(schedule, project_teams)
-   schedule = dplyr::left_join(schedule, resources)
+   schedule = dplyr::left_join(schedule, wp$project_teams)
+   schedule = dplyr::left_join(schedule, wp$resources)
    schedule = .get_pad_schedule(schedule)
    return(schedule)
 }

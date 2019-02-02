@@ -4,6 +4,7 @@
 #' @param capacity Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week
 #' @return A reference table for staff
 #' @examples 
+#' library(workplanr)
 #' staff <- c('Shelby', 'Luis', 'Taishawn', 'Samantha', 'Taylor')
 #' capacity <- c(40,60,100,100,100)
 #' projects <- LETTERS[1:3]
@@ -26,6 +27,5 @@ get_workplan <- function(staff, capacity, projects, probability, start, end, pha
   wp@project_teams <- set_project_team(wp@projects@project, wp@roles@role, assigned_staff, assigned_capacity) 
   return(wp)
 }
-
 
 

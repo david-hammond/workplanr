@@ -5,9 +5,8 @@
 #' @param start Expected start date of project
 #' @param end Expected end date of the project
 #' @return A reference table for projects 
-#' @examples 
 
-set_projects <- function(projects, probability = 1, start, end, plan = new("workplan")) {
+set_projects <- function(projects, probability = 1, start, end) {
     projects <- data.frame(project = projects, 
                            probability = probability, 
                            start = start, end = end)
