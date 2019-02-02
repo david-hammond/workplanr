@@ -22,6 +22,7 @@ get_workplan <- function(staff, capacity, projects, probability, start, end, pha
   wp@projects <- set_projects(projects, probability, start, end)
   wp@phases <- set_phases(phases)
   wp@roles <- set_roles(roles)
+  wp@holidays <- set_public_holidays()
   wp@responsibilities <- set_responsibilities(wp@roles@role, wp@phases@phase, responsibilities)
   wp@time_estimates <- set_time_estimates(wp@projects@project, wp@phases@phase, time_estimates)
   wp@project_teams <- set_project_team(wp@projects@project, wp@roles@role, assigned_staff, assigned_capacity) 

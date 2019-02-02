@@ -26,6 +26,20 @@ setMethod("as.data.frame", "roles", definition = function(x){
   return(x)
 })
 
+leav <- setClass("leave", slots = c(staff="character", start = "Date", end = "Date", description = "character"))
+
+setMethod("as.data.frame", "leave", definition = function(x){
+  x <- data.frame(staff = x@staff, start = x@start, end = x@end, desxription = x@description)
+  return(x)
+})
+
+holi <- setClass("public_holidays", slots = c(date="Date", name = "character", info = "character"))
+
+setMethod("as.data.frame", "public_holidays", definition = function(x){
+  x <- data.frame(date = x@date, name = x@name, info = x@info)
+  return(x)
+})
+
 resp <- setClass("responsibilities", slots = c(role ="ordered", phase ="ordered", responsibilities ="numeric"))
 
 setMethod("as.data.frame", "responsibilities", definition = function(x){
@@ -53,6 +67,7 @@ workplan <- setClass("workplan", slots =  list(resources = "resources",
                                                projects = "projects", 
                                                phases = "phases",
                                                roles = "roles",
+                                               holidays = "public_holidays",
                                                responsibilities = "responsibilities",
                                                time_estimates = "time_estimates",
                                                project_teams = "project_teams"))
@@ -63,6 +78,7 @@ setMethod("as.list", "workplan", definition = function(x){
     projects = as.data.frame(x@projects),
     phases = as.data.frame(x@phases),
     roles = as.data.frame(x@roles),
+    holidays = as.data.frame(x@holidays),
     responsibilities = as.data.frame(x@responsibilities),
     time_estimates = as.data.frame(x@time_estimates),
     project_teams = as.data.frame(x@project_teams))
