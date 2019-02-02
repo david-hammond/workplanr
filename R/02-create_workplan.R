@@ -20,7 +20,7 @@ get_workplan <- function(staff, staff_capacity, projects, project_probability, p
                          leave_start, leave_end, leave_description, 
                          staff_project_assignments = "unassigned", staff_project_assigned_capacity = 100) {
   wp <- new("workplan")
-  #wp@resources <- set_resources(staff, staff_capacity)
+  wp@resources <- set_resources(staff, staff_capacity)
   wp@projects <- set_projects(projects, project_probability, project_start, project_end)
   wp@phases <- set_phases(project_phases)
   wp@roles <- set_roles(project_roles)
