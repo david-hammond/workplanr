@@ -1,13 +1,26 @@
 Package: workplanr
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Version: 0.2.0
+Author: David Hammond 
+Maintainer: David Hammond <anotherdavidhammond@gmail.com>
+Description: A package to allow project managers to assign resources to multiple projects, highlight bottlenecks and balance staff loads.
+License: MIT + file LICENSE
 Encoding: UTF-8
+Depends: 
+  dplyr (>= 0.7.8),
+  R (>= 3.4.3)
+Imports:
+  tidyr (>= 0.8.2),
+  lubridate (>= 1.7.4),
+  bizdays (>= 1.0.6),
+  padr (>= 0.4.1),
+  utils (>= 3.4.3),
+  RColorBrewer (>= 1.1.2),
+  ggplot2 (>= 3.0.0),
+  ggrepel (>= 0.0.8),
+  scales (>= 1.0.0),
+  grDevices (>= 3.4.3),
+  rio (>= 0.5.10)
 LazyData: true
-Depends:tidyverse,randomNames
 RoxygenNote: 6.1.1
