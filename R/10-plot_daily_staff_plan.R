@@ -49,8 +49,7 @@ plot_staff_calendar = function(daily_plan){
     ggplot2::scale_fill_gradientn(colors = myPalette(100), 
                                   labels = scales::percent, name = 'Workload') +
     ggplot2::labs(x='', y = '', 
-                  title = toupper('STAFF WORKLOAD')) + 
-    ggplot2::theme_bw()
+                  title = toupper('STAFF WORKLOAD')) 
   
   # Add task labels
   tasks <- daily_plan %>% 
