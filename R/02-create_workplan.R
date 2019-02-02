@@ -15,17 +15,21 @@
 #' roles <- c("lead", "researcher", "editor", "design")
 #' wp <- get_workplan(staff, capacity, projects, probability, start, end, phases, roles)
 #' @export
-get_workplan <- function(staff, capacity, projects, probability, start, end, phases, 
-                         roles, responsibilities = 1, time_estimates = 10, assigned_staff = "unassigned", assigned_capacity = 100) {
+get_workplan <- function(staff, staff_capacity, projects, project_probability, project_start, project_end, project_phases, 
+                         project_roles, project_responsibilities = 1, phase_time_estimates = 10, staff_on_leave, 
+                         leave_start, leave_end, leave_description, 
+                         staff_project_assignments = "unassigned", staff_project_assigned_capacity = 100) {
   wp <- new("workplan")
-  wp@resources <- set_resources(staff, capacity)
-  wp@projects <- set_projects(projects, probability, start, end)
-  wp@phases <- set_phases(phases)
-  wp@roles <- set_roles(roles)
+  wp@resources <- set_resources(staff, staff_capacity)
+  wp@projects <- set_projects(projects, project_probability, project_start, project_end)
+  wp@phases <- set_phases(project_phases)
+  wp@roles <- set_roles(project_roles)
+  wp@leave <- set_leave(staff_on_leave, leave_start, leave_end, leave_description)
   wp@holidays <- set_public_holidays()
   wp@responsibilities <- set_responsibilities(wp@roles@role, wp@phases@phase, responsibilities)
   wp@time_estimates <- set_time_estimates(wp@projects@project, wp@phases@phase, time_estimates)
-  wp@project_teams <- set_project_team(wp@projects@project, wp@roles@role, assigned_staff, assigned_capacity) 
+  wp@project_teams <- set_project_team(wp@projects@project, wp@roles@role, 
+                                       staff_project_assignments, staff_project_assigned_capacity) 
   return(wp)
 }
 

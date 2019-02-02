@@ -3,9 +3,9 @@
 #' @param phases List of phases in any project in order of execution
 #' @return A reference table for phases 
 
-set_phases <- function(phases) {
+set_leave <- function(staff_on_leave, leave_start, leave_end, leave_description) {
   
-    phases <- phas(phase = factor(phases, levels = phases, ordered = TRUE))
+    leave <- leav(staff = staff.on.leave, start = leave.start, end = leave.end, description = leave_description)
     
-    return(phases)
+    return(leave)
 }

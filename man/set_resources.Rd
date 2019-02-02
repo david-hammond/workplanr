@@ -4,7 +4,7 @@
 \alias{set_resources}
 \title{create a list of employees that are to be assigned to projects}
 \usage{
-set_resources(staff, capacity, dummy_resource = "unassigned")
+set_resources(staff, capacity)
 }
 \arguments{
 \item{staff}{Names of staff members}

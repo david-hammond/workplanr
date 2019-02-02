@@ -15,17 +15,3 @@ Calculated workload of staff per date
 \description{
 Create a daily list of assignments for each staff
 }
-\examples{
-library(workplanr)
-staff <- c('Shelby', 'Luis', 'Taishawn', 'Samantha', 'Taylor')
-capacity <- c(40,60,100,100,100)
-projects <- LETTERS[1:3]
-probability <- c(50, 100, 100)
-start <- as.Date(c("2019-07-25", "2019-05-17", "2019-09-27")) 
-end <- as.Date(c("2019-09-03", "2019-06-16", "2019-10-27"))
-phases <- c("research", "drafting", "editing", "design", "print", "events")
-roles <- c("lead", "researcher", "editor", "design")
-wp <- get_workplan(staff, capacity, projects, probability, start, end, phases, roles)
-daily_plan <- get_daily_plan(wp)
-get_staff_daily_workload(daily_plan)      
-}

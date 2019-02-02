@@ -4,9 +4,12 @@
 \alias{get_workplan}
 \title{create a list of employees that are to be assigned to projects}
 \usage{
-get_workplan(staff, capacity, projects, probability, start, end, phases,
-  roles, responsibilities = 1, time_estimates = 10,
-  assigned_staff = "unassigned", assigned_capacity = 100)
+get_workplan(staff, staff_capacity, projects, project_probability,
+  project_start, project_end, project_phases, project_roles,
+  project_responsibilities = 1, phase_time_estimates = 10,
+  staff_on_leave, leave_start, leave_end, leave_description,
+  staff_project_assignments = "unassigned",
+  staff_project_assigned_capacity = 100)
 }
 \arguments{
 \item{staff}{Names of staff members}
