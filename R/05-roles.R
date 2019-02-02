@@ -2,6 +2,7 @@
 #'
 #' @param roles List of roles in any project team in order of responsibility
 #' @return A reference table for roles
+#' @keywords internal
 
 set_roles <- function(roles){
 

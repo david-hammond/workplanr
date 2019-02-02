@@ -15,3 +15,6 @@ ggplot of workload of team per date
 \description{
 Plot a team workload calendar
 }
+\examples{
+      
+}

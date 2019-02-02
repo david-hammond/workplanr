@@ -2,6 +2,7 @@
 #'
 #' @param phases List of phases in any project in order of execution
 #' @return A reference table for phases 
+#' @keywords internal
 
 set_phases <- function(phases) {
   

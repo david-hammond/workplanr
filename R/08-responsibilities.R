@@ -4,6 +4,7 @@
 #' @param phases List of roles in any project team in order of responsibility
 #' @param responsibilities a binary matrix of if role i is in volved in phase j
 #' @return A reference table for responsibilities
+#' @keywords internal
 
 set_responsibilities <- function(roles, phases, responsibilities = 1){ 
   

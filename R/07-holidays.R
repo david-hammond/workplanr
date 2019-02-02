@@ -2,6 +2,7 @@
 #'
 #' @param file file with public holiday information
 #' @return A reference table for phases 
+#' @keywords internal
 
 set_public_holidays <- function(file = "https://data.gov.au/data/dataset/b1bc6077-dadd-4f61-9f8c-002ab2cdff10/resource/31eec35e-1de6-4f04-9703-9be1d43d405b/download/australian_public_holidays_2019.csv"){
   public_holidays <- utils::read.csv(file, stringsAsFactors = FALSE)

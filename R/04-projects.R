@@ -4,7 +4,8 @@
 #' @param probability Probability that the project will go ahead
 #' @param start Expected start date of project
 #' @param end Expected end date of the project
-#' @return A reference table for projects 
+#' @return A reference table for projects
+#' @keywords internal
 
 set_projects <- function(projects, probability = 1, start, end) {
     projects <- data.frame(project = projects, 
