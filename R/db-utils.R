@@ -1,30 +1,16 @@
-#' Save project information
+#' Create Excel file for project inputs
+#' 
+#' This function creates an excel file that can be used to create a new project
 #'
-#' @param df Project table to save
-#' @param folder Location to save Project Tables
+#' @param excel_file_name File name for project inputs
 #' @return NULL
-
-.db.save = function(df, folder = "./db/"){
-  if(!dir.exists(folder)){
-    dir.create(folder)
+#' @example 
+#' create_project_file()
+#' @export 
+create_project_file = function(excel_file_name = "my_project.xlsx"){
+  data("example_project")
+  for (i in names(example_project)){
+    rio::export(example_project[[i]], file = excel_file_name, which = i)
   }
-  fname <- paste0(folder, (deparse(substitute(df))), ".csv")
-  write.csv(df, file = fname, row.names = F)
   return(NULL)
-}
-
-#' Retrieve project information
-#'
-#' @param db Project table to retrieve
-#' @param folder Location ofProject Tables
-#' @return Requested Table if it exists, NULL otherwise
-.db.get = function(db, folder = "./db/"){
-  if(!dir.exists(folder)){
-    message("Employee database does not exist, please refer to the manual to create")
-    db = NULL
-  }else{
-    fname <- paste0(folder, db, ".csv")
-    db = read.csv(fname)
-  }
-  return(db)
 }

@@ -32,3 +32,4 @@ staff_workplan <- get_staff_daily_workload(daily_plan)
 plot_staff_calendar(daily_plan)
 team_workplan <- get_team_daily_workload(daily_plan)
 plot_team_daily_workload(daily_plan)
+

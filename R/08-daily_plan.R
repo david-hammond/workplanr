@@ -1,10 +1,10 @@
 #' create a daily list of assignments for each staff
 #'
-#' @param resources Names of projects
-#' @param projects Probability that the project will go ahead
-#' @param phases Expected start date of project
-#' @param time_estimates Expected end date of the project
-#' @param project_teams A reference table project teams and roles
+#' @param resources Names of staff
+#' @param projects Lists of projects
+#' @param phases Phases of a project
+#' @param time_estimates Time required for different phases
+#' @param project_teams Project teams
 #' @param responsibilities A reference table for responsibilities
 #' @return A reference table for daily projects schedule
 #' @examples 

@@ -20,6 +20,7 @@ Imports:
   ggplot2 (>= 3.0.0),
   ggrepel (>= 0.0.8),
   scales (>= 1.0.0),
-  grDevices (>= 3.4.3)
+  grDevices (>= 3.4.3),
+  rio (>= 0.5.10)
 LazyData: true
 RoxygenNote: 6.1.1

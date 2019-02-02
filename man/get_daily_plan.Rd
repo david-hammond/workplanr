@@ -8,15 +8,15 @@ get_daily_plan(resources, projects, phases, time_estimates, project_teams,
   responsibilities)
 }
 \arguments{
-\item{resources}{Names of projects}
+\item{resources}{Names of staff}
 
-\item{projects}{Probability that the project will go ahead}
+\item{projects}{Lists of projects}
 
-\item{phases}{Expected start date of project}
+\item{phases}{Phases of a project}
 
-\item{time_estimates}{Expected end date of the project}
+\item{time_estimates}{Time required for different phases}
 
-\item{project_teams}{A reference table project teams and roles}
+\item{project_teams}{Project teams}
 
 \item{responsibilities}{A reference table for responsibilities}
 }
