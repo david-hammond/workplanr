@@ -4,7 +4,7 @@
 \alias{set_responsibilities}
 \title{creates a span responbsibilities of of roles across project phases}
 \usage{
-set_responsibilities(roles, phases, responsibilities)
+set_responsibilities(roles, phases, responsibilities = 1)
 }
 \arguments{
 \item{roles}{List of roles in any project team in order of responsibility}
@@ -24,7 +24,7 @@ roles <- c("lead", "researcher", "editor", "design")
 roles <- set_roles(roles)
 phases <- c("research", "drafting", "editing", "design", "print", "events")
 phases <- set_phases(phases)
-responsibilities <- rbind(lead = rep(1, length(phases$phase)), researcher = c(1,1,1,0,0,0), 
-editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
+responsibilities <- rbind(lead = rep(1, length(phases$phase)), 
+researcher = c(1,1,1,0,0,0), editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
 responsibilities <- set_responsibilities(roles, phases, responsibilities)
 }

@@ -4,10 +4,17 @@
 \alias{set_project_team}
 \title{Assigns staff roles on a project}
 \usage{
-set_project_team(project_teams)
+set_project_team(projects, roles, assigned_staff = NA,
+  assigned_capacity = NA)
 }
 \arguments{
-\item{project_teams}{Data frame that lists project, role, staff, assigned_capacity}
+\item{projects}{Data frame that lists project, role, staff, assigned_capacity}
+
+\item{roles}{vvv}
+
+\item{assigned_capacity}{vvv}
+
+\item{staff}{nnn}
 }
 \value{
 A reference table project teams and roles
@@ -26,14 +33,11 @@ end <- as.Date(c("2019-09-03", "2019-06-16", "2019-10-27"))
 projects <- set_projects(projects, probability, start, end)
 roles <- c("lead", "researcher", "editor", "design")
 roles <- set_roles(roles)
-project_teams <- expand.grid(project = projects$project, 
-                             role = roles$role, 
-                             KEEP.OUT.ATTRS = FALSE)
-project_teams$staff <- sample(resources$staff, 
+staff <- sample(resources$staff, 
                               size = nrow(project_teams), 
                               replace = TRUE)
-project_teams$assigned_capacity <- sample(c(25,25,75,100), 
+assigned_capacity <- sample(c(25,25,75,100), 
                                    size = nrow(project_teams), 
                                    replace = TRUE)
-project_teams <- set_project_team(project_teams)
+project_teams <- set_project_team(project, roles, staff, assigned_capacity)
 }

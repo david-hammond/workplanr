@@ -9,16 +9,18 @@
 #' roles <- set_roles(roles)
 #' phases <- c("research", "drafting", "editing", "design", "print", "events")
 #' phases <- set_phases(phases)
-#' responsibilities <- rbind(lead = rep(1, length(phases$phase)), researcher = c(1,1,1,0,0,0), 
-#' editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
+#' responsibilities <- rbind(lead = rep(1, length(phases$phase)), 
+#' researcher = c(1,1,1,0,0,0), editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
 #' responsibilities <- set_responsibilities(roles, phases, responsibilities)
 #' @export
-set_responsibilities <- function(roles, phases, responsibilities){ 
+set_responsibilities <- function(roles, phases, responsibilities = 1){ 
   
-  colnames(responsibilities) <- phases$phase
+  tmp <- expand.grid(role = roles, phase = phases, KEEP.OUT.ATTRS = FALSE)
   
-  responsibilities <- data.frame(role = roles$role, responsibilities)
-
-  return(responsibilities)
+  tmp <- resp(role = tmp$role, 
+              phase = tmp$phase, 
+              responsibilities = responsibilities)
+  
+  return(tmp)
 }
 

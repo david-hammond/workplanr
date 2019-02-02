@@ -4,7 +4,8 @@
 \alias{set_projects}
 \title{create a list of employees that are to be assigned to projects}
 \usage{
-set_projects(projects, probability = 1, start, end)
+set_projects(projects, probability = 1, start, end,
+  plan = new("workplan"))
 }
 \arguments{
 \item{projects}{Names of projects}

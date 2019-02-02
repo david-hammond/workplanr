@@ -9,6 +9,7 @@
 #' @export 
 create_project_file = function(excel_file_name = "my_project.xlsx"){
   utils::data("example_project", envir = environment())
+  
   for (i in names(example_project)){
     rio::export(example_project[[i]], file = excel_file_name, which = i)
   }

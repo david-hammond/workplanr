@@ -4,14 +4,14 @@
 \alias{set_time_estimates}
 \title{creates time estimates for each phases of each project}
 \usage{
-set_time_estimates(projects, phases, days_from_end)
+set_time_estimates(projects, phases, time_estimates = 10)
 }
 \arguments{
 \item{projects}{List of roles in any project team in order of responsibility}
 
 \item{phases}{List of roles in any project team in order of responsibility}
 
-\item{days_from_end}{Time estimates of how long each phase will take in relation to project end, negative = phase will occur before project end, positive = phase will occur after project end}
+\item{time_estimates}{Time estimates of how long each phase will take in relation to project end, negative = phase will occur before project end, positive = phase will occur after project end}
 }
 \value{
 A reference table for time estimates of each phase of each project

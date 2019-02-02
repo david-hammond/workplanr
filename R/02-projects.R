@@ -6,14 +6,8 @@
 #' @param end Expected end date of the project
 #' @return A reference table for projects 
 #' @examples 
-#' projects <- LETTERS[1:3]
-#' probability <- c(50, 100, 100)
-#' start <- as.Date(c("2019-07-25", "2019-05-17", "2019-09-27")) 
-#' end <- as.Date(c("2019-09-03", "2019-06-16", "2019-10-27"))
-#' projects <- set_projects(projects, probability, start, end)
-#' @export
-set_projects <- function(projects, probability = 1, start, end) {
 
+set_projects <- function(projects, probability = 1, start, end, plan = new("workplan")) {
     projects <- data.frame(project = projects, 
                            probability = probability, 
                            start = start, end = end)
@@ -21,6 +15,11 @@ set_projects <- function(projects, probability = 1, start, end) {
     projects <- projects %>% 
       dplyr::arrange(start) %>% 
       dplyr::mutate(project = factor(project, project, ordered = TRUE))
+    
+    projects <- proj(project = projects$project, 
+                     probability = projects$probability,
+                     start = projects$start,
+                     end = projects$end)
     
     return(projects)
 }

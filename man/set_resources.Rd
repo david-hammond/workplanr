@@ -17,8 +17,3 @@ A reference table for staff
 \description{
 create a list of employees that are to be assigned to projects
 }
-\examples{
-staff <- c('Shelby', 'Luis', 'Taishawn', 'Samantha', 'Taylor')
-capacity <- c(40,60,100,100,100)
-resources <- set_resources(staff, capacity)
-}
