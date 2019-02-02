@@ -14,24 +14,13 @@
 #' @export
 set_projects <- function(projects, probability = 1, start, end) {
 
-    projects <- data.frame(project = projects, probability = probability, start = start, end = end)
+    projects <- data.frame(project = projects, 
+                           probability = probability, 
+                           start = start, end = end)
     
     projects <- projects %>% 
       dplyr::arrange(start) %>% 
       dplyr::mutate(project = factor(project, project, ordered = TRUE))
     
-    .db.save(projects)
-    
     return(projects)
-}
-
-#' Retrieve projects list
-#'
-#' @examples 
-#' get_projects()
-#' @export
-get_projects <- function() {
-  
-  return(.db.get("projects"))
-  
 }

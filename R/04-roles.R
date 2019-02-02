@@ -8,20 +8,8 @@
 #' @export
 set_roles <- function(roles){
 
-  roles <- factor(roles, levels = roles, ordered = TRUE)
-  
-  .db.save(roles)
+  roles <- data.frame(role = factor(roles, levels = roles, ordered = TRUE))
   
   return(roles)
 }
 
-#' Retrieve role list
-#'
-#' @examples 
-#' get_roles()
-#' @export
-get_roles <- function() {
-  
-  return(.db.get("roles"))
-  
-}

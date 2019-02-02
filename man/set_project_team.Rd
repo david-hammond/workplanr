@@ -27,7 +27,7 @@ projects <- set_projects(projects, probability, start, end)
 roles <- c("lead", "researcher", "editor", "design")
 roles <- set_roles(roles)
 project_teams <- expand.grid(project = projects$project, 
-                             role = roles, 
+                             role = roles$role, 
                              KEEP.OUT.ATTRS = FALSE)
 project_teams$staff <- sample(resources$staff, 
                               size = nrow(project_teams), 

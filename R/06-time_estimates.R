@@ -19,22 +19,9 @@
 
 set_time_estimates <- function(projects, phases, days_from_end){ 
   
-  colnames(time_estimates) <- phases
+  colnames(time_estimates) <- phases$phase
   
   time_estimates <- data.frame(project = projects$project, time_estimates)
   
-  .db.save(time_estimates)
-  
   return(time_estimates)
-}
-
-#' Retrieve time estimates
-#'
-#' @examples 
-#' get_time_estimates()
-#' @export
-get_time_estimates <- function() {
-  
-  return(.db.get("time_estimates"))
-  
 }

@@ -14,7 +14,7 @@
 #' roles <- c("lead", "researcher", "editor", "design")
 #' roles <- set_roles(roles)
 #' project_teams <- expand.grid(project = projects$project, 
-#'                              role = roles, 
+#'                              role = roles$role, 
 #'                              KEEP.OUT.ATTRS = FALSE)
 #' project_teams$staff <- sample(resources$staff, 
 #'                               size = nrow(project_teams), 
@@ -25,18 +25,6 @@
 #' project_teams <- set_project_team(project_teams)
 #' @export
 set_project_team = function(project_teams){
-  .db.save(project_teams)
+
   return(project_teams)
-}
-
-
-#' Retrieve project teams
-#'
-#' @examples 
-#' get_project_teams()
-#' @export
-get_project_teams <- function() {
-  
-  return(.db.get("project_teams"))
-  
 }

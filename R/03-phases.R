@@ -8,20 +8,7 @@
 #' @export
 set_phases <- function(phases) {
   
-    phases <- factor(phases, levels = phases, ordered = TRUE)
-    
-    .db.save(phases)
+    phases <- data.frame(phase = factor(phases, levels = phases, ordered = TRUE))
     
     return(phases)
-}
-
-#' Retrieve phase list
-#'
-#' @examples 
-#' get_phases()
-#' @export
-get_phases <- function() {
-  
-  return(.db.get("phases"))
-  
 }

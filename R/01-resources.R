@@ -12,18 +12,6 @@ set_resources <- function(staff, capacity) {
     
     resources <- data.frame(staff = staff, capacity = capacity)
     
-    .db.save(resources)
-    
     return(resources)
 }
 
-#' Retrieve resource list
-#'
-#' @examples 
-#' get_resources()
-#' @export
-get_resources <- function() {
-  
-  return(.db.get("resources"))
-  
-}

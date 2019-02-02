@@ -28,14 +28,14 @@ phases <- c("research", "drafting", "editing", "design", "print", "events")
 phases <- set_phases(phases)
 roles <- c("lead", "researcher", "editor", "design")
 roles <- set_roles(roles)
-responsibilities <- rbind(lead = rep(1, length(phases)), 
+responsibilities <- rbind(lead = rep(1, length(phases$phase)), 
 researcher = c(1,1,1,0,0,0), editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
 responsibilities <- set_responsibilities(roles, phases, responsibilities)
 time_estimates <- rbind(c(-40,-10,-10,-10,-10,10), c(-10,-10,-10,0,0,0), 
                         c(0,0,0,-10,-10,10))
 time_estimates <- set_time_estimates(projects, phases, time_estimates)
 project_teams <- expand.grid(project = projects$project, 
-                             role = roles, KEEP.OUT.ATTRS = FALSE)
+                             role = roles$role, KEEP.OUT.ATTRS = FALSE)
 project_teams$staff <- sample(resources$staff, size = nrow(project_teams), 
                               replace = TRUE)
 project_teams$assigned_capacity <- sample(c(25,25,75,100), 

@@ -24,7 +24,7 @@ roles <- c("lead", "researcher", "editor", "design")
 roles <- set_roles(roles)
 phases <- c("research", "drafting", "editing", "design", "print", "events")
 phases <- set_phases(phases)
-responsibilities <- rbind(lead = rep(1, length(phases)), researcher = c(1,1,1,0,0,0), 
+responsibilities <- rbind(lead = rep(1, length(phases$phase)), researcher = c(1,1,1,0,0,0), 
 editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
 responsibilities <- set_responsibilities(roles, phases, responsibilities)
 }
