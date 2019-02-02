@@ -11,6 +11,9 @@
 
 \item{folder}{Location ofProject Tables}
 }
+\value{
+Requested Table if it exists, NULL otherwise
+}
 \description{
 Retrieve project information
 }

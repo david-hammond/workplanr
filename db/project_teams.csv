@@ -1,0 +1,13 @@
+"project","role","staff","assigned_capacity"
+"B","lead","Shelby",25
+"A","lead","Taishawn",100
+"C","lead","Luis",100
+"B","researcher","Samantha",100
+"A","researcher","Shelby",75
+"C","researcher","Taishawn",25
+"B","editor","Taylor",100
+"A","editor","Shelby",75
+"C","editor","Samantha",25
+"B","design","Taishawn",100
+"A","design","Shelby",75
+"C","design","Luis",100

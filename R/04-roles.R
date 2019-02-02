@@ -7,8 +7,7 @@
 #' roles <- set_roles(roles)
 #' @export
 set_roles <- function(roles){
-  require(dplyr)
-  
+
   roles <- factor(roles, levels = roles, ordered = TRUE)
   
   .db.save(roles)

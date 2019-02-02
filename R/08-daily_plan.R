@@ -20,75 +20,79 @@
 #' phases <- set_phases(phases)
 #' roles <- c("lead", "researcher", "editor", "design")
 #' roles <- set_roles(roles)
-#' responsibilities <- rbind(lead = rep(1, length(phases)), researcher = c(1,1,1,0,0,0), editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
+#' responsibilities <- rbind(lead = rep(1, length(phases)), 
+#' researcher = c(1,1,1,0,0,0), editor = c(0,0,1,0,0,0), design = c(0,0,0,1,1,0))
 #' responsibilities <- set_responsibilities(roles, phases, responsibilities)
-#' time_estimates <- rbind(c(-40,-10,-10,-10,-10,10), c(-10,-10,-10,0,0,0), c(0,0,0,-10,-10,10))
+#' time_estimates <- rbind(c(-40,-10,-10,-10,-10,10), c(-10,-10,-10,0,0,0), 
+#'                         c(0,0,0,-10,-10,10))
 #' time_estimates <- set_time_estimates(projects, phases, time_estimates)
-#' project_teams <- expand.grid(project = projects$project, role = roles, KEEP.OUT.ATTRS = FALSE)
-#' project_teams$staff <- sample(resources$staff, size = nrow(project_teams), replace = TRUE)
-#' project_teams$assigned_capacity <- sample(c(25,25,75,100), size = nrow(project_teams), replace = TRUE)
+#' project_teams <- expand.grid(project = projects$project, 
+#'                              role = roles, KEEP.OUT.ATTRS = FALSE)
+#' project_teams$staff <- sample(resources$staff, size = nrow(project_teams), 
+#'                               replace = TRUE)
+#' project_teams$assigned_capacity <- sample(c(25,25,75,100), 
+#'                                    size = nrow(project_teams), 
+#'                                    replace = TRUE)
 #' project_teams <- set_project_team(project_teams)
-#' get_daily_plan(resources, projects, phases, time_estimates, project_teams, responsibilities)
+#' get_daily_plan(resources, projects, 
+#'                phases, time_estimates, 
+#'                project_teams, responsibilities)
 #' @export
 get_daily_plan = function(resources, projects,
                           phases, time_estimates,
                           project_teams, responsibilities){
 
   schedule = .get_schedule(projects, time_estimates, phases)
-  schedule = .get_assignment_schedule(schedule, resources, project_teams, responsibilities)
+  schedule = .get_assignment_schedule(schedule, resources, 
+                                      project_teams, responsibilities)
   return(schedule)
 }
 
 .get_schedule <- function(projects, time_estimates, phases){
-   require(bizdays)
-   require(lubridate)
-   require(tidyr)
-   require(dplyr)
-   cal <- create.calendar('normal', weekdays = c('saturday', 'sunday'), 
+   cal <- bizdays::create.calendar('normal', weekdays = c('saturday', 'sunday'), 
                           start.date = min(projects$end)-180, end.date = max(projects$end) +180)
-   times = left_join(projects, time_estimates)
+   times = dplyr::left_join(projects, time_estimates)
    end = times
  
-   end[, ncol(end)] = offset(end$end, end[,ncol(end)], 'normal')
+   end[, ncol(end)] = bizdays::offset(end$end, end[,ncol(end)], 'normal')
    for (i in  rev(names(time_estimates[, -c(1, ncol(time_estimates))]))){
-     end[,i] = offset(end[,(which(names(end) == i)) +1], times[,i], 'normal')
+     end[,i] = bizdays::offset(end[,(which(names(end) == i)) +1], times[,i], 'normal')
    }
    start = times
    for (i in  names(time_estimates[, -1])){
-     start[,i] = offset(end[,i], -times[,i], 'normal')
+     start[,i] = bizdays::offset(end[,i], -times[,i], 'normal')
    }
  
    schedule = list(start = start, end = end)
-   schedule = lapply(schedule, function(x) x %>% select(-c(probability, start, end)) %>% 
-                       gather(phase, date, -c(project)) %>%
-                       mutate(phase = factor(phase, phases, ordered = T)))
-   schedule = bind_rows(schedule, .id = 'date.type')
-   schedule = schedule %>% spread(date.type, date) %>% filter(start!=end) %>%
-     gather(date.type, date, -c(project, phase))
+   schedule = lapply(schedule, function(x) x %>% dplyr::select(-c(probability, start, end)) %>% 
+                       tidyr::gather(phase, date, -c(project)) %>%
+                       dplyr::mutate(phase = factor(phase, phases, ordered = T)))
+   schedule = dplyr::bind_rows(schedule, .id = 'date.type')
+   schedule = schedule %>% 
+     tidyr::spread(date.type, date) %>% 
+     dplyr::filter(start!=end) %>%
+     tidyr::gather(date.type, date, -c(project, phase))
    schedule$date.type = factor(schedule$date.type, (c('start', 'end')), ordered = T)
 
-   schedule = schedule %>% arrange(project, phase, desc(date), date.type) %>% 
-     select(-date.type)
+   schedule = schedule %>% 
+     dplyr::arrange(project, phase, desc(date), date.type) %>% 
+     dplyr::select(-date.type)
    return(schedule)
  }
  
 .get_pad_schedule = function(schedule){
-  require(padr)
-  require(dplyr)
   schedule = schedule %>%  
-  pad(group = setdiff(names(schedule), 'date'), interval = 'day') 
+    padr::pad(group = setdiff(names(schedule), 'date'), interval = 'day') 
   return(schedule)
 }
 
 .get_assignment_schedule = function(schedule, resources, project_teams, responsibilities){
-  require(tidyr)
-  require(dplyr)
-   tmp = responsibilities %>% gather('phase', 'needed', -role) %>% 
-     filter(needed == 1) %>%  select(-needed) 
+   tmp = responsibilities %>% tidyr::gather('phase', 'needed', -role) %>% 
+     dplyr::filter(needed == 1) %>%  dplyr::select(-needed) 
    tmp$phase = factor(tmp$phase, levels = levels(schedule$phase), ordered = T)
-   schedule = left_join(schedule, tmp)
-   schedule = left_join(schedule, project_teams)
-   schedule = left_join(schedule, resources)
+   schedule = dplyr::left_join(schedule, tmp)
+   schedule = dplyr::left_join(schedule, project_teams)
+   schedule = dplyr::left_join(schedule, resources)
    schedule = .get_pad_schedule(schedule)
    return(schedule)
 }

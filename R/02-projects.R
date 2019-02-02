@@ -13,11 +13,12 @@
 #' projects <- set_projects(projects, probability, start, end)
 #' @export
 set_projects <- function(projects, probability = 1, start, end) {
-    require(dplyr)
-  
+
     projects <- data.frame(project = projects, probability = probability, start = start, end = end)
     
-    projects <- projects %>% arrange(start) %>% mutate(project = factor(project, project, ordered = TRUE))
+    projects <- projects %>% 
+      dplyr::arrange(start) %>% 
+      dplyr::mutate(project = factor(project, project, ordered = TRUE))
     
     .db.save(projects)
     

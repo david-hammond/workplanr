@@ -12,7 +12,8 @@
 #' projects <- set_projects(projects, probability, start, end)
 #' phases <- c("research", "drafting", "editing", "design", "print", "events")
 #' phases <- set_phases(phases)
-#' time_estimates <- rbind(c(-40,-10,-10,-10,-10,10), c(-10,-10,-10,0,0,0), c(0,0,0,-10,-10,10))
+#' time_estimates <- rbind(c(-40,-10,-10,-10,-10,10), c(-10,-10,-10,0,0,0), 
+#'                         c(0,0,0,-10,-10,10))
 #' time_estimates <- set_time_estimates(projects, phases, time_estimates)
 #' @export
 
