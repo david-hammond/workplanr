@@ -2,12 +2,10 @@
 #'
 #' @param daily_plan Daily work plan of staff
 #' @return Calculated workload of team per date
-#' @examples 
-#' @export
-#' 
+#' @keywords internal
 
-get_team_daily_workload = function(daily_plan){
-  
+set_team_schedule = function(wp){
+  daily_plan = as.data.frame(wp@full_schedule)
   team_capacity <- daily_plan %>% 
     dplyr::select(staff, capacity) %>%
     dplyr::distinct() %>%
@@ -20,6 +18,7 @@ get_team_daily_workload = function(daily_plan){
     dplyr::select(-assigned_capacity) %>%
     dplyr::ungroup()
   
-  daily_plan$teamload <- ifelse(daily_plan$workload > 1, "Overload", "Covered")
+  daily_plan <- team_sched(date = daily_plan$date, workload = daily_plan$workload)
+  
   return(daily_plan)
 }

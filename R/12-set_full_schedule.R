@@ -1,16 +1,23 @@
 #' create a daily list of assignments for each staff
 #'
-#' @param plan Complete workplan object
+#' @param wp Complete workplan object
 #' @return A reference table for daily projects schedule
-#' @examples 
-#' @export
-get_daily_plan = function(wp){
-  tmp = as.list(wp)
-  schedule = .get_schedule(tmp)
-  schedule = .get_assignment_schedule(schedule, tmp)
+#' @keywords internal
+set_full_schedule = function(wp){
+  tmp <- as.list(wp)
+  schedule <- .get_schedule(tmp)
+  schedule <- .get_assignment_schedule(schedule, tmp)
+  schedule <- full_sched(date = schedule$date, project = schedule$project, phase = schedule$phase, 
+                       role = schedule$role, staff = as.character(schedule$staff), assigned_capacity = schedule$assigned_capacity,
+                       capacity = schedule$capacity)
   return(schedule)
 }
 
+#' create a daily list of assignments for each staff
+#'
+#' @param wp Complete workplan object
+#' @return A reference table for daily projects schedule
+#' @keywords internal
 .get_schedule <- function(wp){
    cal <- bizdays::create.calendar('normal', weekdays = c('saturday', 'sunday'), 
                           start.date = min(wp$projects$end)-180, end.date = max(wp$projects$end) +180)
@@ -43,12 +50,23 @@ get_daily_plan = function(wp){
    return(schedule)
  }
  
+#' pad out daily list of assignments for each staff
+#'
+#' @param schedule A working schedule
+#' @return A reference table for daily projects schedule
+#' @keywords internal
 .get_pad_schedule = function(schedule){
   schedule = schedule %>%  
     padr::pad(group = setdiff(names(schedule), 'date'), interval = 'day') 
   return(schedule)
 }
 
+#' pad out daily list of assignments for each staff
+#'
+#' @param schedule A working schedule
+#' @param wp Complete workplan object
+#' @return A reference table for daily projects schedule
+#' @keywords internal
 .get_assignment_schedule = function(schedule, wp){
    tmp = wp$responsibilities %>% tidyr::gather('phase', 'needed', -role) %>% 
      dplyr::filter(needed == 1) %>%  dplyr::select(-needed) 

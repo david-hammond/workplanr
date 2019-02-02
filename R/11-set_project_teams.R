@@ -1,9 +1,10 @@
 #' Assigns staff roles on a project
 #'
-#' @param projects Data frame that lists project, role, staff, assigned_capacity
-#' @param roles vvv
-#' @param staff nnn
-#' @param assigned_capacity vvv
+#' @param projects List of projects
+#' @param roles Roles of projects
+#' @param staff Assigned staff to each [project, role] combination (needs to be at least length(project) x length(roles) in length)
+#' @param assigned_capacity Amount of time each staff is expected to dedicate to each [project, role] 
+#' combination (needs to be at least length(project) x length(roles) in length)
 #' @return A reference table project teams and roles
 #' @keywords internal
 

@@ -17,6 +17,5 @@ wp <- get_workplan(staff = staff, staff_capacity = capacity, projects = projects
                    project_start = start, project_end = end, project_phases = phases, project_roles = roles,
                    staff_on_leave = staff_on_leave, leave_start = leave_start, leave_end = leave_end, leave_description = leave_description, 
                    staff_project_assignments = assigned_staff, staff_project_assigned_capacity = assigned_capacity)
-daily_plan <- get_daily_plan(wp)
-plot_daily_staff_plan(daily_plan)
-plot_team_daily_workload(daily_plan)
+plot(wp@staff_schedule)
+plot(wp@team_schedule)
