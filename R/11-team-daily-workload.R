@@ -42,7 +42,7 @@ get_team_daily_workload = function(daily_plan){
   team_capacity <- daily_plan %>% 
     dplyr::select(staff, capacity) %>%
     dplyr::distinct() %>%
-    ungroup()
+    dplyr::ungroup()
   team_capacity <- sum(team_capacity$capacity)
   daily_plan <- daily_plan %>% 
     dplyr::group_by(date) %>% 

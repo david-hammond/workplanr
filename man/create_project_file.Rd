@@ -12,3 +12,6 @@ create_project_file(excel_file_name = "my_project.xlsx")
 \description{
 This function creates an excel file that can be used to create a new project
 }
+\examples{
+create_project_file()
+}

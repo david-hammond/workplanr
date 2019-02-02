@@ -32,10 +32,10 @@
 #' daily_plan <- get_daily_plan(resources, projects, 
 #'                phases, time_estimates, 
 #'                project_teams, responsibilities)
-#' plot_staff_calendar(daily_plan)
+#' plot_daily_staff_plan(daily_plan)
 #'       
 #' @export
-plot_staff_calendar = function(daily_plan){
+plot_daily_staff_plan = function(daily_plan){
 
   workplan = get_staff_daily_workload(daily_plan)
   # create base plot
@@ -47,7 +47,7 @@ plot_staff_calendar = function(daily_plan){
                           date_breaks = '1 month', 
                           expand = c(0,0)) +
     ggplot2::scale_fill_gradientn(colors = myPalette(100), 
-                                  labels = scales::percent, name = 'Workload') +
+                                  labels = scales::percent, name = 'Workload', na.value = "white") +
     ggplot2::labs(x='', y = '', 
                   title = toupper('STAFF WORKLOAD')) 
   
@@ -60,7 +60,7 @@ plot_staff_calendar = function(daily_plan){
     dplyr::group_by(staff, date) %>% 
     dplyr::summarise(project = paste(project, collapse = ', ')) %>%
     dplyr::ungroup()
-  tasks <- left_join(tasks, workplan)
+  tasks <- dplyr::left_join(tasks, workplan)
   p <- p + ggrepel::geom_text_repel(data = as.data.frame(tasks),
                            ggplot2::aes(x = date, y = staff, label = project), 
                            size = 3, hjust = 1, force = 2.5)

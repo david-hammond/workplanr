@@ -75,7 +75,7 @@ get_daily_plan = function(resources, projects,
    schedule$date.type = factor(schedule$date.type, (c('start', 'end')), ordered = T)
 
    schedule = schedule %>% 
-     dplyr::arrange(project, phase, desc(date), date.type) %>% 
+     dplyr::arrange(project, phase, dplyr::desc(date), date.type) %>% 
      dplyr::select(-date.type)
    return(schedule)
  }

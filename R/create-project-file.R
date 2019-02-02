@@ -4,7 +4,7 @@
 #'
 #' @param excel_file_name File name for project inputs
 #' @return NULL
-#' @example 
+#' @examples 
 #' create_project_file()
 #' @export 
 create_project_file = function(excel_file_name = "my_project.xlsx"){
