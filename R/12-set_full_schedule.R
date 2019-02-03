@@ -7,6 +7,7 @@ set_full_schedule = function(wp){
   tmp <- as.list(wp)
   schedule <- .get_schedule(tmp)
   schedule <- .get_assignment_schedule(schedule, tmp)
+  
   # account for leave
   leave = tmp$leave
   leave = leave %>% tidyr::gather("type", "date", -c(staff, description))
@@ -36,6 +37,8 @@ set_full_schedule = function(wp){
            leave_adjusted_workload = ifelse(is.na(out_of_office), leave_expansion_factor * assigned_capacity, 0)) %>%
     dplyr::ungroup()
 
+  schedule$leave_adjusted_workload <- ifelse(is.na(schedule$leave_adjusted_workload), 0, schedule$leave_adjusted_workload)
+  schedule$staff <- ifelse(is.na(schedule$staff), "unassigned", schedule$staff)
   schedule <- full_sched(date = schedule$date, project = schedule$project, phase = schedule$phase, 
                        role = schedule$role, staff = as.character(schedule$staff), assigned_capacity = schedule$assigned_capacity,
                        capacity = schedule$capacity, public_holiday = as.character(schedule$public_holiday), 
@@ -64,7 +67,7 @@ set_full_schedule = function(wp){
    }
    start = times
    for (i in  names(wp$time_estimates[, -1])){
-     start[,i] = bizdays::offset(end[,i], -times[,i], 'normal')
+     start[,i] = bizdays::offset(end[,i], times[,i], 'normal')
    }
  
    schedule = list(start = start, end = end)
@@ -92,6 +95,10 @@ set_full_schedule = function(wp){
 .get_pad_schedule = function(schedule){
   schedule = schedule %>%  
     padr::pad(group = setdiff(names(schedule), 'date'), interval = 'day') 
+  schedule <- schedule %>% padr::pad(group = c("staff", "capacity"), interval = 'day', 
+                                     start_val = min(schedule$date), end_val = max(schedule$date)) 
+  schedule$assigned_capacity = ifelse(is.na(schedule$assigned_capacity), 0, schedule$assigned_capacity)
+  
   return(schedule)
 }
 

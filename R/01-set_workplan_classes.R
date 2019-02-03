@@ -231,6 +231,7 @@ setMethod("as.data.frame", "staff_schedule", definition = function(x){
 #' @description Coerce Object full_schedule to ggplot, avoiding using the "slot" notation.
 #'
 #' @param x A \code{staff_schedule} object.
+#' @export
 setMethod("plot", "staff_schedule", definition = function(x){
   x = as.data.frame(x)
   myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
@@ -254,14 +255,15 @@ setMethod("plot", "staff_schedule", definition = function(x){
     dplyr::group_by(staff, out_of_office, workload) %>%
     dplyr::summarise(start = min(date), end = max(date)) %>%
     dplyr::filter(!is.na(out_of_office))
+  
   p <- p + ggplot2::geom_segment(data = leave, ggplot2::aes(x=start, 
                                           xend=end, 
                                           y=staff, 
-                                          yend=staff), size=2, alpha = 0.6, colour = "red")
+                                          yend=staff, colour = out_of_office), size=2, alpha = 0.6)
   p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=start, 
-                                        y=staff), size=3, colour = "red")
+                                        y=staff, colour = out_of_office), size=3)
   p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=end, 
-                                        y=staff), size=3,  colour = "red")
+                                        y=staff, colour = out_of_office), size=3)
   public_holidays <- x %>% 
     dplyr::filter(!is.na(public_holiday))
   p <- p + ggplot2::geom_vline(xintercept = public_holidays$date, 
@@ -292,6 +294,7 @@ setMethod("as.data.frame", "team_schedule", definition = function(x){
 #' @description Coerce Object team_schedule to ggplot, avoiding using the "slot" notation.
 #'
 #' @param x A \code{team_schedule} object.
+#' @export
 setMethod("plot", "team_schedule", definition = function(x){
   x <- as.data.frame(x)
   x$maxcapacity <- ifelse(x$workload > 1, 1, x$workload)
@@ -352,6 +355,7 @@ workplan <- setClass("workplan", slots =  list(resources = "resources",
 #' @description Coerce Object workplan to a list of data frames, avoiding using the "slot" notation.
 #'
 #' @param x A \code{workplan} object.
+#' @export
 setMethod("as.list", "workplan", definition = function(x){
   x = list(
     resources = as.data.frame(x@resources),

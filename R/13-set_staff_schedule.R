@@ -25,7 +25,7 @@ set_staff_schedule = function(wp){
      dplyr::ungroup()
    tasks <- tasks %>% 
      dplyr::group_by(staff, date) %>% 
-     dplyr::summarise(project = paste(project, collapse = ', ')) %>%
+     dplyr::summarise(project = paste(na.omit(project), collapse = ', ')) %>%
      dplyr::ungroup()
    daily_plan <- dplyr::left_join(daily_plan, tasks)
    
@@ -39,8 +39,8 @@ set_staff_schedule = function(wp){
    holidays <- as.data.frame(wp@full_schedule) %>% 
      dplyr::filter(!is.na(public_holiday)) %>% 
      dplyr::select(date, staff, public_holiday)
-   daily_plan <- dplyr::left_join(daily_plan, holidays)
-   
+   daily_plan <- dplyr::left_join(daily_plan, holidays) 
+
    daily_plan <- staff_sched(date = daily_plan$date, staff = as.character(daily_plan$staff), project = daily_plan$project,
                              workload = daily_plan$workload, out_of_office = as.character(daily_plan$out_of_office), 
                                public_holiday = as.character(daily_plan$public_holiday))

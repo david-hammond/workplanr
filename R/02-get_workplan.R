@@ -50,9 +50,9 @@ get_workplan <- function(staff, staff_capacity, projects, project_probability, p
                                  workload = wp@project_teams@assigned_capacity[1], out_of_office = "dummy", public_holiday = "dummy")
   wp@team_schedule <- team_sched(date = lubridate::today(), workload = wp@project_teams@assigned_capacity[1])
   #calculate actual schedules
-  #wp@full_schedule <- set_full_schedule(wp)
-  #wp@staff_schedule <- set_staff_schedule(wp)
-  #wp@team_schedule <- set_team_schedule(wp)
+  wp@full_schedule <- set_full_schedule(wp)
+  wp@staff_schedule <- set_staff_schedule(wp)
+  wp@team_schedule <- set_team_schedule(wp)
   return(wp)
 }
 
