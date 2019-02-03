@@ -2,6 +2,4 @@
 
 export(create_project_file)
 export(get_workplan)
-export(plot_daily_staff_plan)
-export(plot_team_daily_workload)
 importFrom(dplyr,"%>%")

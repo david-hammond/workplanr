@@ -79,7 +79,7 @@ leav <- setClass("leave", slots = c(staff="character", start = "Date", end = "Da
 #'
 #' @param x A \code{leave} object.
 setMethod("as.data.frame", "leave", definition = function(x){
-  x <- data.frame(staff = x@staff, start = x@start, end = x@end, desxription = x@description)
+  x <- data.frame(staff = x@staff, start = x@start, end = x@end, description = x@description)
   return(x)
 })
 
@@ -169,10 +169,22 @@ setMethod("as.data.frame", "project_teams", definition = function(x){
 #' @slot staff Assigned staff to each [project, role] combination 
 #' @slot assigned_capacity Amount of time each staff is expected to dedicate to each [project, role] 
 #' @slot capacity Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week
+#' @slot public_holiday = "character"
+#' @slot out_of_office = "character" 
+#' @slot project_duration = "numeric"
+#' @slot num_holidays = "numeric" 
+#' @slot holiday_expansion_factor = "numeric"
+#' @slot num_out_of_office = "numeric" 
+#' @slot leave_expansion_factor = "numeric"
+#' @slot leave_adjusted_workload = "numeric"
 #' @family classes
 full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "ordered", phase = "ordered", 
                                                   role = "ordered", staff = "character", assigned_capacity = "numeric",
-                                                  capacity = "numeric"))
+                                                  capacity = "numeric", public_holiday = "character",
+                                                  out_of_office = "character", project_duration = "numeric",
+                                                  num_holidays = "numeric", holiday_expansion_factor = "numeric",
+                                                  num_out_of_office = "numeric", leave_expansion_factor = "numeric",
+                                                  leave_adjusted_workload = "numeric"))
 
 #' Coerce Object full_schedule to a data frame
 #'
@@ -181,7 +193,11 @@ full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "orde
 #' @param x A \code{full_schedule} object.
 setMethod("as.data.frame", "full_schedule", definition = function(x){
   x <- data.frame(date = x@date, project = x@project, phase = x@phase,
-                  role = x@role, staff = x@staff, assigned_capacity = x@assigned_capacity, capacity = x@capacity)
+                  role = x@role, staff = x@staff, assigned_capacity = x@assigned_capacity, capacity = x@capacity,
+                  public_holiday = x@public_holiday, out_of_office = x@out_of_office, project_duration = x@project_duration,
+                  num_holidays = x@num_holidays, holiday_expansion_factor = x@holiday_expansion_factor,
+                  num_out_of_office = x@num_out_of_office, leave_expansion_factor = x@leave_expansion_factor,
+                  leave_adjusted_workload = x@leave_adjusted_workload)
   return(x)
 })
 
@@ -319,6 +335,7 @@ setMethod("as.list", "workplan", definition = function(x){
     projects = as.data.frame(x@projects),
     phases = as.data.frame(x@phases),
     roles = as.data.frame(x@roles),
+    leave = as.data.frame(x@leave),
     holidays = as.data.frame(x@holidays),
     responsibilities = as.data.frame(x@responsibilities),
     time_estimates = as.data.frame(x@time_estimates),

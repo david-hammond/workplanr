@@ -8,9 +8,9 @@ set_staff_schedule = function(wp){
   daily_plan <- daily_plan %>% 
     dplyr::group_by(date, staff) %>% 
     dplyr::summarise(capacity = min(capacity), 
-                assigned_capacity = sum(assigned_capacity),
-                workload = round(assigned_capacity/capacity,2)) %>%
-    dplyr::select(-capacity, -assigned_capacity) %>%
+                leave_adjusted_workload = sum(leave_adjusted_workload),
+                workload = round(leave_adjusted_workload/capacity,2)) %>%
+    dplyr::select(-capacity, -leave_adjusted_workload) %>%
     dplyr::ungroup()
 
     full_staff_calendar <- expand.grid(date = unique(daily_plan$date), 
@@ -27,7 +27,7 @@ set_staff_schedule = function(wp){
      dplyr::group_by(staff, date) %>% 
      dplyr::summarise(project = paste(project, collapse = ', ')) %>%
      dplyr::ungroup()
-   daily_plan <- dplyr::left_join(tasks, daily_plan)
+   daily_plan <- dplyr::left_join(daily_plan, tasks)
    daily_plan <- staff_sched(date = daily_plan$date, staff = as.character(daily_plan$staff), project = daily_plan$project,
                              workload = daily_plan$workload)
   

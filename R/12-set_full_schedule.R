@@ -7,9 +7,43 @@ set_full_schedule = function(wp){
   tmp <- as.list(wp)
   schedule <- .get_schedule(tmp)
   schedule <- .get_assignment_schedule(schedule, tmp)
+  # account for leave
+  leave = tmp$leave
+  leave = leave %>% tidyr::gather("type", "date", -c(staff, description))
+  leave = leave %>%  
+    padr::pad(group = "staff", interval = 'day') %>%
+    dplyr::select(staff, date, description) %>%
+    dplyr::rename(out_of_office = description) %>%
+    tidyr::fill(out_of_office)
+  schedule = dplyr::left_join(schedule, leave)
+  
+  # account for public holidays
+  holidays = tmp$holidays %>%
+    dplyr::select(date, name) %>% 
+    dplyr::rename(public_holiday = name)
+  schedule = dplyr::left_join(schedule, holidays)
+  cal <- bizdays::create.calendar('normal', weekdays = c('saturday', 'sunday'), 
+                                  start.date = min(tmp$projects$end)-180, end.date = max(tmp$projects$end) +180)
+  schedule = schedule %>% dplyr::group_by(project) %>%
+    mutate(project_duration = bizdays::bizdays(min(date), max(date), 'normal'), 
+              num_holidays = sum(!is.na(public_holiday)),
+              holiday_expansion_factor = project_duration/(project_duration-num_holidays))
+  
+  schedule = schedule %>% 
+    dplyr::group_by(project, staff) %>%
+    mutate(num_out_of_office = sum(!is.na(out_of_office)),
+           leave_expansion_factor = holiday_expansion_factor * project_duration/(project_duration-num_out_of_office), 
+           leave_adjusted_workload = ifelse(is.na(out_of_office), leave_expansion_factor * assigned_capacity, 0)) %>%
+    dplyr::ungroup()
+
   schedule <- full_sched(date = schedule$date, project = schedule$project, phase = schedule$phase, 
                        role = schedule$role, staff = as.character(schedule$staff), assigned_capacity = schedule$assigned_capacity,
-                       capacity = schedule$capacity)
+                       capacity = schedule$capacity, public_holiday = as.character(schedule$public_holiday), 
+                       out_of_office = as.character(schedule$out_of_office), 
+                       project_duration = schedule$project_duration, num_holidays = schedule$num_holidays, 
+                       holiday_expansion_factor = schedule$holiday_expansion_factor,
+                       num_out_of_office = schedule$num_out_of_office, leave_expansion_factor = schedule$leave_expansion_factor,
+                       leave_adjusted_workload = schedule$leave_adjusted_workload)
   return(schedule)
 }
 

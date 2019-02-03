@@ -13,9 +13,9 @@ set_team_schedule = function(wp){
   team_capacity <- sum(team_capacity$capacity)
   daily_plan <- daily_plan %>% 
     dplyr::group_by(date) %>% 
-    dplyr::summarise(assigned_capacity = sum(assigned_capacity),
-                     workload = round(assigned_capacity/team_capacity,2)) %>%
-    dplyr::select(-assigned_capacity) %>%
+    dplyr::summarise(leave_adjusted_workload = sum(leave_adjusted_workload),
+                     workload = round(leave_adjusted_workload/team_capacity,2)) %>%
+    dplyr::select(-leave_adjusted_workload) %>%
     dplyr::ungroup()
   
   daily_plan <- team_sched(date = daily_plan$date, workload = daily_plan$workload)

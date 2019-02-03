@@ -24,6 +24,22 @@ Base Class for workplan full_schedule
 \item{\code{assigned_capacity}}{Amount of time each staff is expected to dedicate to each [project, role]}
 
 \item{\code{capacity}}{Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week}
+
+\item{\code{public_holiday}}{= "character"}
+
+\item{\code{out_of_office}}{= "character"}
+
+\item{\code{project_duration}}{= "numeric"}
+
+\item{\code{num_holidays}}{= "numeric"}
+
+\item{\code{holiday_expansion_factor}}{= "numeric"}
+
+\item{\code{num_out_of_office}}{= "numeric"}
+
+\item{\code{leave_expansion_factor}}{= "numeric"}
+
+\item{\code{leave_adjusted_workload}}{= "numeric"}
 }}
 
 \seealso{
