@@ -18,6 +18,10 @@ Base Class for workplan staff_schedule
 \item{\code{projects}}{Names of projects}
 
 \item{\code{workload}}{Amount of work assigned to staff member}
+
+\item{\code{out_of_office}}{Whether a staff member is out of office on a date}
+
+\item{\code{public_holiday}}{Whether a day is a public holiday}
 }}
 
 \seealso{

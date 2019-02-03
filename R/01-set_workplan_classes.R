@@ -208,8 +208,12 @@ setMethod("as.data.frame", "full_schedule", definition = function(x){
 #' @slot staff Assigned staff to each [project, role] combination 
 #' @slot projects Names of projects
 #' @slot workload Amount of work assigned to staff member 
+#' @slot out_of_office Whether a staff member is out of office on a date
+#' @slot public_holiday Whether a day is a public holiday
 #' @family classes
-staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "character", project = "character", workload= "numeric"))
+staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "character", project = "character", workload= "numeric",
+                                                    out_of_office = "character", 
+                                                    public_holiday = "character"))
 
 #' Coerce Object staff_schedule to a data frame
 #'
@@ -217,7 +221,8 @@ staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "char
 #'
 #' @param x A \code{staff_schedule} object.
 setMethod("as.data.frame", "staff_schedule", definition = function(x){
-  x <- data.frame(date = x@date, staff = x@staff, project = x@project, workload = x@workload)
+  x <- data.frame(date = x@date, staff = x@staff, project = x@project, workload = x@workload, 
+                  out_of_office = x@out_of_office, public_holiday = x@public_holiday)
   return(x)
 })
 
@@ -243,6 +248,24 @@ setMethod("plot", "staff_schedule", definition = function(x){
   p <- p + ggrepel::geom_text_repel(ggplot2::aes(x = date, y = staff, label = project), 
                                     size = 3, hjust = 1, force = 2.5)
   
+  #add leave
+  
+  leave <- x %>% 
+    dplyr::group_by(staff, out_of_office, workload) %>%
+    dplyr::summarise(start = min(date), end = max(date)) %>%
+    dplyr::filter(!is.na(out_of_office))
+  p <- p + ggplot2::geom_segment(data = leave, ggplot2::aes(x=start, 
+                                          xend=end, 
+                                          y=staff, 
+                                          yend=staff), size=2, alpha = 0.6, colour = "red")
+  p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=start, 
+                                        y=staff), size=3, colour = "red")
+  p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=end, 
+                                        y=staff), size=3,  colour = "red")
+  public_holidays <- x %>% 
+    dplyr::filter(!is.na(public_holiday))
+  p <- p + ggplot2::geom_vline(xintercept = public_holidays$date, 
+                      linetype = "dashed", colour = grey(0.5), alpha = 0.6)
   return(p)
 })
 
