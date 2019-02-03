@@ -69,7 +69,9 @@ set_full_schedule = function(wp){
    for (i in  names(wp$time_estimates[, -1])){
      start[,i] = bizdays::offset(end[,i], times[,i], 'normal')
    }
- 
+  first.phase = names(wp$time_estimates[, -c(1, ncol(wp$time_estimates))])[1]
+  #TODO: need to document this
+   start[, first.phase] <- as.Date(apply(data.frame(start$start, start[,first.phase]), 1, min))
    schedule = list(start = start, end = end)
    schedule = lapply(schedule, function(x) x %>% dplyr::select(-c(probability, start, end)) %>% 
                        tidyr::gather(phase, date, -c(project)) %>%

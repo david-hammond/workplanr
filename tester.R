@@ -10,7 +10,7 @@ roles <- c("lead", "researcher", "editor", "design")
 staff_on_leave <- c("Luis", "Samantha")
 leave_start <-  as.Date(c("2019-07-23", "2019-05-16"))
 leave_end <- leave_start + c(20, 25)
-leave_description <- c("leave", "work")
+leave_description <- c("leave", "work trip")
 assigned_staff <- c("Samantha",   "Taylor", "unassigned", "unassigned",
                     "Taishawn",   "unassigned", "Taishawn",   "Taishawn", 
                     "unassigned", "Shelby", "Luis", "Shelby")
