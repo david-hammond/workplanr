@@ -87,9 +87,8 @@ setMethod("as.data.frame", "leave", definition = function(x){
 #' 
 #' @slot date Date of public holiday
 #' @slot name Name of public holiday
-#' @slot info Holiday Info
 #' @family classes
-holi <- setClass("public_holidays", slots = c(date="Date", name = "character", info = "character"))
+holi <- setClass("public_holidays", slots = c(date="Date", name = "character"))
 
 #' Coerce Object public_holidays to a data frame
 #'
@@ -97,7 +96,7 @@ holi <- setClass("public_holidays", slots = c(date="Date", name = "character", i
 #'
 #' @param x A \code{public_holidays} object.
 setMethod("as.data.frame", "public_holidays", definition = function(x){
-  x <- data.frame(date = x@date, name = x@name, info = x@info)
+  x <- data.frame(date = x@date, name = x@name)
   return(x)
 })
 
@@ -376,15 +375,16 @@ setMethod("as.list", "workplan", definition = function(x){
 #' Create Excel file for project inputs
 #' 
 #' This function creates an excel file that can be used to create a new project
-#' @param plan File name for project inputs
+#' @param wp Complete workplan object
 #' @param excel_file_name File name for project inputs
 #' @return NULL
 #' @examples 
-#' create_project_file()
+#' library(workplanr)
 #' @export 
-create_project_file = function(plan = utils::data("example_project", envir = environment()), excel_file_name = "my_project.xlsx"){
-  for (i in names(plan)){
-    rio::export(example_project[[i]], file = excel_file_name, which = i)
+create_project_file = function(wp, excel_file_name = "my_project.xlsx"){
+  wp = as.list(wp)
+  for (i in names(wp)){
+    rio::export(wp[[i]], file = excel_file_name, which = i)
   }
   return(NULL)
 }

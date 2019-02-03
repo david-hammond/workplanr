@@ -8,7 +8,7 @@ get_workplan(staff, staff_capacity, projects, project_probability,
   project_start, project_end, project_phases, project_roles,
   project_responsibilities = 1, project_time_estimates = 10,
   staff_on_leave, leave_start, leave_end, leave_description,
-  staff_project_assignments = "unassigned",
+  public_holidays, staff_project_assignments = "unassigned",
   staff_project_assigned_capacity = 100)
 }
 \arguments{
@@ -39,6 +39,8 @@ get_workplan(staff, staff_capacity, projects, project_probability,
 \item{leave_end}{Ending date for leave}
 
 \item{leave_description}{Type of leave, can be user defined but recommend "leave" or "work trip"}
+
+\item{public_holidays}{A data frame of dates and names of public holidays}
 
 \item{staff_project_assignments}{Assigned staff to each [project, role] combination (needs to be at least length(project) x length(roles) in length)}
 

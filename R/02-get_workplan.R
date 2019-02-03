@@ -13,6 +13,7 @@
 #' @param staff_on_leave Names of staff that are going to be out of the office
 #' @param leave_start Starting date for leave
 #' @param leave_end Ending date for leave
+#' @param public_holidays A data frame of dates and names of public holidays
 #' @param leave_description Type of leave, can be user defined but recommend "leave" or "work trip"
 #' @param staff_project_assignments Assigned staff to each [project, role] combination (needs to be at least length(project) x length(roles) in length)
 #' @param staff_project_assigned_capacity Amount of time each staff is expected to dedicate to each [project, role] 
@@ -23,7 +24,7 @@
 #' @export
 get_workplan <- function(staff, staff_capacity, projects, project_probability, project_start, project_end, project_phases, 
                          project_roles, project_responsibilities = 1, project_time_estimates = 10, staff_on_leave, 
-                         leave_start, leave_end, leave_description, 
+                         leave_start, leave_end, leave_description, public_holidays,
                          staff_project_assignments = "unassigned", staff_project_assigned_capacity = 100) {
   wp <- new("workplan")
   wp@resources <- set_resources(staff, staff_capacity)
@@ -31,7 +32,7 @@ get_workplan <- function(staff, staff_capacity, projects, project_probability, p
   wp@phases <- set_phases(project_phases)
   wp@roles <- set_roles(project_roles)
   wp@leave <- set_leave(staff_on_leave, leave_start, leave_end, leave_description)
-  wp@holidays <- set_public_holidays()
+  wp@holidays <- set_public_holidays(public_holidays)
   wp@responsibilities <- set_responsibilities(wp@roles@role, wp@phases@phase, project_responsibilities)
   wp@time_estimates <- set_time_estimates(wp@projects@project, wp@phases@phase, project_time_estimates)
   wp@project_teams <- set_project_team(wp@projects@project, wp@roles@role, 
