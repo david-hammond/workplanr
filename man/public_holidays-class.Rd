@@ -14,8 +14,6 @@ Base Class for workplan roles
 \item{\code{date}}{Date of public holiday}
 
 \item{\code{name}}{Name of public holiday}
-
-\item{\code{info}}{Holiday Info}
 }}
 
 \seealso{

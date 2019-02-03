@@ -4,8 +4,7 @@
 \alias{set_public_holidays}
 \title{create a list of phases in any project}
 \usage{
-
-  set_public_holidays(file = "https://data.gov.au/data/dataset/b1bc6077-dadd-4f61-9f8c-002ab2cdff10/resource/31eec35e-1de6-4f04-9703-9be1d43d405b/download/australian_public_holidays_2019.csv")
+set_public_holidays(public_holidays)
 }
 \arguments{
 \item{file}{file with public holiday information}

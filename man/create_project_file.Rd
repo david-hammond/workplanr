@@ -4,11 +4,10 @@
 \alias{create_project_file}
 \title{Create Excel file for project inputs}
 \usage{
-create_project_file(plan = utils::data("example_project", envir =
-  environment()), excel_file_name = "my_project.xlsx")
+create_project_file(wp, excel_file_name = "my_project.xlsx")
 }
 \arguments{
-\item{plan}{File name for project inputs}
+\item{wp}{Complete workplan object}
 
 \item{excel_file_name}{File name for project inputs}
 }
@@ -16,5 +15,5 @@ create_project_file(plan = utils::data("example_project", envir =
 This function creates an excel file that can be used to create a new project
 }
 \examples{
-create_project_file()
+library(workplanr)
 }
