@@ -9,16 +9,13 @@
 #' @return A reference table project teams and roles
 #' @keywords internal
 
-set_project_team = function(projects, phases, staff, assigned_capacity = 0, 
-                            randomise = TRUE){
+set_project_team = function(projects, phases, staff, assigned_capacity = 0){
   
   tmp <- expand.grid(project = projects, 
                      phase = phases,
                      staff = staff,
                      KEEP.OUT.ATTRS = FALSE)
-  tmp$assigned_capacity <- ifelse(randomise, sample(x = seq(0,100, by = 10),
-                                                   size = nrow(tmp),
-                                                   replace = T), assigned_capacity)
+  tmp$assigned_capacity <- assigned_capacity
   tmp <- team(project = tmp$project, 
               phase = tmp$phase, 
               staff = as.character(tmp$staff),

@@ -11,9 +11,9 @@ set_full_schedule = function(wp){
                             start.date = min(tmp$projects$end)-180, 
                             end.date = max(tmp$projects$end) +180)
   schedule <- set_project_phase_dates(tmp)
-  schedule <- set_staff_assignment(schedule, tmp)
-  schedule <- set_leave(schedule, tmp) #TODO: fix staff factor etc
-  schedule <- set_holidays(schedule, tmp)
+  schedule <- add_staff_assignment(schedule, tmp)
+  schedule <- add_leave(schedule, tmp) #TODO: fix staff factor etc
+  schedule <- add_holidays(schedule, tmp)
   schedule <- factor_leave_in_work_allocation(schedule)
   return(schedule)
 }

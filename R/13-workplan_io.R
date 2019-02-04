@@ -77,38 +77,3 @@ read_excel_allsheets <- function(filename, tibble = FALSE) {
   x
 }
 
-#' Create Excel file for project inputs
-#' 
-#' This function creates an excel file that can be used to create a new project
-#' @param excel_file_name File name for project inputs
-#' @return NULL
-#' @examples 
-#' library(workplanr)
-#' @keywords internal
-correct_classes <- function(staff, staff_capacity, projects, project_probability, 
-                          project_start, project_end, project_phases, 
-                          project_time_estimates, staff_on_leave, 
-                          leave_start, leave_end, leave_description, 
-                          public_holidays_date, public_holidays_name,
-                          staff_project_assigned_capacity) {
-  x <- list()
-  x$staff <- as.character(staff)
-  x$staff_capacity <- as.numeric(staff_capacity)
-  x$projects <- factor(unique(projects), unique(projects), ordered = T)
-  x$project_probability <- as.numeric(project_probability)
-  x$project_start <- as.Date(project_start)
-  x$project_end <- as.Date(project_end)
-  x$project_phases <- factor(unique(project_phases), unique(project_phases), ordered = T)
-  x$project_time_estimates <- as.numeric(project_time_estimates)
-  x$staff_on_leave <- as.character(staff_on_leave)
-  x$leave_start <- as.Date(leave_start)
-  x$leave_end <- as.Date(leave_end)
-  x$leave_description <- as.character(leave_description)
-  x$public_holidays_date <- as.Date(public_holidays_date)
-  x$public_holidays_name <- as.character(public_holidays_name)
-  x$staff_project_assigned_capacity <- as.numeric(staff_project_assigned_capacity)
-  
-  return(x)
-  
-}
-
