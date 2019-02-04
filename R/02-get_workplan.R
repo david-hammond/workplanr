@@ -11,7 +11,8 @@
 #' @param staff_on_leave Names of staff that are going to be out of the office
 #' @param leave_start Starting date for leave
 #' @param leave_end Ending date for leave
-#' @param public_holidays A data frame of dates and names of public holidays
+#' @param public_holidays_date A data frame of dates of public holidays
+#' @param public_holidays_name A data frame of names of public holidays
 #' @param leave_description Type of leave, can be user defined but recommend "leave" or "work trip"
 #' @param staff_project_assigned_capacity Amount of time each staff is expected to dedicate to each [project, phase] 
 #' @param randomise Set to TRUE to create a randomised workplan
@@ -19,23 +20,35 @@
 #' @examples 
 #' library(workplanr)
 #' @export
-get_workplan <- function(staff, staff_capacity, projects, project_probability, project_start, project_end, project_phases, 
+init_workplan <- function(staff, staff_capacity, projects, project_probability, 
+                         project_start, project_end, project_phases, 
                          project_time_estimates = 10, staff_on_leave, 
-                         leave_start, leave_end, leave_description, public_holidays,
-                         staff_project_assigned_capacity = 100,
+                         leave_start, leave_end, leave_description, 
+                         public_holidays_date, public_holidays_name,
+                         staff_project_assignment_capacity = 100,
                          randomise = TRUE) {
+  
+  x <- correct_classes(staff, staff_capacity, projects, project_probability, 
+                  project_start, project_end, project_phases, 
+                  project_time_estimates, staff_on_leave, 
+                  leave_start, leave_end, leave_description, 
+                  public_holidays_date, public_holidays_name,
+                  staff_project_assigned_capacity)
+  
   wp <- new("workplan")
-  wp@resources <- set_resources(staff, staff_capacity)
-  wp@projects <- set_projects(projects, project_probability, project_start, project_end)
-  wp@phases <- set_phases(project_phases)
-  wp@leave <- set_leave(staff_on_leave, leave_start, leave_end, leave_description)
-  wp@holidays <- set_public_holidays(public_holidays)
-  wp@time_estimates <- set_time_estimates(wp@projects@project, wp@phases@phase, project_time_estimates)
+  
+  wp@resources <- set_resources(x$staff, x$staff_capacity)
+  wp@projects <- set_projects(x$projects, x$project_probability, x$project_start, x$project_end)
+  wp@phases <- set_phases(x$project_phases)
+  wp@leave <- set_leave(x$staff_on_leave, x$leave_start, x$leave_end, x$leave_description)
+  wp@holidays <- set_public_holidays(x$public_holidays_date, x$public_holidays_name)
+  wp@time_estimates <- set_time_estimates(wp@projects@project, wp@phases@phase, x$project_time_estimates)
   wp@project_teams <- set_project_team(wp@projects@project, wp@phases@phase, 
                                        wp@resources@staff, 
-                                       staff_project_assigned_capacity, randomise) 
-  #initialise dummy schedules
-  #TODO: try new()?
+                                       x$staff_project_assignment_capacity, randomise) 
+  return(wp)
+}
+get_workplan <- function(wp){
   wp@full_schedule <- full_sched(date = lubridate::today(), project = wp@projects@project[1], 
                                  phase = wp@phases@phase[1], 
                                  staff = wp@resources@staff[1], 
@@ -46,14 +59,21 @@ get_workplan <- function(staff, staff_capacity, projects, project_probability, p
                                  num_holidays = 1, holiday_expansion_factor = 1,
                                  num_out_of_office = 1, leave_expansion_factor = 1,
                                  leave_adjusted_workload = wp@project_teams@assigned_capacity[1])
-  wp@staff_schedule <- staff_sched(date = lubridate::today(), staff = wp@resources@staff[1], project = as.character(wp@projects@project[1]),
-                                 workload = wp@project_teams@assigned_capacity[1], out_of_office = "dummy", public_holiday = "dummy")
-  wp@team_schedule <- team_sched(date = lubridate::today(), workload = wp@project_teams@assigned_capacity[1])
+  wp@staff_schedule <- staff_sched(date = lubridate::today(), 
+                                   staff = wp@resources@staff[1], 
+                                   project = as.character(wp@projects@project[1]),
+                                   workload = wp@project_teams@assigned_capacity[1], 
+                                   out_of_office = "dummy", 
+                                   public_holiday = "dummy")
+  wp@team_schedule <- team_sched(date = lubridate::today(), 
+                                 workload = wp@project_teams@assigned_capacity[1])
   #calculate actual schedules
   wp@full_schedule <- set_full_schedule(wp)
   wp@staff_schedule <- set_staff_schedule(wp)
   wp@team_schedule <- set_team_schedule(wp)
   return(wp)
 }
+
+
 
 

@@ -4,7 +4,7 @@
 \alias{set_public_holidays}
 \title{create a list of phases in any project}
 \usage{
-set_public_holidays(public_holidays)
+set_public_holidays(date, name)
 }
 \arguments{
 \item{file}{file with public holiday information}

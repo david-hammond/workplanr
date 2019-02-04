@@ -5,6 +5,7 @@
 #' @keywords internal
 set_full_schedule = function(wp){
   tmp <- as.list(wp)
+  tmp$time_estimates <- tmp$time_estimates %>% tidyr::spread(phase, time_estimate)
   bizdays::create.calendar('normal', 
                             weekdays = c('saturday', 'sunday'), 
                             start.date = min(tmp$projects$end)-180, 
@@ -60,7 +61,7 @@ set_project_phase_dates <- function(tmp){
 #' @param tmp Complete workplan object
 #' @return A reference table for daily projects schedule
 #' @keywords internal
-set_staff_assignment = function(schedule, tmp){
+add_staff_assignment = function(schedule, tmp){
   schedule = dplyr::left_join(schedule, tmp$project_teams)
   schedule = dplyr::left_join(schedule, tmp$resources)
   schedule = pad_schedule(schedule)
@@ -88,7 +89,7 @@ pad_schedule = function(schedule){
 #' @param tmp Complete workplan object
 #' @return A reference table for daily projects schedule
 #' @keywords internal
-set_leave = function(schedule, tmp){
+add_leave = function(schedule, tmp){
   # account for leave
   leave = tmp$leave
   leave = leave %>% tidyr::gather("type", "date", -c(staff, description))
@@ -107,7 +108,7 @@ set_leave = function(schedule, tmp){
 #' @param tmp Complete workplan object
 #' @return A reference table for daily projects schedule
 #' @keywords internal
-set_holidays = function(schedule, tmp){
+add_holidays = function(schedule, tmp){
   # account for public holidays
   holidays = tmp$holidays %>%
     dplyr::select(date, name) %>% 

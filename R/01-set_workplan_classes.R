@@ -101,7 +101,6 @@ time <- setClass("time_estimates", slots = c(project = "ordered", phase = "order
 #' @param x A \code{time_estimates} object.
 setMethod("as.data.frame", "time_estimates", definition = function(x){
   x <- data.frame(project = x@project, phase = x@phase, time_estimate = x@time_estimate)
-  x <- x %>% tidyr::spread(phase, time_estimate)
   return(x)
 })
 
@@ -331,23 +330,4 @@ setMethod("as.list", "workplan", definition = function(x){
     team_schedule = as.data.frame(x@team_schedule))
   return(x)
 })
-
-#' Create Excel file for project inputs
-#' 
-#' This function creates an excel file that can be used to create a new project
-#' @param wp Complete workplan object
-#' @param excel_file_name File name for project inputs
-#' @return NULL
-#' @examples 
-#' library(workplanr)
-#' @export 
-create_project_file = function(wp, excel_file_name = "my_project.xlsx"){
-  wp = as.list(wp)
-  for (i in names(wp)){
-    rio::export(wp[[i]], file = excel_file_name, which = i)
-  }
-  return(NULL)
-}
-
-
 
