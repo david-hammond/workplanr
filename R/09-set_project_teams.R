@@ -18,7 +18,7 @@ set_project_team = function(projects, phases, staff, assigned_capacity = 0){
   tmp$assigned_capacity <- assigned_capacity
   tmp <- team(project = tmp$project, 
               phase = tmp$phase, 
-              staff = as.character(tmp$staff),
+              staff = tmp$staff,
               assigned_capacity = tmp$assigned_capacity)
   return(tmp)
 }

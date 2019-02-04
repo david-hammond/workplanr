@@ -3,7 +3,7 @@
 #' @slot capacity Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week
 #' @family classes
 #' @keywords internal
-resc <- setClass("resources", slots = c(staff="character", capacity = "numeric"))
+resc <- setClass("resources", slots = c(staff="ordered", capacity = "numeric"))
 
 #' Coerce Object resource to a data frame
 #'
@@ -126,7 +126,7 @@ setMethod("as.data.frame", "time_estimates", definition = function(x){
 #' @family classes
 #' @keywords internal
 team <- setClass("project_teams", slots = c(project = "ordered", phase = "ordered", 
-                                            staff = "character", assigned_capacity = "numeric"))
+                                            staff = "ordered", assigned_capacity = "numeric"))
 
 #' Coerce Object project_teams to a data frame
 #'
@@ -158,7 +158,7 @@ setMethod("as.data.frame", "project_teams", definition = function(x){
 #' @family classes
 #' @keywords internal
 full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "ordered", phase = "ordered", 
-                                                  staff = "character", assigned_capacity = "numeric",
+                                                  staff = "ordered", assigned_capacity = "numeric",
                                                   capacity = "numeric", public_holiday = "character",
                                                   out_of_office = "character", project_duration = "numeric",
                                                   num_holidays = "numeric", holiday_expansion_factor = "numeric",
@@ -193,7 +193,7 @@ setMethod("as.data.frame", "full_schedule", definition = function(x){
 #' @slot public_holiday Whether a day is a public holiday
 #' @family classes
 #' @keywords internal
-staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "character", project = "character", workload= "numeric",
+staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "ordered", project = "character", workload= "numeric",
                                                     out_of_office = "character", 
                                                     public_holiday = "character"))
 
@@ -220,6 +220,7 @@ setMethod("as.data.frame", "staff_schedule", definition = function(x){
 #' @param x A \code{staff_schedule} object.
 setMethod("plot", "staff_schedule", definition = function(x){
   x = as.data.frame(x)
+  x$staff <- forcats::fct_rev(x$staff)
   myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
                                            space='Lab')
   p <- ggplot2::ggplot(x, ggplot2::aes(date, staff, fill = workload)) +
@@ -232,7 +233,9 @@ setMethod("plot", "staff_schedule", definition = function(x){
     ggplot2::labs(x='', y = '', 
                   title = toupper('STAFF WORKLOAD')) 
   
-  p <- p + ggrepel::geom_text_repel(ggplot2::aes(x = date, y = staff, label = project), 
+  projects <- x %>% dplyr::filter(!is.na(project))
+
+  p <- p + ggrepel::geom_text_repel(data = projects, ggplot2::aes(x = date, y = staff, label = project), 
                                     size = 3, hjust = 1, force = 2.5)
   
   #add leave

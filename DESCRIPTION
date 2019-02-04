@@ -23,7 +23,8 @@ Imports:
   grDevices (>= 3.4.3),
   rio (>= 0.5.10),
   methods (>= 3.4.3),
-  readxl (>= 1.1.0)
+  readxl (>= 1.1.0),
+  forcats (>= 0.3.0)
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: knitr,
