@@ -5,11 +5,10 @@
 \title{create a list of employees that are to be assigned to projects}
 \usage{
 get_workplan(staff, staff_capacity, projects, project_probability,
-  project_start, project_end, project_phases, project_roles,
-  project_responsibilities = 1, project_time_estimates = 10,
+  project_start, project_end, project_phases, project_time_estimates,
   staff_on_leave, leave_start, leave_end, leave_description,
-  public_holidays, staff_project_assignments = "unassigned",
-  staff_project_assigned_capacity = 100)
+  public_holidays_date, public_holidays_name,
+  staff_project_assignment_capacity)
 }
 \arguments{
 \item{staff}{Names of staff members}
@@ -26,10 +25,6 @@ get_workplan(staff, staff_capacity, projects, project_probability,
 
 \item{project_phases}{List of phases in any project in order of execution}
 
-\item{project_roles}{List of roles in any project team in order of responsibility}
-
-\item{project_responsibilities}{a binary matrix of if role i is in volved in phase j}
-
 \item{project_time_estimates}{Time estimates of how long each phase will take in relation}
 
 \item{staff_on_leave}{Names of staff that are going to be out of the office}
@@ -40,12 +35,11 @@ get_workplan(staff, staff_capacity, projects, project_probability,
 
 \item{leave_description}{Type of leave, can be user defined but recommend "leave" or "work trip"}
 
-\item{public_holidays}{A data frame of dates and names of public holidays}
+\item{public_holidays_date}{A data frame of dates of public holidays}
 
-\item{staff_project_assignments}{Assigned staff to each [project, role] combination (needs to be at least length(project) x length(roles) in length)}
+\item{public_holidays_name}{A data frame of names of public holidays}
 
-\item{staff_project_assigned_capacity}{Amount of time each staff is expected to dedicate to each [project, role] 
-(needs to be at least length(project) x length(roles) in length)}
+\item{staff_project_assignment_capacity}{Amount of time each staff is expected to dedicate to each [project, phase]}
 }
 \value{
 A reference table for staff

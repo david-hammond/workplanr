@@ -4,9 +4,9 @@
 \name{leave-class}
 \alias{leave-class}
 \alias{leav}
-\title{Base Class for workplan roles}
+\title{Base Class for workplan leave}
 \description{
-Base Class for workplan roles
+Base Class for workplan leave
 }
 \section{Slots}{
 
@@ -27,8 +27,6 @@ Other classes: \code{\link{full_schedule-class}},
   \code{\link{projects-class}},
   \code{\link{public_holidays-class}},
   \code{\link{resources-class}},
-  \code{\link{responsibilities-class}},
-  \code{\link{roles-class}},
   \code{\link{staff_schedule-class}},
   \code{\link{team_schedule-class}},
   \code{\link{time_estimates-class}},

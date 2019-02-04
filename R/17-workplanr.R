@@ -5,7 +5,7 @@
 #'
 #' @docType package
 #' @name workplanr
-#' @importFrom dplyr %>%
+#' @importFrom dplyr "%>%"
 #' @importFrom grDevices grey
 #' @importFrom stats end na.omit start
 NULL

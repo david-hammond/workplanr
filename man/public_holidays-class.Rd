@@ -4,9 +4,9 @@
 \name{public_holidays-class}
 \alias{public_holidays-class}
 \alias{holi}
-\title{Base Class for workplan roles}
+\title{Base Class for workplan public_holidays}
 \description{
-Base Class for workplan roles
+Base Class for workplan public_holidays
 }
 \section{Slots}{
 
@@ -22,8 +22,6 @@ Other classes: \code{\link{full_schedule-class}},
   \code{\link{project_teams-class}},
   \code{\link{projects-class}},
   \code{\link{resources-class}},
-  \code{\link{responsibilities-class}},
-  \code{\link{roles-class}},
   \code{\link{staff_schedule-class}},
   \code{\link{team_schedule-class}},
   \code{\link{time_estimates-class}},

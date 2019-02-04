@@ -17,13 +17,9 @@ Base Class for workplan workplan
 
 \item{\code{phases}}{Object of class "phases",}
 
-\item{\code{roles}}{Object of class  "roles",}
-
 \item{\code{leave}}{Object of class  "leave",}
 
 \item{\code{holidays}}{Object of class  "public_holidays",}
-
-\item{\code{responsibilities}}{Object of class  "responsibilities",}
 
 \item{\code{time_estimates}}{Object of class  "time_estimates",}
 
@@ -43,8 +39,6 @@ Other classes: \code{\link{full_schedule-class}},
   \code{\link{projects-class}},
   \code{\link{public_holidays-class}},
   \code{\link{resources-class}},
-  \code{\link{responsibilities-class}},
-  \code{\link{roles-class}},
   \code{\link{staff_schedule-class}},
   \code{\link{team_schedule-class}},
   \code{\link{time_estimates-class}}

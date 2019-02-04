@@ -4,8 +4,8 @@
 #' @return A reference table for phases 
 #' @keywords internal
 
-set_public_holidays <- function(public_holidays){
-  public_holidays <- holi(date = public_holidays$date, 
-                          name = public_holidays$name)
+set_public_holidays <- function(date, name){
+  public_holidays <- holi(date = date, 
+                          name = name)
   return(public_holidays)
 }
