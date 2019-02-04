@@ -31,8 +31,6 @@ Other classes: \code{\link{full_schedule-class}},
   \code{\link{projects-class}},
   \code{\link{public_holidays-class}},
   \code{\link{resources-class}},
-  \code{\link{responsibilities-class}},
-  \code{\link{roles-class}},
   \code{\link{team_schedule-class}},
   \code{\link{time_estimates-class}},
   \code{\link{workplan-class}}

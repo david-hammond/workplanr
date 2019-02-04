@@ -48,30 +48,15 @@ setMethod("as.data.frame", "phases", definition = function(x){
   return(x)
 })
 
-#' Base Class for workplan roles
-#'
-#' @slot roles List of roles in any project team in order of responsibility
-#' @family classes
-role <- setClass("roles", slots = c(role="ordered"))
-
-#' Coerce Object roles to a data frame
-#'
-#' @description Coerce Object roles to a data frame, avoiding using the "slot" notation.
-#'
-#' @param x A \code{phases} object.
-setMethod("as.data.frame", "roles", definition = function(x){
-  x <- data.frame(role = x@role)
-  return(x)
-})
-
-#' Base Class for workplan roles
+#' Base Class for workplan leave
 #' 
 #' @slot staff_on_leave Names of staff that are going to be out of the office
 #' @slot leave_start Starting date for leave
 #' @slot leave_end Ending date for leave
 #' @slot leave_description Type of leave, can be user defined but recommend "leave" or "work trip"
 #' @family classes
-leav <- setClass("leave", slots = c(staff="character", start = "Date", end = "Date", description = "character"))
+leav <- setClass("leave", slots = c(staff="character", start = "Date", 
+                                    end = "Date", description = "character"))
 
 #' Coerce Object leave to a data frame
 #'
@@ -83,7 +68,7 @@ setMethod("as.data.frame", "leave", definition = function(x){
   return(x)
 })
 
-#' Base Class for workplan roles
+#' Base Class for workplan public_holidays
 #' 
 #' @slot date Date of public holiday
 #' @slot name Name of public holiday
@@ -97,25 +82,6 @@ holi <- setClass("public_holidays", slots = c(date="Date", name = "character"))
 #' @param x A \code{public_holidays} object.
 setMethod("as.data.frame", "public_holidays", definition = function(x){
   x <- data.frame(date = x@date, name = x@name)
-  return(x)
-})
-
-#' Base Class for workplan responsibilites
-#'
-#' @slot roles List of roles in any project team in order of responsibility
-#' @slot phases List of roles in any project team in order of responsibility
-#' @slot responsibilities a binary matrix of if role i is in volved in phase j
-#' @family classes
-resp <- setClass("responsibilities", slots = c(role ="ordered", phase ="ordered", responsibilities ="numeric"))
-
-#' Coerce Object responsibilities to a data frame
-#'
-#' @description Coerce Object responsibilities to a data frame, avoiding using the "slot" notation.
-#'
-#' @param x A \code{responsibilities} object.
-setMethod("as.data.frame", "responsibilities", definition = function(x){
-  x <- data.frame(role = x@role, phase = x@phase, responsibilities = x@responsibilities)
-  x <- x %>% tidyr::spread(phase, responsibilities)
   return(x)
 })
 
@@ -142,12 +108,12 @@ setMethod("as.data.frame", "time_estimates", definition = function(x){
 #' Base Class for workplan project_teams
 #'
 #' @slot projects List of projects
-#' @slot roles Roles of projects
-#' @slot staff Assigned staff to each [project, role] combination (needs to be at least length(project) x length(roles) in length)
-#' @slot assigned_capacity Amount of time each staff is expected to dedicate to each [project, role] 
-#' combination (needs to be at least length(project) x length(roles) in length)
+#' @slot phases List of phases in any project in order of execution
+#' @slot staff Names of staff members
+#' @slot assigned_capacity Amount of time each staff is expected to dedicate to each [project, phase] 
 #' @family classes
-team <- setClass("project_teams", slots = c(project = "ordered", role = "ordered", staff = "character", assigned_capacity = "numeric"))
+team <- setClass("project_teams", slots = c(project = "ordered", phase = "ordered", 
+                                            staff = "character", assigned_capacity = "numeric"))
 
 #' Coerce Object project_teams to a data frame
 #'
@@ -155,7 +121,7 @@ team <- setClass("project_teams", slots = c(project = "ordered", role = "ordered
 #'
 #' @param x A \code{project_teams} object.
 setMethod("as.data.frame", "project_teams", definition = function(x){
-  x <- data.frame(project = x@project, role = x@role, staff = x@staff, assigned_capacity = x@assigned_capacity)
+  x <- data.frame(project = x@project, phase = x@phase, staff = x@staff, assigned_capacity = x@assigned_capacity)
   return(x)
 })
 
@@ -164,9 +130,8 @@ setMethod("as.data.frame", "project_teams", definition = function(x){
 #' @slot projects List of projects
 #' @slot phases List of phases in any project in order of execution
 #' @slot date Day wourk occurs on
-#' @slot role Roles of projects
-#' @slot staff Assigned staff to each [project, role] combination 
-#' @slot assigned_capacity Amount of time each staff is expected to dedicate to each [project, role] 
+#' @slot staff Assigned staff to each [project, phase] combination 
+#' @slot assigned_capacity Amount of time each staff is expected to dedicate to each [project, phase] 
 #' @slot capacity Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week
 #' @slot public_holiday = "character"
 #' @slot out_of_office = "character" 
@@ -178,7 +143,7 @@ setMethod("as.data.frame", "project_teams", definition = function(x){
 #' @slot leave_adjusted_workload = "numeric"
 #' @family classes
 full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "ordered", phase = "ordered", 
-                                                  role = "ordered", staff = "character", assigned_capacity = "numeric",
+                                                  staff = "character", assigned_capacity = "numeric",
                                                   capacity = "numeric", public_holiday = "character",
                                                   out_of_office = "character", project_duration = "numeric",
                                                   num_holidays = "numeric", holiday_expansion_factor = "numeric",
@@ -192,10 +157,11 @@ full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "orde
 #' @param x A \code{full_schedule} object.
 setMethod("as.data.frame", "full_schedule", definition = function(x){
   x <- data.frame(date = x@date, project = x@project, phase = x@phase,
-                  role = x@role, staff = x@staff, assigned_capacity = x@assigned_capacity, capacity = x@capacity,
+                  staff = x@staff, assigned_capacity = x@assigned_capacity, capacity = x@capacity,
                   public_holiday = x@public_holiday, out_of_office = x@out_of_office, project_duration = x@project_duration,
                   num_holidays = x@num_holidays, holiday_expansion_factor = x@holiday_expansion_factor,
-                  num_out_of_office = x@num_out_of_office, leave_expansion_factor = x@leave_expansion_factor,
+                  num_out_of_office = x@num_out_of_office, 
+                  leave_expansion_factor = x@leave_expansion_factor,
                   leave_adjusted_workload = x@leave_adjusted_workload)
   return(x)
 })
@@ -326,10 +292,8 @@ setMethod("plot", "team_schedule", definition = function(x){
 #' @slot resources Object of class "resource"
 #' @slot projects Object of class "projects" 
 #' @slot phases Object of class "phases",
-#' @slot roles Object of class  "roles",
 #' @slot leave Object of class  "leave",
 #' @slot holidays Object of class  "public_holidays",
-#' @slot responsibilities Object of class  "responsibilities",
 #' @slot time_estimates Object of class  "time_estimates",
 #' @slot project_teams Object of class  "project_teams"
 #' @slot full_schedule Object of class "full_schedule"
@@ -339,10 +303,8 @@ setMethod("plot", "team_schedule", definition = function(x){
 workplan <- setClass("workplan", slots =  list(resources = "resources", 
                                                projects = "projects", 
                                                phases = "phases",
-                                               roles = "roles",
                                                leave = "leave",
                                                holidays = "public_holidays",
-                                               responsibilities = "responsibilities",
                                                time_estimates = "time_estimates",
                                                project_teams = "project_teams",
                                                full_schedule = "full_schedule",
@@ -360,10 +322,8 @@ setMethod("as.list", "workplan", definition = function(x){
     resources = as.data.frame(x@resources),
     projects = as.data.frame(x@projects),
     phases = as.data.frame(x@phases),
-    roles = as.data.frame(x@roles),
     leave = as.data.frame(x@leave),
     holidays = as.data.frame(x@holidays),
-    responsibilities = as.data.frame(x@responsibilities),
     time_estimates = as.data.frame(x@time_estimates),
     project_teams = as.data.frame(x@project_teams),
     full_schedule = as.data.frame(x@full_schedule),

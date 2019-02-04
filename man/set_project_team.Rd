@@ -4,18 +4,20 @@
 \alias{set_project_team}
 \title{Assigns staff roles on a project}
 \usage{
-set_project_team(projects, roles, assigned_staff = NA,
-  assigned_capacity = NA)
+set_project_team(projects, phases, staff, assigned_capacity = 0,
+  randomise = TRUE)
 }
 \arguments{
 \item{projects}{List of projects}
 
-\item{roles}{Roles of projects}
-
-\item{assigned_capacity}{Amount of time each staff is expected to dedicate to each [project, role] 
-combination (needs to be at least length(project) x length(roles) in length)}
+\item{phases}{List of phases in any project in order of execution}
 
 \item{staff}{Assigned staff to each [project, role] combination (needs to be at least length(project) x length(roles) in length)}
+
+\item{assigned_capacity}{Amount of time each staff is expected to dedicate to each [project, role]}
+
+\item{randomise}{Randomise project assignments
+combination (needs to be at least length(project) x length(roles) in length)}
 }
 \value{
 A reference table project teams and roles

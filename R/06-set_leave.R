@@ -9,7 +9,8 @@
 
 set_leave <- function(staff_on_leave, leave_start, leave_end, leave_description) {
   
-    leave <- leav(staff = staff_on_leave, start = leave_start, end = leave_end, description = leave_description)
+    leave <- leav(staff = staff_on_leave, start = leave_start, 
+                  end = leave_end, description = leave_description)
     
     return(leave)
 }

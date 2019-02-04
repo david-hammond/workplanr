@@ -13,12 +13,11 @@ Base Class for workplan project_teams
 \describe{
 \item{\code{projects}}{List of projects}
 
-\item{\code{roles}}{Roles of projects}
+\item{\code{phases}}{List of phases in any project in order of execution}
 
-\item{\code{staff}}{Assigned staff to each [project, role] combination (needs to be at least length(project) x length(roles) in length)}
+\item{\code{staff}}{Names of staff members}
 
-\item{\code{assigned_capacity}}{Amount of time each staff is expected to dedicate to each [project, role] 
-combination (needs to be at least length(project) x length(roles) in length)}
+\item{\code{assigned_capacity}}{Amount of time each staff is expected to dedicate to each [project, phase]}
 }}
 
 \seealso{
@@ -27,8 +26,6 @@ Other classes: \code{\link{full_schedule-class}},
   \code{\link{projects-class}},
   \code{\link{public_holidays-class}},
   \code{\link{resources-class}},
-  \code{\link{responsibilities-class}},
-  \code{\link{roles-class}},
   \code{\link{staff_schedule-class}},
   \code{\link{team_schedule-class}},
   \code{\link{time_estimates-class}},

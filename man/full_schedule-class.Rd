@@ -17,11 +17,9 @@ Base Class for workplan full_schedule
 
 \item{\code{date}}{Day wourk occurs on}
 
-\item{\code{role}}{Roles of projects}
+\item{\code{staff}}{Assigned staff to each [project, phase] combination}
 
-\item{\code{staff}}{Assigned staff to each [project, role] combination}
-
-\item{\code{assigned_capacity}}{Amount of time each staff is expected to dedicate to each [project, role]}
+\item{\code{assigned_capacity}}{Amount of time each staff is expected to dedicate to each [project, phase]}
 
 \item{\code{capacity}}{Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week}
 
@@ -49,8 +47,6 @@ Other classes: \code{\link{leave-class}},
   \code{\link{projects-class}},
   \code{\link{public_holidays-class}},
   \code{\link{resources-class}},
-  \code{\link{responsibilities-class}},
-  \code{\link{roles-class}},
   \code{\link{staff_schedule-class}},
   \code{\link{team_schedule-class}},
   \code{\link{time_estimates-class}},
