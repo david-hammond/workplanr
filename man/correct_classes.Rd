@@ -8,7 +8,7 @@ correct_classes(staff, staff_capacity, projects, project_probability,
   project_start, project_end, project_phases, project_time_estimates,
   staff_on_leave, leave_start, leave_end, leave_description,
   public_holidays_date, public_holidays_name,
-  staff_project_assigned_capacity)
+  staff_project_assignment_capacity)
 }
 \arguments{
 \item{excel_file_name}{File name for project inputs}

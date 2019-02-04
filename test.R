@@ -24,7 +24,7 @@ public_holidays <- public_holidays %>% filter(jurisdiction == "nsw") %>%
 public_holidays_date <- public_holidays$date
 public_holidays_name = public_holidays$name
 #staff project assignments
-staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(phases)*length(staff), replace = T)
+staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(project_phases)*length(staff), replace = T)
 wp <- get_workplan(staff = staff, 
                     staff_capacity = staff_capacity,
                     projects = projects, 

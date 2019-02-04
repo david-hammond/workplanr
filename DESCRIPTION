@@ -7,7 +7,7 @@ Maintainer: David Hammond <anotherdavidhammond@gmail.com>
 Description: A package to allow project managers to assign resources to multiple projects, highlight bottlenecks and balance staff loads.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Depends: 
+Depends:
   dplyr (>= 0.7.8),
   R (>= 3.4.0)
 Imports:
@@ -25,3 +25,6 @@ Imports:
   methods (>= 3.4.3)
 LazyData: true
 RoxygenNote: 6.1.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
