@@ -1,7 +1,7 @@
 Package: workplanr
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.2.0
+Version: 0.0.9
 Author: David Hammond 
 Maintainer: David Hammond <anotherdavidhammond@gmail.com>
 Description: A package to allow project managers to assign resources to multiple projects, highlight bottlenecks and balance staff loads.
