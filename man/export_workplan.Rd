@@ -16,4 +16,9 @@ This function creates an excel file that can be used to create a new project
 }
 \examples{
 library(workplanr)
+wp <- build_sample_workplan()
+## ----export_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+export_workplan(wp, excel_file_name = "my-workplan.xlsx")
+## ----import_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+wp <- import_workplan(excel_file_name = "my-workplan.xlsx")
 }

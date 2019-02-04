@@ -53,3 +53,4 @@ Other classes: \code{\link{leave-class}},
   \code{\link{workplan-class}}
 }
 \concept{classes}
+\keyword{internal}

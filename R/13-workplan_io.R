@@ -6,6 +6,11 @@
 #' @return NULL
 #' @examples 
 #' library(workplanr)
+#' wp <- build_sample_workplan()
+#' ## ----export_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+#' export_workplan(wp, excel_file_name = "my-workplan.xlsx")
+#' ## ----import_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+#' wp <- import_workplan(excel_file_name = "my-workplan.xlsx")
 #' @export 
 export_workplan = function(wp, excel_file_name = "my_workplan.xlsx"){
   tmp = as.list(wp)
@@ -27,6 +32,11 @@ export_workplan = function(wp, excel_file_name = "my_workplan.xlsx"){
 #' @return NULL
 #' @examples 
 #' library(workplanr)
+#' wp <- build_sample_workplan()
+#' ## ----export_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+#' export_workplan(wp, excel_file_name = "my-workplan.xlsx")
+#' ## ----import_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+#' wp <- import_workplan(excel_file_name = "my-workplan.xlsx")
 #' @export 
 import_workplan = function(excel_file_name = "my_workplan.xlsx"){
   tmp <- read_excel_allsheets(excel_file_name)
@@ -105,7 +115,7 @@ build_sample_workplan = function(excel_file_name = "my-workplan.xlsx"){
   public_holidays_date <- public_holidays$date
   public_holidays_name = public_holidays$name
   #staff project assignments
-  staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(project_phases)*length(staff), replace = T)
+  staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(project_phases)*length(staff), replace = TRUE)
   wp <- get_workplan(staff = staff, 
                      staff_capacity = staff_capacity,
                      projects = projects, 
@@ -124,5 +134,6 @@ build_sample_workplan = function(excel_file_name = "my-workplan.xlsx"){
   export_workplan(wp, excel_file_name)
   message("Opening setup vignette and writing sample workplan to my-workplan.xlsx, please use this to enter and manage your project information")
   message("Happy Planning!")
+  return(wp)
 }
 

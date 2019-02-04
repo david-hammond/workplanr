@@ -12,13 +12,6 @@ vignette: >
 > "Plans are worthless, but planning is everything."
 ([Dwight D. Eisenhower](https://quoteinvestigator.com/2017/11/18/planning/))
 
-```{r setup, include = FALSE, messages = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
 ## Required inputs to workplanr
 
 ```{r library, include = TRUE, results='hide', message=FALSE, warning=FALSE}
@@ -76,7 +69,7 @@ public_holidays_name = public_holidays$name
 
 ```{r assignments, include = TRUE, results='hide', message=FALSE, warning=FALSE}
 #staff project assignments
-staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(project_phases)*length(staff), replace = T)
+staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(project_phases)*length(staff), replace = TRUE)
 ```
 
 ### Getting your workplan

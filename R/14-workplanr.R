@@ -9,6 +9,7 @@
 #' @importFrom grDevices grey
 #' @importFrom stats end na.omit start
 #' @importFrom utils vignette
+#' @exportMethod plot
 NULL
 
 if(getRversion() >= "2.15.1")  utils::globalVariables(c("assigned_capacity", "capacity", "date.type", "description",

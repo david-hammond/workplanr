@@ -28,3 +28,4 @@ Other classes: \code{\link{full_schedule-class}},
   \code{\link{workplan-class}}
 }
 \concept{classes}
+\keyword{internal}

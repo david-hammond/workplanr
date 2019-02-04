@@ -13,3 +13,4 @@
 \description{
 Coerce Object workplan to a list of data frames, avoiding using the "slot" notation.
 }
+\keyword{internal}

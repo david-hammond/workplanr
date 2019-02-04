@@ -44,3 +44,4 @@ Other classes: \code{\link{full_schedule-class}},
   \code{\link{time_estimates-class}}
 }
 \concept{classes}
+\keyword{internal}

@@ -13,3 +13,4 @@
 \description{
 Coerce Object full_schedule to a data frame, avoiding using the "slot" notation.
 }
+\keyword{internal}
