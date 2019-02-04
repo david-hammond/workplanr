@@ -4,9 +4,11 @@
 \alias{export_workplan}
 \title{Create Excel file for project inputs}
 \usage{
-export_workplan(wp, excel_file_name = "my_project.xlsx")
+export_workplan(wp, excel_file_name = "my_workplan.xlsx")
 }
 \arguments{
+\item{wp}{A workplan object}
+
 \item{excel_file_name}{File name for project inputs}
 }
 \description{

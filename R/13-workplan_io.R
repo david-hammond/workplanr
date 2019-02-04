@@ -1,7 +1,7 @@
 #' Create Excel file for project inputs
 #' 
 #' This function creates an excel file that can be used to create a new project
-#' @param wp
+#' @param wp A workplan object
 #' @param excel_file_name File name for project inputs
 #' @return NULL
 #' @examples 

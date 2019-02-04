@@ -39,7 +39,7 @@ get_workplan(staff, staff_capacity, projects, project_probability,
 
 \item{public_holidays_name}{A data frame of names of public holidays}
 
-\item{staff_project_assigned_capacity}{Amount of time each staff is expected to dedicate to each [project, phase]}
+\item{staff_project_assignment_capacity}{Amount of time each staff is expected to dedicate to each [project, phase]}
 }
 \value{
 A reference table for staff

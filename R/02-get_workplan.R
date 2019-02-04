@@ -14,7 +14,7 @@
 #' @param public_holidays_date A data frame of dates of public holidays
 #' @param public_holidays_name A data frame of names of public holidays
 #' @param leave_description Type of leave, can be user defined but recommend "leave" or "work trip"
-#' @param staff_project_assigned_capacity Amount of time each staff is expected to dedicate to each [project, phase] 
+#' @param staff_project_assignment_capacity Amount of time each staff is expected to dedicate to each [project, phase] 
 #' @return A reference table for staff
 #' @examples 
 #' library(workplanr)

@@ -4,7 +4,7 @@
 \alias{import_workplan}
 \title{Create Excel file for project inputs}
 \usage{
-import_workplan(excel_file_name = "my_project.xlsx")
+import_workplan(excel_file_name = "my_workplan.xlsx")
 }
 \arguments{
 \item{excel_file_name}{File name for project inputs}
