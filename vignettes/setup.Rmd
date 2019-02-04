@@ -1,10 +1,10 @@
 ---
-title: "The workplanr Packge"
+title: "Setting up a workplan"
 author: "David Hammond"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Setting up a workplan}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
