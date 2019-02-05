@@ -38,7 +38,7 @@ export_workplan = function(wp, excel_file_name = "my_workplan.xlsx"){
 #' ## ----import_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
 #' wp <- import_workplan(excel_file_name = "my-workplan.xlsx")
 #' @export 
-import_workplan = function(excel_file_name = "my_workplan.xlsx"){
+import_workplan_from_xlsx = function(excel_file_name = "my_workplan.xlsx"){
   tmp <- read_excel_allsheets(excel_file_name)
   tmp$projects <- tmp$projects %>% dplyr::arrange(start)
   tmp$time_estimates <- tmp$time_estimates %>% 
@@ -65,6 +65,43 @@ import_workplan = function(excel_file_name = "my_workplan.xlsx"){
   
 }
 
+#' Create Excel file for project inputs
+#' 
+#' This function creates an excel file that can be used to create a new project
+#' @param excel_file_name File name for project inputs
+#' @return NULL
+#' @examples 
+#' library(workplanr)
+#' wp <- build_sample_workplan()
+#' ## ----export_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+#' export_workplan(wp, excel_file_name = "my-workplan.xlsx")
+#' ## ----import_workplan, include = TRUE, results='hide', message=FALSE, warning=FALSE----
+#' wp <- import_workplan(excel_file_name = "my-workplan.xlsx")
+#' @export 
+create_workplan_from_xlsx = function(excel_file_name = "my_workplan.xlsx"){
+  tmp <- read_excel_allsheets(excel_file_name)
+  tmp$projects <- tmp$projects %>% dplyr::arrange(start)
+  tmp$time_estimates <- tmp$time_estimates %>% 
+    tidyr::gather(phase, time_estimate, -project)
+  wp <- new("workplan")
+  wp <- get_workplan(staff = tmp$resources$staff, 
+                     staff_capacity = tmp$resources$capacity, 
+                     projects = tmp$projects$project, 
+                     project_probability = tmp$projects$probability, 
+                     project_start = tmp$projects$start, 
+                     project_end = tmp$projects$end, 
+                     project_phases = tmp$phases$phase, 
+                     project_time_estimates = tmp$time_estimates$time_estimate, 
+                     staff_on_leave = tmp$leave$staff, 
+                     leave_start = tmp$leave$start, 
+                     leave_end = tmp$leave$end, 
+                     leave_description = tmp$leave$description, 
+                     public_holidays_date = tmp$holidays$date, 
+                     public_holidays_name = tmp$holidays$name,
+                     staff_project_assignment_capacity = 0)
+  return(wp)
+  
+}
 #' Create Excel file for project inputs
 #' 
 #' This function creates an excel file that can be used to create a new project
