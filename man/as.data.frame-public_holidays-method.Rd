@@ -13,3 +13,4 @@
 \description{
 Coerce Object public_holidays to a data frame, avoiding using the "slot" notation.
 }
+\keyword{internal}

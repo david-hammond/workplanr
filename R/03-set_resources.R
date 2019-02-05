@@ -6,6 +6,7 @@
 #' @keywords internal
 
 set_resources <- function(staff, capacity) {
+  if(!is.factor(staff)) staff <- factor(staff, levels = staff, ordered = T)
   resources <- resc(staff = staff, capacity = capacity)
   return(resources)
 }

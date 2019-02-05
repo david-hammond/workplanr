@@ -91,14 +91,15 @@ pad_schedule = function(schedule){
 #' @keywords internal
 add_leave = function(schedule, tmp){
   # account for leave
-  leave = tmp$leave
-  leave = leave %>% tidyr::gather("type", "date", -c(staff, description))
-  leave = leave %>%  
+  leave <- tmp$leave
+  leave <- leave %>% tidyr::gather("type", "date", -c(staff, description))
+  leave <- leave %>%  
     padr::pad(group = "staff", interval = 'day') %>%
     dplyr::select(staff, date, description) %>%
     dplyr::rename(out_of_office = description) %>%
     tidyr::fill(out_of_office)
-  schedule = dplyr::left_join(schedule, leave)
+  leave$staff <- factor(leave$staff, levels = levels(schedule$staff), ordered = T) 
+  schedule <- dplyr::left_join(schedule, leave)
   return(schedule)
 }
 
@@ -110,10 +111,10 @@ add_leave = function(schedule, tmp){
 #' @keywords internal
 add_holidays = function(schedule, tmp){
   # account for public holidays
-  holidays = tmp$holidays %>%
+  holidays <- tmp$holidays %>%
     dplyr::select(date, name) %>% 
     dplyr::rename(public_holiday = name)
-  schedule = dplyr::left_join(schedule, holidays)
+  schedule <- dplyr::left_join(schedule, holidays)
   return(schedule)
 }
 #' pad out daily list of assignments for each staff
@@ -137,9 +138,8 @@ factor_leave_in_work_allocation = function(schedule){
     dplyr::ungroup()
   
   schedule$leave_adjusted_workload <- ifelse(is.na(schedule$leave_adjusted_workload), 0, schedule$leave_adjusted_workload)
-  schedule$staff <- ifelse(is.na(schedule$staff), "unassigned", schedule$staff)
   schedule <- full_sched(date = schedule$date, project = schedule$project, phase = schedule$phase, 
-                         staff = as.character(schedule$staff), assigned_capacity = schedule$assigned_capacity,
+                         staff = schedule$staff, assigned_capacity = schedule$assigned_capacity,
                          capacity = schedule$capacity, public_holiday = as.character(schedule$public_holiday), 
                          out_of_office = as.character(schedule$out_of_office), 
                          project_duration = schedule$project_duration, num_holidays = schedule$num_holidays, 

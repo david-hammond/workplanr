@@ -1,0 +1,92 @@
+#' \code{workplanr} package
+#'
+#'
+#' The \code{iep.charts} package is a collection of functions I have written to help me with ggplot in R.
+#' 
+#' These functions are intended to produce pdfs that are importable into illustrator
+#' making the layout for comms much easier.
+#' 
+#' @section Installation:
+#' 
+#' \strong{Note:} If you have not set yourself up on Github yet you need to do this first, setup guide here \url{https://githubiep.github.io/Github.html#setup}. This needs to be done every time you get a new computer.
+#'
+#' # Then you need devtools installed
+#' 
+#' \code{install.packages('devtools')}
+#' 
+#' # Now you can install from github 
+#' 
+#' \code{devtools::install_github('githubIEP/iep.charts',}
+#' 
+#' \code{auth_token=suppressWarnings(readLines(file.path(Sys.getenv('HOME'),}
+#' 
+#' \code{'authtoken.txt'))), type='source', INSTALL_opts=c('--no-lock'))}
+#' 
+#' # Now you can load the package
+#' 
+#' \code{library(iep.charts)}
+#' 
+#' @section Limitations:
+#' \strong{Currently there is no way to add axis labels such as "Less Peaceful" "More Peaceful".} I do this either in word of in illustrator. 
+#' Its annoying but it is still a net benefit gain for the process from research to layout.
+#' 
+#' @section Use Cases:
+#' There are three use cases for \code{iep.charts}
+#' \itemize{
+#' \item Producing charts for draft reports
+#' \item Producing finalised charts for layout
+#' \item Producing maps in IEP colours
+#' }
+#' 
+#' iep.charts requires you to produce charts using \code{ggplot2}. 
+#' Go here for any ggplot you will ever need:
+#'
+#' \url{http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html}.
+#' 
+#' @section Draft chart reports using the \code{\link{theme_iep}} function:
+#' The process is
+#' \itemize{
+#' \item load \code{library(ggplot2)}
+#' \item load \code{library(iep.charts)}
+#' \item Produce a ggplot chart in R (say its called \code{p} for example). 
+#' \item Finish the plot by \code{p <- p + theme_iep()}
+#' \item run \code{iep.ggsave(p)} to save the chart into a png and pdf in the \code{graphs} directory.
+#' }
+#' 
+#' @section Charts for Layout using the \code{\link{iep.chart.theme}} function:
+#' The process is
+#' \itemize{
+#' \item load \code{library(ggplot2)}
+#' \item load \code{library(iep.charts)}
+#' \item Produce a ggplot chart in R (say its called \code{p} for example). 
+#' \strong{Note:} You need to finish your plot before you use iep.charts functions.
+#' \item This means it has a title, narrative title, source, x and y labels as per the  example in 
+#' \code{\link{iep.chart.theme}}
+#' \item run \code{p <- iep.chart.theme(p)} on your plot
+#' \item run \code{grid.draw(p)} to view it
+#' \item run \code{iep.ggsave(p)} to save the chart into a png and pdf in the \code{graphs} directory.
+#' }
+#' 
+#' @section Mapping using the \code{\link{iep.map.data}} function:
+#' iep.map.data plots the maps for GPI, GTI and PPI. I STILL NEED TO DOCUMENT THESE - Watch this space.
+#' 
+#'
+#' @name workplanr-package
+#' @aliases iep.charts-package
+#' @title IEP charting functions for R
+#' @author David Hammond \email{anotherdavidhammond@gmail.com}
+#' @name workplanr
+#' @importFrom dplyr "%>%"
+#' @importFrom grDevices grey
+#' @importFrom stats end na.omit start
+#' @importFrom utils vignette
+#' @exportMethod plot
+#' @keywords package
+NULL
+
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("assigned_capacity", "capacity", "date.type", "description",
+                                                          "holiday_expansion_factor", "leave_adjusted_workload",
+                                                          "leave_expansion_factor", "maxcapacity", "mutate", "name", "needed", 
+                                                          "new", "num_holidays", "num_out_of_office", "out_of_office", "phase", "probability",
+                                                          "project", "project_duration", "public_holiday", "responsibilities", "staff",
+                                                          "teamload", "time_estimate", "workload", "jurisdiction", "holiday.name"), add = FALSE)

@@ -41,7 +41,7 @@ set_staff_schedule = function(wp){
      dplyr::select(date, staff, public_holiday)
    daily_plan <- dplyr::left_join(daily_plan, holidays) 
 
-   daily_plan <- staff_sched(date = daily_plan$date, staff = as.character(daily_plan$staff), project = daily_plan$project,
+   daily_plan <- staff_sched(date = daily_plan$date, staff = daily_plan$staff, project = daily_plan$project,
                              workload = daily_plan$workload, out_of_office = as.character(daily_plan$out_of_office), 
                                public_holiday = as.character(daily_plan$public_holiday))
   

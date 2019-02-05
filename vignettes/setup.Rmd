@@ -1,23 +1,16 @@
 ---
-title: "The workplanr Packge"
+title: "Setting up a workplan"
 author: "David Hammond"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Setting up a workplan}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 > "Plans are worthless, but planning is everything."
 ([Dwight D. Eisenhower](https://quoteinvestigator.com/2017/11/18/planning/))
-
-```{r setup, include = FALSE, messages = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
 
 ## Required inputs to workplanr
 
@@ -31,12 +24,6 @@ library(workplanr)
 staff <- c("Shelby", "Luis", "Taishawn", "Samantha", "Taylor", "unassigned")
 staff_capacity <- c(40,60,100,100,100, 100)
 ```
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
 
 ### Projects
 
@@ -76,7 +63,7 @@ public_holidays_name = public_holidays$name
 
 ```{r assignments, include = TRUE, results='hide', message=FALSE, warning=FALSE}
 #staff project assignments
-staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(project_phases)*length(staff), replace = T)
+staff_project_assignment_capacity <- sample(c(0,25,50,75,100), size = length(projects)*length(project_phases)*length(staff), replace = TRUE)
 ```
 
 ### Getting your workplan

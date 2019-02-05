@@ -13,3 +13,8 @@
 \description{
 Coerce Object full_schedule to ggplot, avoiding using the "slot" notation.
 }
+\examples{
+library(workplanr)
+wp <- build_sample_workplan()
+plot(wp@staff_schedule)
+}
