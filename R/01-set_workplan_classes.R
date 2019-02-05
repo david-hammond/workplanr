@@ -253,6 +253,7 @@ setMethod("plot", "staff_schedule", definition = function(x){
                                         y=staff, colour = out_of_office), size=3)
   p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=end, 
                                         y=staff, colour = out_of_office), size=3)
+  p <- p + ggplot2::labs(fill ="Workload" ,colour="Out of Office")
   public_holidays <- x %>% 
     dplyr::filter(!is.na(public_holiday))
   p <- p + ggplot2::geom_vline(xintercept = public_holidays$date, 
