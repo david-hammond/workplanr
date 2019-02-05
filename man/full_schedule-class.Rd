@@ -13,6 +13,8 @@ Base Class for workplan full_schedule
 \describe{
 \item{\code{projects}}{List of projects}
 
+\item{\code{probability}}{Probability project will occur}
+
 \item{\code{phases}}{List of phases in any project in order of execution}
 
 \item{\code{date}}{Day wourk occurs on}

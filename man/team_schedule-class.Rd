@@ -13,6 +13,8 @@ Base Class for workplan team_schedule
 \describe{
 \item{\code{date}}{Day wourk occurs on}
 
+\item{\code{probability}}{Probability project will occur}
+
 \item{\code{workload}}{Amount of work assigned to staff member}
 }}
 

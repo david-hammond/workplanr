@@ -138,7 +138,9 @@ init_workplan <- function(x) {
   wp@project_teams <- set_project_team(wp@projects@project, wp@phases@phase, 
                                        wp@resources@staff, 
                                        x$staff_project_assignment_capacity) 
-  wp@full_schedule <- full_sched(date = lubridate::today(), project = wp@projects@project[1], 
+  wp@full_schedule <- full_sched(date = lubridate::today(), 
+                                 project = wp@projects@project[1], 
+                                 probability = wp@projects@probability[1],
                                  phase = wp@phases@phase[1], 
                                  staff = wp@resources@staff[1], 
                                  assigned_capacity = wp@project_teams@assigned_capacity[1],
@@ -155,6 +157,7 @@ init_workplan <- function(x) {
                                    out_of_office = "dummy", 
                                    public_holiday = "dummy")
   wp@team_schedule <- team_sched(date = lubridate::today(), 
+                                 probability = wp@projects@probability[1],
                                  workload = wp@project_teams@assigned_capacity[1])
   return(wp)
 }

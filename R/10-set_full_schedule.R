@@ -15,6 +15,17 @@ set_full_schedule = function(wp){
   schedule <- add_leave(schedule, tmp) #TODO: fix staff factor etc
   schedule <- add_holidays(schedule, tmp)
   schedule <- factor_leave_in_work_allocation(schedule)
+  
+  schedule <- full_sched(date = schedule$date, project = schedule$project, probability = schedule$probability,
+                         phase = schedule$phase, staff = schedule$staff, 
+                         assigned_capacity = schedule$assigned_capacity,
+                         capacity = schedule$capacity, public_holiday = as.character(schedule$public_holiday), 
+                         out_of_office = as.character(schedule$out_of_office), 
+                         project_duration = schedule$project_duration, num_holidays = schedule$num_holidays, 
+                         holiday_expansion_factor = schedule$holiday_expansion_factor,
+                         num_out_of_office = schedule$num_out_of_office, leave_expansion_factor = schedule$leave_expansion_factor,
+                         leave_adjusted_workload = schedule$leave_adjusted_workload)
+  
   return(schedule)
 }
 
@@ -39,14 +50,14 @@ set_project_phase_dates <- function(tmp){
   #TODO: need to document this
    start[, first.phase] <- as.Date(apply(data.frame(start$start, start[,first.phase]), 1, min))
    schedule = list(start = start, end = end)
-   schedule = lapply(schedule, function(x) x %>% dplyr::select(-c(probability, start, end)) %>% 
-                       tidyr::gather(phase, date, -c(project)) %>%
+   schedule = lapply(schedule, function(x) x %>% dplyr::select(-c(start, end)) %>% 
+                       tidyr::gather(phase, date, -c(project, probability)) %>%
                        dplyr::mutate(phase = factor(phase, tmp$phases$phase, ordered = T)))
    schedule = dplyr::bind_rows(schedule, .id = 'date.type')
    schedule = schedule %>% 
      tidyr::spread(date.type, date) %>% 
      dplyr::filter(start!=end) %>%
-     tidyr::gather(date.type, date, -c(project, phase))
+     tidyr::gather(date.type, date, -c(project, probability, phase))
    schedule$date.type = factor(schedule$date.type, (c('start', 'end')), ordered = T)
 
    schedule = schedule %>% 
@@ -138,14 +149,7 @@ factor_leave_in_work_allocation = function(schedule){
     dplyr::ungroup()
   
   schedule$leave_adjusted_workload <- ifelse(is.na(schedule$leave_adjusted_workload), 0, schedule$leave_adjusted_workload)
-  schedule <- full_sched(date = schedule$date, project = schedule$project, phase = schedule$phase, 
-                         staff = schedule$staff, assigned_capacity = schedule$assigned_capacity,
-                         capacity = schedule$capacity, public_holiday = as.character(schedule$public_holiday), 
-                         out_of_office = as.character(schedule$out_of_office), 
-                         project_duration = schedule$project_duration, num_holidays = schedule$num_holidays, 
-                         holiday_expansion_factor = schedule$holiday_expansion_factor,
-                         num_out_of_office = schedule$num_out_of_office, leave_expansion_factor = schedule$leave_expansion_factor,
-                         leave_adjusted_workload = schedule$leave_adjusted_workload)
+
   return(schedule)
 }
 

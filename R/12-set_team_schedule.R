@@ -5,20 +5,20 @@
 #' @keywords internal
 
 set_team_schedule = function(wp){
-  daily_plan = as.data.frame(wp@full_schedule)
-  team_capacity <- daily_plan %>% 
+  tmp = as.data.frame(wp@full_schedule)
+  team_capacity <- tmp %>% 
     dplyr::select(staff, capacity) %>%
     dplyr::distinct() %>%
     dplyr::ungroup()
   team_capacity <- sum(team_capacity$capacity)
-  daily_plan <- daily_plan %>% 
-    dplyr::group_by(date) %>% 
-    dplyr::summarise(leave_adjusted_workload = sum(leave_adjusted_workload),
+  tmp <- tmp %>% 
+    dplyr::group_by(date, probability) %>% 
+    dplyr::summarise(leave_adjusted_workload = sum(leave_adjusted_workload, na.rm=TRUE),
                      workload = round(leave_adjusted_workload/team_capacity,2)) %>%
     dplyr::select(-leave_adjusted_workload) %>%
     dplyr::ungroup()
   
-  daily_plan <- team_sched(date = daily_plan$date, workload = daily_plan$workload)
+  tmp <- team_sched(date = tmp$date, probability = tmp$probability, workload = tmp$workload)
   
-  return(daily_plan)
+  return(tmp)
 }

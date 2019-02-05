@@ -142,6 +142,7 @@ setMethod("as.data.frame", "project_teams", definition = function(x){
 #' Base Class for workplan full_schedule
 #'
 #' @slot projects List of projects
+#' @slot probability Probability project will occur
 #' @slot phases List of phases in any project in order of execution
 #' @slot date Day wourk occurs on
 #' @slot staff Assigned staff to each [project, phase] combination 
@@ -157,7 +158,8 @@ setMethod("as.data.frame", "project_teams", definition = function(x){
 #' @slot leave_adjusted_workload = "numeric"
 #' @family classes
 #' @keywords internal
-full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "ordered", phase = "ordered", 
+full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "ordered", 
+                                                  probability = "numeric", phase = "ordered", 
                                                   staff = "ordered", assigned_capacity = "numeric",
                                                   capacity = "numeric", public_holiday = "character",
                                                   out_of_office = "character", project_duration = "numeric",
@@ -172,7 +174,8 @@ full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "orde
 #' @param x A \code{full_schedule} object.
 #' @keywords internal
 setMethod("as.data.frame", "full_schedule", definition = function(x){
-  x <- data.frame(date = x@date, project = x@project, phase = x@phase,
+  x <- data.frame(date = x@date, project = x@project, 
+                  probability = x@probability, phase = x@phase,
                   staff = x@staff, assigned_capacity = x@assigned_capacity, capacity = x@capacity,
                   public_holiday = x@public_holiday, out_of_office = x@out_of_office, project_duration = x@project_duration,
                   num_holidays = x@num_holidays, holiday_expansion_factor = x@holiday_expansion_factor,
@@ -193,7 +196,8 @@ setMethod("as.data.frame", "full_schedule", definition = function(x){
 #' @slot public_holiday Whether a day is a public holiday
 #' @family classes
 #' @keywords internal
-staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "ordered", project = "character", workload= "numeric",
+staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "ordered", 
+                                                    project = "character", workload= "numeric",
                                                     out_of_office = "character", 
                                                     public_holiday = "character"))
 
@@ -264,10 +268,11 @@ setMethod("plot", "staff_schedule", definition = function(x){
 #' Base Class for workplan team_schedule
 #'
 #' @slot date Day wourk occurs on
+#' @slot probability Probability project will occur
 #' @slot workload Amount of work assigned to staff member 
 #' @family classes
 #' @keywords internal
-team_sched <- setClass("team_schedule", slots = c(date = "Date", workload= "numeric"))
+team_sched <- setClass("team_schedule", slots = c(date = "Date", probability = "numeric", workload= "numeric"))
 
 #' Coerce Object team_schedule to a data frame
 #'
@@ -276,7 +281,7 @@ team_sched <- setClass("team_schedule", slots = c(date = "Date", workload= "nume
 #' @param x A \code{team_schedule} object.
 #' @keywords internal
 setMethod("as.data.frame", "team_schedule", definition = function(x){
-  x <- data.frame(date = x@date, workload = x@workload)
+  x <- data.frame(date = x@date, probability = x@probability, workload = x@workload)
   return(x)
 })
 
@@ -292,25 +297,50 @@ setMethod("as.data.frame", "team_schedule", definition = function(x){
 #' @param x A \code{team_schedule} object.
 setMethod("plot", "team_schedule", definition = function(x){
   x <- as.data.frame(x)
-  x$maxcapacity <- ifelse(x$workload > 1, 1, x$workload)
-  x$teamload <- ifelse(x$workload > 1, "Overloaded", "Covered")
+  pos <- x$workload == 0
+  x$probability[pos] <- 100
+  x$probability <- ifelse(x$probability == 100, "Committed", "Potential")
+  x$probability = factor(x$probability, c("Potential", "Committed"), ordered = TRUE)
+  x <- x %>% dplyr::group_by(date) %>% 
+    dplyr::mutate(total = sum(workload)) %>%
+    dplyr::ungroup() 
+  x <- x %>% dplyr::group_by(date, probability) %>% 
+    dplyr::mutate(maximum = min(workload, 1), deficit = ifelse(workload > 1, workload-1, 0)) %>%
+    dplyr::ungroup() %>% dplyr::select(-workload) %>%
+          tidyr::gather(load, value, -c(date, probability, total))
+  pos <- x$probability == "Potatential"
   gg_red <- "#F8766D"
   gg_blue <- "#00BFC4"
+  cols = c(scales::alpha(gg_red, 0.5),   scales::alpha(gg_blue, 0.5),gg_red, gg_blue)
+  x$group = paste(x$probability, x$load)
   
+  x <- x %>% dplyr::select(date, group, value) %>% 
+    tidyr::spread(group, value, fill = 0)
+  
+  pos <- x$`Committed deficit` > 0
+  x$`Potential deficit`[pos] = x$`Potential deficit`[pos] + x$`Potential maximum`[pos]
+  x$`Potential maximum`[pos] = 0
+  
+  total_potential <- x$`Potential deficit` + x$`Potential maximum`
+  pos <- x$`Committed deficit` == 0 & (x$`Committed maximum` + total_potential) > 1
+  x$`Potential maximum`[pos] <- 1 - x$`Committed maximum`[pos] 
+  x$`Potential deficit`[pos] <- total_potential[pos] - x$`Potential maximum`[pos]
+  
+  x <- x %>% tidyr::gather(group, value, -date)
+  
+  
+  x$group = factor(x$group, levels = rev(sort(unique(x$group))[c(2,1,4,3)]), ordered = T)
+                  
   # base layer
-  p <- ggplot2::ggplot(x, ggplot2::aes(date, workload, fill = teamload)) +
-    ggplot2::geom_bar(stat = 'identity',  show.legend = T) +
-    ggplot2::scale_fill_manual(values = c(gg_blue, gg_red)) +
+  p <- ggplot2::ggplot(x, ggplot2::aes(date, value, fill =  group)) +
+    ggplot2::geom_bar(stat = 'identity',  show.legend = T) + 
+    ggplot2::scale_fill_manual(values = cols) +
     ggplot2::scale_y_continuous(labels = scales::percent) +
     ggplot2::scale_x_date(labels = scales::date_format('%b'), date_breaks = '1 month',
                           expand = c(0,0)) +
-    ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD')
+    ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD', fill = "")
   
-  
-  p <- p + ggplot2::geom_bar(data = x, 
-                             ggplot2::aes(date, maxcapacity),
-                             stat = 'identity', fill = gg_blue)
-  
+
   return(p)
 })
 
