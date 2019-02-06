@@ -40,7 +40,7 @@ init_db = function(db_name = "my_workplan.sqlite"){
   RSQLite::dbSendQuery(db, statement = "CREATE TABLE `time_estimates` 
               ( `id_time_estimates` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
               `id_project` INTEGER, `id_project_phase` INTEGER, 
-              `time_estimates` INTEGER, FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`) )")
+              `time_estimate` INTEGER, FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`) )")
   
   RSQLite::dbSendQuery(db, statement = "CREATE TABLE `project_assignments` 
               ( `id_project_assignment` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 

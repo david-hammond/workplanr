@@ -1,15 +1,4 @@
-#' create a list of employees that are to be assigned to projects
-#'
-#' @param db_name The name of the database to create 
-#' @keywords internal
-get_phases = function(db_name){
-  con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
-  tmp <- RSQLite::dbSendQuery(con, "SELECT project_phase_name FROM project_phases")
-  tmp <- RSQLite::dbFetch(tmp)
-  tmp <- tmp$project_phase_name
-  RSQLite::dbDisconnect(con)
-  return(tmp)
-}
+
 #' create a list of employees that are to be assigned to projects
 #'
 #' @param db_name The name of the database to create 
@@ -29,16 +18,13 @@ init_schedule = function(db_name){
 #' @keywords internal
 add_project_calendar = function(tmp, db_name){
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
-  phases <- get_phases(db_name)
-  rs <- RSQLite::dbSendQuery(con, "SELECT project_name, project_phase_name, project_start, project_end, 
-                           project_confirmed, time_estimates  FROM time_estimates INNER JOIN projects ON projects.id_project = time_estimates.id_project
-                             INNER JOIN project_phases ON project_phases.id_project_phase =  time_estimates.id_project_phase;")
-  rs <- RSQLite::dbFetch(rs)
-  
+  phases <- get_project_phases(db_name)
+  phases <- phases$project_phase_name
+  rs <- get_time_estimates(db_name)
   rs <- rs %>% dplyr::mutate(project_phase_name = factor(project_phase_name, 
                                        levels = phases,
                                        ordered = T)) %>%
-  tidyr::spread(project_phase_name, time_estimates)
+  tidyr::spread(project_phase_name, time_estimate)
   
   end = rs 
   
@@ -82,12 +68,7 @@ add_project_calendar = function(tmp, db_name){
 #' @keywords internal
 add_staff_assignment = function(tmp, db_name){
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
-  rs <- RSQLite::dbSendQuery(con, "SELECT project_name, project_phase_name, staff_name, staff_capacity, staff_contribution
-                                                              FROM project_assignments 
-                             INNER JOIN projects ON projects.id_project = project_assignments.id_project
-                             INNER JOIN project_phases ON project_phases.id_project_phase =  project_assignments.id_project_phase
-                             INNER JOIN staff ON staff.id_staff =  project_assignments .id_staff;")
-  rs <- RSQLite::dbFetch(rs)
+  rs <- get_project_assignments(db_name)
   tmp <- dplyr::left_join(tmp, rs)
   RSQLite::dbDisconnect(con)
   return(tmp)
@@ -99,13 +80,7 @@ add_staff_assignment = function(tmp, db_name){
 #' @keywords internal
 add_staff_out_of_office = function(tmp, db_name){
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
-  rs <- RSQLite::dbSendQuery(con, "SELECT id_out_of_office, staff_name, 
-                             out_of_office_start, 
-                             out_of_office_end, 
-                             work_related 
-                             FROM out_of_office 
-                             INNER JOIN staff ON staff.id_staff = out_of_office.id_staff;")
-  rs <- RSQLite::dbFetch(rs)
+  rs <- get_out_of_office(db_name)
   rs <- rs %>% 
     tidyr::gather(date_type, date, -c(id_out_of_office, staff_name, work_related)) %>%
     dplyr::group_by(id_out_of_office, staff_name, work_related) %>%

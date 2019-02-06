@@ -31,7 +31,7 @@ public_holidays <- public_holidays %>% filter(jurisdiction == "nsw") %>%
 ## create time_estimates dataframe
 time_estimates <- expand.grid(id_project_phase = 1:nrow(project_phases), id_project = 1:nrow(projects), 
                               KEEP.OUT.ATTRS = FALSE)
-time_estimates$time_estimates <- rep(c(-10,-10,-10,-10,-10,10), nrow(projects))
+time_estimates$time_estimate <- rep(c(-10,-10,-10,-10,-10,10), nrow(projects))
 ## create project_assignments dataframe
 
 project_assignments <- expand.grid(id_staff = 1:nrow(staff), id_project_phase = 1:nrow(project_phases), 
