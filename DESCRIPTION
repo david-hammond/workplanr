@@ -24,7 +24,7 @@ Imports:
   rio (>= 0.5.10),
   methods (>= 3.4.3),
   readxl (>= 1.1.0),
-  forcats (>= 0.3.0)
+  RSQLite (>= 2.1.1)
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: knitr,

@@ -3,7 +3,7 @@
 #' @param db_name The name of the database to create 
 
 #' @keywords interal
-init_workplan_db = function(db_name = "my_workplan.sqlite"){
+init_db = function(db_name = "my_workplan.sqlite"){
   
   if(file.exists(db_name)) file.remove(db_name)
   

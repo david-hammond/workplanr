@@ -78,9 +78,7 @@
 #' @name workplanr
 #' @importFrom dplyr "%>%"
 #' @importFrom grDevices grey
-#' @importFrom stats end na.omit start
 #' @importFrom utils vignette
-#' @exportMethod plot
 #' @keywords package
 NULL
 
