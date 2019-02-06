@@ -23,7 +23,7 @@ create_new_workplan_db = function(staff,
                                db_name = "my_workplan.sqlite"){
   init_db(db_name)
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
-  RSQLite::dbWriteTable(con, "staff", tmp$staff, append = T)
+  RSQLite::dbWriteTable(con, "staff", staff, append = T)
   RSQLite::dbWriteTable(con, "projects", projects, append = T)
   RSQLite::dbWriteTable(con, "project_phases", project_phases, append = T)
   RSQLite::dbWriteTable(con, "out_of_office", out_of_office, append = T)

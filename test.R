@@ -9,10 +9,10 @@ projects = data.frame(project_name = LETTERS[1:3],
 ## create calendar dataframe
 bizdays::create.calendar('normal', 
                          weekdays = c('saturday', 'sunday'), 
-                         start.date = min(as.Date(projects$project_start)-30), 
-                         end.date = max(as.Date(projects$project_start)+30))
-calendar <- data.frame(date = as.character(bizdays::bizseq(from = min(as.Date(projects$project_start)-30), 
-                                                           to = max(as.Date(projects$project_start)+30), 'normal')))
+                         start.date = min(as.Date(projects$project_start)-120), 
+                         end.date = max(as.Date(projects$project_start)+120))
+calendar <- data.frame(date = as.character(bizdays::bizseq(from = min(as.Date(projects$project_start)-120), 
+                                                           to = max(as.Date(projects$project_start)+120), 'normal')))
 ## create phases dataframe
 project_phases <- data.frame(project_phase_name = c("research", "drafting", "editing", "design", "print", "events"))
 ## create out_of_office dataframe
