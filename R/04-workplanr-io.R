@@ -63,7 +63,6 @@ import_workplan_from_xlsx = function(db_name = "my_workplan.sqlite", excel_file_
   tmp$project_assignments <- format_project_assignments(tmp$project_assignments)
   tmp <- normalise_project_assignments(tmp)
   tmp <- normalise_out_of_office(tmp)
-  
   create_new_workplan_db(staff = tmp$staff,
                          projects = tmp$projects,
                          calendar = tmp$calendar,
@@ -140,3 +139,5 @@ normalise_out_of_office = function(tmp){
   tmp$out_of_office <- rs
   return(tmp)
 }
+
+

@@ -7,12 +7,13 @@ projects = data.frame(project_name = LETTERS[1:3],
                       project_start = c("2019-01-25", "2019-05-17", "2019-06-27"),
                       project_end = c("2019-06-03", "2019-06-16", "2019-09-27"))
 ## create calendar dataframe
-bizdays::create.calendar('normal', 
+cals <- bizdays::create.calendar('normal', 
                          weekdays = c('saturday', 'sunday'), 
-                         start.date = min(as.Date(projects$project_start)-120), 
-                         end.date = max(as.Date(projects$project_start)+120))
-calendar <- data.frame(date = as.character(bizdays::bizseq(from = min(as.Date(projects$project_start)-120), 
-                                                           to = max(as.Date(projects$project_start)+120), 'normal')))
+                         start.date = "2010-01-01", 
+                         end.date = "2025-01-01")
+calendar <- data.frame(date = as.character(bizdays::bizseq(from = "2010-01-01", 
+                                                           to = "2025-01-01", 'normal')))
+bizdays::remove.calendars('normal')
 ## create phases dataframe
 project_phases <- data.frame(project_phase_name = c("research", "drafting", "editing", "design", "print", "events"))
 ## create out_of_office dataframe
@@ -57,8 +58,7 @@ create_new_workplan_db(staff = staff,
 schedule = get_schedule(db_name)
 plot_staff_schedule(schedule)
 plot_team_schedule(schedule)
-db_name = "my_workplan.sqlite"
 workplanr::import_workplan_from_xlsx(excel_file_name = "iep_workplan.xlsx")
-schedule = get_schedule(db_name)
-plot_staff_schedule(schedule)
-plot_team_schedule(schedule)
+schedule = workplanr::get_schedule(db_name)
+workplanr::plot_staff_schedule(schedule)
+workplanr::plot_team_schedule(schedule)

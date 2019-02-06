@@ -34,6 +34,7 @@ get_staff_schedule = function(tmp){
 #' @export
 plot_staff_schedule = function(tmp){
   tmp <- get_staff_schedule(tmp)
+  tmp$workload <- tmp$workload/100
   myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
                                            space='Lab')
   p <- ggplot2::ggplot(data = tmp$staff_schedule, ggplot2::aes(date, staff_name, fill = workload)) +
@@ -69,7 +70,7 @@ get_team_schedule = function(tmp){
     dplyr::summarise(leave_adjusted_workload = sum(leave_adjusted_workload, na.rm=TRUE),
                      workload = round(leave_adjusted_workload/team_capacity,2)) %>%
     dplyr::select(-leave_adjusted_workload) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() 
   return(tmp)
 }
 #' create a list of employees that are to be assigned to projects
@@ -92,7 +93,8 @@ plot_team_schedule = function(tmp){
   x <- x %>% dplyr::group_by(date, project_confirmed) %>% 
     dplyr::mutate(Work = min(workload, 1), Deficit = ifelse(workload > 1, workload-1, 0)) %>%
     dplyr::ungroup() %>% dplyr::select(-workload) %>%
-    tidyr::gather(load, value, -c(date, project_confirmed, total))
+    tidyr::gather(load, value, -c(date, project_confirmed, total)) %>%
+    dplyr::distinct()
   gg_red <- "#F8766D"
   gg_blue <- "#00BFC4"
   cols = c(scales::alpha(gg_red, 0.5),   scales::alpha(gg_blue, 0.5),gg_red, gg_blue)
