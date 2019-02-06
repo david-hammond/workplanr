@@ -54,6 +54,10 @@ export_workplan_to_xlsx = function(db_name = "my_workplan.sqlite", excel_file_na
 #' @export 
 import_workplan_from_xlsx = function(db_name = "my_workplan.sqlite", excel_file_name = "my_workplan.xlsx"){
   tmp <- read_excel_allsheets(excel_file_name)
+  tmp$projects$project_start = as.character(tmp$projects$project_start)
+  tmp$projects$project_end = as.character(tmp$projects$project_end)
+  tmp$out_of_office$out_of_office_start = as.character(tmp$out_of_office$out_of_office_start)
+  tmp$out_of_office$out_of_office_end = as.character(tmp$out_of_office$out_of_office_end)
   tmp$time_estimates <- format_time_estimates(tmp$time_estimates)
   tmp <- normalise_time_estimates(tmp)
   tmp$project_assignments <- format_project_assignments(tmp$project_assignments)
@@ -108,9 +112,9 @@ format_project_assignments <- function(tmp){
 
 normalise_time_estimates = function(tmp){
   rs <-  tmp$time_estimates
-  rs <- dplyr::left_join(rs, tmp$projects %>% select(id_project, project_name)) %>%
+  rs <- dplyr::left_join(rs, tmp$projects %>% dplyr::select(id_project, project_name)) %>%
     dplyr::select(-project_name)
-  rs <- dplyr::left_join(rs, tmp$project_phases %>% select(id_project_phase, project_phase_name)) %>%
+  rs <- dplyr::left_join(rs, tmp$project_phases %>% dplyr::select(id_project_phase, project_phase_name)) %>%
     dplyr::select(-project_phase_name)
   rs <- rs %>% dplyr::select(-c(project_start, project_end, project_confirmed))
   tmp$time_estimates <- rs
@@ -119,11 +123,11 @@ normalise_time_estimates = function(tmp){
 
 normalise_project_assignments = function(tmp){
   rs <-  tmp$project_assignments 
-  rs <- dplyr::left_join(rs, tmp$projects %>% select(id_project, project_name)) %>%
+  rs <- dplyr::left_join(rs, tmp$projects %>% dplyr::select(id_project, project_name)) %>%
     dplyr::select(-project_name)
-  rs <- dplyr::left_join(rs, tmp$project_phases %>% select(id_project_phase, project_phase_name)) %>%
+  rs <- dplyr::left_join(rs, tmp$project_phases %>% dplyr::select(id_project_phase, project_phase_name)) %>%
     dplyr::select(-project_phase_name)
-  rs <- dplyr::left_join(rs, tmp$staff %>% select(id_staff, staff_name)) %>%
+  rs <- dplyr::left_join(rs, tmp$staff %>% dplyr::select(id_staff, staff_name)) %>%
     dplyr::select(-staff_name)
   tmp$project_assignments <- rs
   return(tmp)
@@ -131,7 +135,7 @@ normalise_project_assignments = function(tmp){
 
 normalise_out_of_office = function(tmp){
   rs <- tmp$out_of_office
-  rs <- dplyr::left_join(rs, tmp$staff %>% select(id_staff, staff_name)) %>%
+  rs <- dplyr::left_join(rs, tmp$staff %>% dplyr::select(id_staff, staff_name)) %>%
     dplyr::select(-staff_name)
   tmp$out_of_office <- rs
   return(tmp)

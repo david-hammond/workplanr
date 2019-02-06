@@ -27,6 +27,11 @@ add_project_calendar = function(tmp, db_name){
   tidyr::spread(project_phase_name, time_estimate)
   
   end = rs 
+  my_cal <- get_calendar(db_name)
+  bizdays::create.calendar('normal', 
+                           weekdays = c('saturday', 'sunday'), 
+                           start.date = min(as.Date(my_cal$date)), 
+                           end.date = max(as.Date(my_cal$date)))
   
   end[, ncol(end)] = bizdays::offset(end$project_end, end[,ncol(end)], 'normal')
   for (i in  rev(phases)[-1]){
