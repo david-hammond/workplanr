@@ -8,7 +8,7 @@
 get_staff_schedule = function(tmp){
   staff_schedule = tmp %>%
     dplyr::group_by(date, staff_name) %>%
-    dplyr::summarise(workload = sum(leave_adjusted_workload)) %>%
+    dplyr::summarise(workload = sum(leave_adjusted_workload)/100) %>%
     dplyr::ungroup() %>%  
     dplyr::filter(is.finite(workload)) #why inf?
   projects = tmp %>% 
@@ -18,7 +18,7 @@ get_staff_schedule = function(tmp){
     dplyr::select(project_name, staff_name, date, leave_adjusted_workload) %>%
     dplyr::group_by(date, staff_name) %>%
     dplyr::summarise(project_name = paste(project_name, collapse = ", "),
-                     workload = sum(leave_adjusted_workload)) %>%
+                     workload = 1) %>%
     dplyr::ungroup() 
   
   
@@ -34,8 +34,7 @@ get_staff_schedule = function(tmp){
 #' @export
 plot_staff_schedule = function(tmp){
   tmp <- get_staff_schedule(tmp)
-  tmp$workload <- tmp$workload/100
-  myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
+    myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
                                            space='Lab')
   p <- ggplot2::ggplot(data = tmp$staff_schedule, ggplot2::aes(date, staff_name, fill = workload)) +
     ggplot2::geom_tile(alpha = 0.9) +
