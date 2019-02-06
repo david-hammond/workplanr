@@ -9,15 +9,17 @@ get_staff_schedule = function(tmp){
   staff_schedule = tmp %>%
     dplyr::group_by(date, staff_name) %>%
     dplyr::summarise(workload = sum(leave_adjusted_workload)) %>%
-    dplyr::ungroup() 
+    dplyr::ungroup() %>%  
+    dplyr::filter(is.finite(workload)) #why inf?
   projects = tmp %>% 
+    dplyr::filter(staff_contribution > 0) %>%
     dplyr::group_by(project_name, staff_name) %>%
     dplyr::filter(date == min(as.Date(date))) %>%
-    dplyr::select(project_name, staff_name, date) %>%
+    dplyr::select(project_name, staff_name, date, leave_adjusted_workload) %>%
     dplyr::group_by(date, staff_name) %>%
     dplyr::summarise(project_name = paste(project_name, collapse = ", "),
-                     workload = 1) %>%
-    dplyr::ungroup()
+                     workload = sum(leave_adjusted_workload)) %>%
+    dplyr::ungroup() 
   
   
   tmp = list(staff_schedule = staff_schedule, projects = projects)
