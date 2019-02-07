@@ -29,7 +29,8 @@ create_new_workplan_db = function(staff,
   RSQLite::dbWriteTable(con, "out_of_office", out_of_office, append = T)
   RSQLite::dbWriteTable(con, "public_holidays", public_holidays, append = T)
   RSQLite::dbWriteTable(con, "calendar", calendar, append = T)
-  RSQLite::dbWriteTable(con, "time_estimates", time_estimates, append = T)
+  #TODO: just standardise these initially and then assign and remove
+  RSQLite::dbWriteTable(con, "time_estimates", time_estimates, append = T) 
   RSQLite::dbWriteTable(con, "project_assignments", project_assignments, append = T)
   RSQLite::dbDisconnect(con)
   return(TRUE)
