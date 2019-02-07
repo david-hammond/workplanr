@@ -58,6 +58,7 @@ create_new_workplan_db(staff = staff,
 schedule = get_schedule(db_name)
 plot_staff_schedule(schedule)
 plot_team_schedule(schedule)
+db_name <- "my_workplan.sqlite"
 workplanr::import_workplan_from_xlsx(excel_file_name = "iep_workplan.xlsx")
 schedule = workplanr::get_schedule(db_name)
 workplanr::plot_staff_schedule(schedule)
