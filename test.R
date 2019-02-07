@@ -42,7 +42,6 @@ project_assignments <- expand.grid(id_staff = 1:nrow(staff), id_project_phase = 
 project_assignments$staff_contribution <- sample(c(0,25,50,75,100), 
                                                  size = nrow(projects)*nrow(project_phases)*nrow(staff), 
                                                  replace = T)
-
 ## create new workplan SQLite database 
 db_name <- "my_workplan.sqlite"
 create_new_workplan_db(staff = staff,
@@ -54,16 +53,47 @@ create_new_workplan_db(staff = staff,
                        time_estimates = time_estimates,
                        project_assignments = project_assignments,
                        db_name = "my_workplan.sqlite")
-
 schedule = get_schedule(db_name)
 schedule$leave_adjusted_workload = schedule$leave_adjusted_workload/100
+schedule$staff_capacity <- schedule$staff_capacity/100
+schedule$out_of_office <- ifelse(schedule$out_of_office == 1, "Work", "Vacation")
 plot_staff_schedule(schedule)
 plot_team_schedule(schedule)
+
+##initial plot
 db_name <- "my_workplan.sqlite"
 workplanr::import_workplan_from_xlsx(excel_file_name = "iep_workplan.xlsx")
 schedule = workplanr::get_schedule(db_name)
 schedule$leave_adjusted_workload <- schedule$leave_adjusted_workload/100
 schedule$staff_capacity <- schedule$staff_capacity/100
 schedule$out_of_office <- ifelse(schedule$out_of_office == 1, "Work", "Vacation")
+schedule$staff_name = factor(schedule$staff_name, rev(unique(schedule$staff_name))[c(3, 1,2, 4:15)], 
+                             ordered = TRUE)
 workplanr::plot_staff_schedule(schedule)
 workplanr::plot_team_schedule(schedule)
+##secondary plot
+assign_staff(db_name, staff_name = "steve", project_name = "CEF", project_phase_name = "editing", 
+             staff_contribution = 100)
+schedule = workplanr::get_schedule(db_name)
+schedule$leave_adjusted_workload <- schedule$leave_adjusted_workload/100
+schedule$staff_capacity <- schedule$staff_capacity/100
+schedule$out_of_office <- ifelse(schedule$out_of_office == 1, "Work", "Vacation")
+schedule$staff_name = factor(schedule$staff_name, rev(unique(schedule$staff_name))[c(3, 1,2, 4:15)], 
+                             ordered = TRUE)
+schedule = workplanr::get_schedule(db_name)
+workplanr::plot_staff_schedule(schedule)
+workplanr::plot_team_schedule(schedule)
+##teritary plot
+remove_staff(db_name, staff_name = "steve", project_name = "CEF", project_phase_name = "editing")
+schedule = workplanr::get_schedule(db_name)
+schedule$leave_adjusted_workload <- schedule$leave_adjusted_workload/100
+schedule$staff_capacity <- schedule$staff_capacity/100
+schedule$out_of_office <- ifelse(schedule$out_of_office == 1, "Work", "Vacation")
+schedule$staff_name = factor(schedule$staff_name, rev(unique(schedule$staff_name))[c(3, 1,2, 4:15)], 
+                             ordered = TRUE)
+schedule = workplanr::get_schedule(db_name)
+workplanr::plot_staff_schedule(schedule)
+workplanr::plot_team_schedule(schedule)
+
+
+

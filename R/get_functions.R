@@ -85,7 +85,7 @@ get_project_assignments = function(db_name){
                                                               FROM project_assignments 
                              INNER JOIN projects ON projects.id_project = project_assignments.id_project
                              INNER JOIN project_phases ON project_phases.id_project_phase =  project_assignments.id_project_phase
-                             INNER JOIN staff ON staff.id_staff =  project_assignments .id_staff;")
+                             INNER JOIN staff ON staff.id_staff =  project_assignments.id_staff;")
   RSQLite::dbDisconnect(con)
   return(rs)
 }

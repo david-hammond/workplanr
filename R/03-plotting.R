@@ -17,6 +17,7 @@ get_staff_schedule = function(tmp){
     dplyr::filter(date == min(as.Date(date))) %>%
     dplyr::select(project_name, staff_name, date, leave_adjusted_workload) %>%
     dplyr::group_by(date, staff_name) %>%
+    dplyr::distinct() %>%
     dplyr::summarise(project_name = paste(project_name, collapse = ", "),
                      workload = 1) %>%
     dplyr::ungroup() 
@@ -43,7 +44,7 @@ get_staff_schedule = function(tmp){
 #' @export
 plot_staff_schedule = function(tmp){
   tmp <- get_staff_schedule(tmp)
-    myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
+  myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
                                            space='Lab')
   p <- ggplot2::ggplot(data = tmp$staff_schedule, ggplot2::aes(date, staff_name, fill = workload)) +
     ggplot2::geom_tile(alpha = 0.9) +
@@ -57,7 +58,7 @@ plot_staff_schedule = function(tmp){
   
   p <- p + ggrepel::geom_text_repel(data = tmp$projects, 
                                     ggplot2::aes(x = date, y = staff_name, label = project_name), 
-                                    size = 3, hjust = 1, force = 2.5) +
+                                    size = 3, hjust = 1) +
     bdscale::scale_x_bd(business.dates=tmp$staff_schedule$date, max.major.breaks=20,
                         labels = scales::date_format('%b'), expand = c(0,0))
   
