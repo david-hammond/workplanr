@@ -57,6 +57,7 @@ add_project_calendar = function(tmp, db_name){
     dplyr::mutate(date = as.character(date))
   
   tmp = dplyr::left_join(tmp, rs)
+  tmp$project_phase_name = as.character(tmp$project_phase_name)
   if(is.na(tmp$project_name[1])){
     tmp <- tmp[-(1:min(which(!is.na(tmp$project_name)))), ]
   }
@@ -94,7 +95,6 @@ add_staff_out_of_office = function(tmp, db_name){
     dplyr::select(-date_type) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(date = as.character(date)) %>%
-    dplyr::select(-id_out_of_office) %>%
     dplyr::rename(out_of_office = work_related)
   tmp <- dplyr::left_join(tmp, rs)
   RSQLite::dbDisconnect(con)
@@ -111,7 +111,8 @@ factor_leave_in_work_allocation = function(tmp){
            num_holidays = sum(!is.na(unique(holiday_name))),
            holiday_expansion_factor = project_duration/(project_duration-num_holidays),
            num_out_of_office = sum(!is.na(out_of_office)),
-           leave_expansion_factor = holiday_expansion_factor * project_duration/(project_duration-num_out_of_office), 
+           leave_expansion_factor = holiday_expansion_factor * 
+             project_duration/(max(project_duration-num_out_of_office, 0.7)), # need to avoid div by 0 error
            leave_adjusted_workload = ifelse(is.na(out_of_office), leave_expansion_factor * staff_contribution, 0)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(staff_name)) %>%
@@ -129,7 +130,7 @@ factor_leave_in_work_allocation = function(tmp){
 get_schedule = function(db_name){
   tmp = init_schedule(db_name)
   tmp = add_project_calendar(tmp, db_name)
-  tmp = add_staff_assignment(tmp, db_name)                             
+  tmp = add_staff_assignment(tmp, db_name) #factor issue                             
   tmp = add_staff_out_of_office(tmp, db_name)
   tmp = factor_leave_in_work_allocation(tmp)
   return(tmp)

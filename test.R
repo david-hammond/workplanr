@@ -56,10 +56,14 @@ create_new_workplan_db(staff = staff,
                        db_name = "my_workplan.sqlite")
 
 schedule = get_schedule(db_name)
+schedule$leave_adjusted_workload = schedule$leave_adjusted_workload/100
 plot_staff_schedule(schedule)
 plot_team_schedule(schedule)
 db_name <- "my_workplan.sqlite"
 workplanr::import_workplan_from_xlsx(excel_file_name = "iep_workplan.xlsx")
 schedule = workplanr::get_schedule(db_name)
+schedule$leave_adjusted_workload <- schedule$leave_adjusted_workload/100
+schedule$staff_capacity <- schedule$staff_capacity/100
+schedule$out_of_office <- ifelse(schedule$out_of_office == 1, "Work", "Vacation")
 workplanr::plot_staff_schedule(schedule)
 workplanr::plot_team_schedule(schedule)

@@ -8,7 +8,7 @@
 get_staff_schedule = function(tmp){
   staff_schedule = tmp %>%
     dplyr::group_by(date, staff_name) %>%
-    dplyr::summarise(workload = sum(leave_adjusted_workload)/100) %>%
+    dplyr::summarise(workload = sum(leave_adjusted_workload)) %>%
     dplyr::ungroup() %>%  
     dplyr::filter(is.finite(workload)) #why inf?
   projects = tmp %>% 
@@ -20,9 +20,18 @@ get_staff_schedule = function(tmp){
     dplyr::summarise(project_name = paste(project_name, collapse = ", "),
                      workload = 1) %>%
     dplyr::ungroup() 
+  #add leave
   
+  leave <- tmp %>% 
+    dplyr::group_by(id_out_of_office, staff_name, out_of_office) %>%
+    dplyr::summarise(start = min(date), end = max(date), workload = 1) %>%
+    dplyr::filter(!is.na(out_of_office))
   
-  tmp = list(staff_schedule = staff_schedule, projects = projects)
+  public_holidays <- tmp %>% 
+    dplyr::filter(!is.na(holiday_name))
+
+  tmp = list(staff_schedule = staff_schedule, projects = projects,
+             leave = leave, public_holidays = public_holidays)
   return(tmp)
 }
 #' create a list of employees that are to be assigned to projects
@@ -38,9 +47,9 @@ plot_staff_schedule = function(tmp){
                                            space='Lab')
   p <- ggplot2::ggplot(data = tmp$staff_schedule, ggplot2::aes(date, staff_name, fill = workload)) +
     ggplot2::geom_tile(alpha = 0.9) +
-    ggplot2::scale_x_date(labels = scales::date_format('%b'), 
-                          date_breaks = '1 month', 
-                          expand = c(0,0)) +
+    # ggplot2::scale_x_date(labels = scales::date_format('%b'), 
+    #                       date_breaks = '1 month', 
+    #                       expand = c(0,0)) +
     ggplot2::scale_fill_gradientn(colors = myPalette(100), 
                                   labels = scales::percent, name = 'Workload', na.value = "white") +
     ggplot2::labs(x='', y = '', 
@@ -48,7 +57,25 @@ plot_staff_schedule = function(tmp){
   
   p <- p + ggrepel::geom_text_repel(data = tmp$projects, 
                                     ggplot2::aes(x = date, y = staff_name, label = project_name), 
-                                    size = 3, hjust = 1, force = 2.5)
+                                    size = 3, hjust = 1, force = 2.5) +
+    bdscale::scale_x_bd(business.dates=tmp$staff_schedule$date, max.major.breaks=20,
+                        labels = scales::date_format('%b'), expand = c(0,0))
+  
+  #add leave
+  p <- p + ggplot2::geom_segment(data = tmp$leave, ggplot2::aes(x=start, 
+                                                            xend=end, 
+                                                            y=staff_name, 
+                                                            yend=staff_name, colour = out_of_office), size=2, alpha = 0.6)
+  p <- p + ggplot2::geom_point(data = tmp$leave, ggplot2::aes(x=start, 
+                                                          y=staff_name, colour = out_of_office), size=3)
+  p <- p + ggplot2::geom_point(data = tmp$leave, ggplot2::aes(x=end, 
+                                                          y=staff_name, colour = out_of_office), size=3)
+  p <- p + ggplot2::labs(fill ="Workload" ,colour="Out of Office")
+  
+  #add holidays
+
+  p <- p + ggplot2::geom_vline(xintercept = tmp$public_holidays$date, 
+                               linetype = "dashed", colour = grey(0.5), alpha = 0.6)
   return(p)
 }
 #' create a list of employees that are to be assigned to projects
@@ -120,9 +147,11 @@ plot_team_schedule = function(tmp){
     ggplot2::geom_bar(stat = 'identity',  show.legend = T) + 
     ggplot2::scale_fill_manual(values = cols) +
     ggplot2::scale_y_continuous(labels = scales::percent) +
-    ggplot2::scale_x_date(labels = scales::date_format('%b'), date_breaks = '1 month',
-                          expand = c(0,0)) +
-    ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD', fill = "")
+    # ggplot2::scale_x_date(labels = scales::date_format('%b'), date_breaks = '1 month',
+    #                       expand = c(0,0)) +
+    ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD', fill = "")  +
+    bdscale::scale_x_bd(business.dates=x$date, max.major.breaks=20,
+                        labels = scales::date_format('%b'), expand = c(0,0))
   return(p)
 }
 
