@@ -93,8 +93,8 @@ plot_team_schedule = function(tmp){
     ggplot2::scale_fill_manual(values = cols) +
     ggplot2::scale_y_continuous(labels = scales::percent) +
     ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD', fill = "")  +
-    bdscale::scale_x_bd(business.dates=tmp$date, matmp.major.breaks=20,
-                        labels = scales::date_format('%b'), etmppand = c(0,0))
+    bdscale::scale_x_bd(business.dates=tmp$date, max.major.breaks=20,
+                        labels = scales::date_format('%b'), expand = c(0,0))
   return(p)
 }
 
