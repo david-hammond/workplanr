@@ -4,7 +4,7 @@
 \alias{get_public_holidays}
 \title{get public_holidays table}
 \usage{
-get_public_holidays(db_name)
+get_public_holidays(db_name = "my_workplan.sqlite")
 }
 \arguments{
 \item{db_name}{The name of the database to create}

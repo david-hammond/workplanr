@@ -4,7 +4,7 @@
 \alias{get_projects}
 \title{Get projects table}
 \usage{
-get_projects(db_name)
+get_projects(db_name = "my_workplan.sqlite")
 }
 \arguments{
 \item{db_name}{The name of the database to create}

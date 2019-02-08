@@ -4,7 +4,7 @@
 \alias{get_out_of_office}
 \title{Get out_of_office table}
 \usage{
-get_out_of_office(db_name)
+get_out_of_office(db_name = "my_workplan.sqlite")
 }
 \arguments{
 \item{db_name}{The name of the database to create}

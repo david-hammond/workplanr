@@ -4,7 +4,7 @@
 \alias{get_project_assignments}
 \title{Get project_assignments table}
 \usage{
-get_project_assignments(db_name)
+get_project_assignments(db_name = "my_workplan.sqlite")
 }
 \arguments{
 \item{db_name}{The name of the database to create}

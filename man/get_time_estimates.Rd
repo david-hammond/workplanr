@@ -4,7 +4,7 @@
 \alias{get_time_estimates}
 \title{gt time_estimates table}
 \usage{
-get_time_estimates(db_name)
+get_time_estimates(db_name = "my_workplan.sqlite")
 }
 \arguments{
 \item{db_name}{The name of the database to create}

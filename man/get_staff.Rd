@@ -4,7 +4,7 @@
 \alias{get_staff}
 \title{Get staff table}
 \usage{
-get_staff(db_name)
+get_staff(db_name = "my_workplan.sqlite")
 }
 \arguments{
 \item{db_name}{The name of the database to create}

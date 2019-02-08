@@ -4,7 +4,7 @@
 \alias{get_calendar}
 \title{get calendar table}
 \usage{
-get_calendar(db_name)
+get_calendar(db_name = "my_workplan.sqlite")
 }
 \arguments{
 \item{db_name}{The name of the database to create}
