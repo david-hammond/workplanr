@@ -15,3 +15,13 @@ remove_staff(db_name, staff_name = "steve", project_name = "CEF", project_phase_
 schedule = workplanr::get_schedule(db_name)
 workplanr::plot_staff_schedule(schedule)
 workplanr::plot_team_schedule(schedule)
+
+#add_leave
+
+#relaeasure sc hdule plot
+
+#deadlines
+
+#burndown charts
+
+#Wstaff plot
