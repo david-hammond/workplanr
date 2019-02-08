@@ -128,12 +128,35 @@ factor_leave_in_work_allocation = function(tmp){
 #' @param db_name The name of the database to create 
 #' @export
 get_schedule = function(db_name){
-  tmp = init_schedule(db_name)
-  tmp = add_project_calendar(tmp, db_name)
-  tmp = add_staff_assignment(tmp, db_name) #factor issue                             
-  tmp = add_staff_out_of_office(tmp, db_name)
-  tmp = factor_leave_in_work_allocation(tmp)
-  return(tmp)
+  schedule <- list()
+  tmp <- init_schedule(db_name)
+  tmp <- add_project_calendar(tmp, db_name)
+  tmp <- add_staff_assignment(tmp, db_name) #factor issue                             
+  tmp <- add_staff_out_of_office(tmp, db_name)
+  tmp <- factor_leave_in_work_allocation(tmp)
+  tmp$leave_adjusted_workload <- tmp$leave_adjusted_workload/tmp$staff_capacity
+  tmp$staff_capacity <- tmp$staff_capacity/tmp$staff_capacity
+  tmp$out_of_office <- ifelse(tmp$out_of_office == 1, "Work", "Vacation")
+  schedule$full_schedule <- tmp
+  schedule$staff_schedule <- get_staff_schedule(tmp)
+  schedule$team_schedule <- get_team_schedule(tmp)
+  return(schedule)
 }
 
+# schedule <- full_sched(date = tmp$date, 
+#                        holiday_name = tmp$holiday_name, 
+#                        project_name = tmp$project_name, 
+#                        project_confirmed = tmp$project_confirmed, 
+#                        project_phase_name = tmp$project_phase_name, 
+#                        staff_name = tmp$staff_name, 
+#                        staff_capacity = tmp$staff_capacity,
+#                        staff_contribution = tmp$staff_contribution,
+#                        id_out_of_office = tmp$id_out_of_office, 
+#                        out_of_office = tmp$out_of_office,
+#                        project_duration = tmp$project_duration, 
+#                        num_holidays = tmp$num_holidays, 
+#                        holiday_expansion_factor = tmp$holiday_expansion_factor,
+#                        num_out_of_office = tmp$num_out_of_office, 
+#                        leave_expansion_factor = tmp$leave_expansion_factor,
+#                        leave_adjusted_workload = tmp$leave_adjusted_workload) 
 

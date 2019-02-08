@@ -15,7 +15,7 @@ init_db = function(db_name = "my_workplan.sqlite"){
   RSQLite::dbClearResult(rs)
   rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `staff` 
             ( `id_staff` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-              `staff_name` TEXT, `staff_capacity` INTEGER, `joined` TEXT, `departed` TEXT )")
+              `staff_name` TEXT, `staff_capacity` INTEGER)")
   RSQLite::dbClearResult(rs)
   rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `projects` 
               ( `id_project` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 

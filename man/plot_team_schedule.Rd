@@ -4,7 +4,7 @@
 \alias{plot_team_schedule}
 \title{create a list of employees that are to be assigned to projects}
 \usage{
-plot_team_schedule(tmp)
+plot_team_schedule(x)
 }
 \arguments{
 \item{tmp}{Scheudle}

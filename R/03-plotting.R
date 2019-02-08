@@ -43,7 +43,7 @@ get_staff_schedule = function(tmp){
 #' library(workplanr)
 #' @export
 plot_staff_schedule = function(tmp){
-  tmp <- get_staff_schedule(tmp)
+  tmp <- tmp$staff_schedule
   myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
                                            space='Lab')
   p <- ggplot2::ggplot(data = tmp$staff_schedule, ggplot2::aes(date, staff_name, fill = workload)) +
@@ -107,8 +107,8 @@ get_team_schedule = function(tmp){
 #' @examples 
 #' library(workplanr)
 #' @export
-plot_team_schedule = function(tmp){
-  x <- get_team_schedule(tmp)
+plot_team_schedule = function(x){
+  x <- x$team_schedule
   pos <- x$workload == 0
   x$project_confirmed[pos] <- 1
   worktypes <- c("Potential", "Planned")

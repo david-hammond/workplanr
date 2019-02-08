@@ -60,8 +60,6 @@ import_workplan_from_xlsx = function(db_name = "my_workplan.sqlite", excel_file_
   tmp$out_of_office$out_of_office_end = as.character(tmp$out_of_office$out_of_office_end)
   tmp$time_estimates <- format_time_estimates(tmp$time_estimates)
   tmp <- normalise_time_estimates(tmp)
-  tmp$project_assignments <- format_project_assignments(tmp$project_assignments)
-  tmp <- normalise_project_assignments(tmp)
   tmp <- normalise_out_of_office(tmp)
   create_new_workplan_db(staff = tmp$staff,
                          projects = tmp$projects,
@@ -70,7 +68,6 @@ import_workplan_from_xlsx = function(db_name = "my_workplan.sqlite", excel_file_
                          out_of_office = tmp$out_of_office,
                          public_holidays = tmp$public_holidays,
                          time_estimates = tmp$time_estimates,
-                         project_assignments = tmp$project_assignments,
                          db_name = db_name)
   return(TRUE)
   
