@@ -44,6 +44,8 @@ create_new_workplan_db = function(staff,
                                         id_project = 1:nrow(projects),
                                         KEEP.OUT.ATTRS = FALSE)
   project_assignments$staff_contribution <- 0
+  project_assignments <- dplyr::left_join(project_assignments, time_estimates) %>%
+    dplyrs::filter(abs(time_estimates) > 0) %>% dplyr::select(-time_estimates)
   #assign all work to unassigned
   project_assignments$staff_contribution[project_assignments$id_staff == nrow(staff)] <- 100
   RSQLite::dbWriteTable(con, "project_assignments", project_assignments, append = T)
