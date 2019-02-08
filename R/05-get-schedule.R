@@ -1,5 +1,5 @@
 
-#' create a list of employees that are to be assigned to projects
+#' Initialise schedule table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -11,10 +11,9 @@ init_schedule = function(db_name){
   RSQLite::dbDisconnect(con)
   return(tmp)
 }
-#' create a list of employees that are to be assigned to projects
-#'
-#' @param db_name The name of the database to create 
+#' Add calendar to schedule
 #' @param tmp schedule
+#' @param db_name The name of the database to create 
 #' @keywords internal
 add_project_calendar = function(tmp, db_name){
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
@@ -51,7 +50,7 @@ add_project_calendar = function(tmp, db_name){
                       dplyr::mutate(project_phase_name = factor(project_phase_name, phases, ordered = T)))
   rs = dplyr::bind_rows(rs)
   rs = rs %>%
-    group_by(project_name, project_confirmed, project_phase_name) %>%
+    dplyr::group_by(project_name, project_confirmed, project_phase_name) %>%
     padr::pad() %>%
       dplyr::ungroup() %>%
     dplyr::mutate(date = as.character(date))
@@ -67,7 +66,7 @@ add_project_calendar = function(tmp, db_name){
   RSQLite::dbDisconnect(con)
   return(tmp)
 }
-#' create a list of employees that are to be assigned to projects
+#' Add staff assignments to schedulke
 #'
 #' @param db_name The name of the database to create 
 #' @param tmp schedule
@@ -79,7 +78,7 @@ add_staff_assignment = function(tmp, db_name){
   RSQLite::dbDisconnect(con)
   return(tmp)
 }
-#' create a list of employees that are to be assigned to projects
+#' Add out of office times to schedule
 #'
 #' @param db_name The name of the database to create 
 #' @param tmp schedule
@@ -100,14 +99,14 @@ add_staff_out_of_office = function(tmp, db_name){
   RSQLite::dbDisconnect(con)
   return(tmp)
 }
-#' create a list of employees that are to be assigned to projects
+#' Re-calculate staff_contributions based on time in office
 #'
 #' @param tmp schedule
 #' @keywords internal
 factor_leave_in_work_allocation = function(tmp){
   
   tmp = tmp %>% dplyr::group_by(project_name, project_phase_name, staff_name) %>%
-    mutate(project_duration = bizdays::bizdays(min(date), max(date), 'normal'), 
+    dplyr::mutate(project_duration = bizdays::bizdays(min(date), max(date), 'normal'), 
            num_holidays = sum(!is.na(unique(holiday_name))),
            holiday_expansion_factor = project_duration/(project_duration-num_holidays),
            num_out_of_office = sum(!is.na(out_of_office)),
@@ -123,7 +122,63 @@ factor_leave_in_work_allocation = function(tmp){
   return(tmp)
 }
 
-#' create a list of employees that are to be assigned to projects
+#' Create staff schedule from full schedule
+#'
+#' @param tmp Scheudle
+#' @return staff_schedule if script exectues completely
+#' @keywords internal
+get_staff_schedule = function(tmp){
+  staff_schedule = tmp %>%
+    dplyr::group_by(date, staff_name) %>%
+    dplyr::summarise(workload = sum(leave_adjusted_workload)) %>%
+    dplyr::ungroup() %>%  
+    dplyr::filter(is.finite(workload)) #why inf?
+  projects = tmp %>% 
+    dplyr::filter(staff_contribution > 0) %>%
+    dplyr::group_by(project_name, staff_name) %>%
+    dplyr::filter(date == min(as.Date(date))) %>%
+    dplyr::select(project_name, staff_name, date, leave_adjusted_workload) %>%
+    dplyr::group_by(date, staff_name) %>%
+    dplyr::distinct() %>%
+    dplyr::summarise(project_name = paste(project_name, collapse = ", "),
+                     workload = 1) %>%
+    dplyr::ungroup() 
+  #add leave
+  
+  leave <- tmp %>% 
+    dplyr::group_by(id_out_of_office, staff_name, out_of_office) %>%
+    dplyr::summarise(start = min(date), end = max(date), workload = 1) %>%
+    dplyr::filter(!is.na(out_of_office))
+  
+  public_holidays <- tmp %>% 
+    dplyr::filter(!is.na(holiday_name))
+  
+  tmp = list(staff_schedule = staff_schedule, projects = projects,
+             leave = leave, public_holidays = public_holidays)
+  return(tmp)
+}
+
+#' Create team schedule from full schedule
+#'
+#' @param tmp Scheudle
+#' @return staff_schedule if script exectues completely
+#' @keywords internal
+get_team_schedule = function(tmp){
+  team_capacity <- tmp %>% 
+    dplyr::select(staff_name, staff_capacity) %>%
+    dplyr::distinct() %>%
+    dplyr::ungroup()
+  team_capacity <- sum(team_capacity$staff_capacity)
+  tmp <- tmp %>% 
+    dplyr::group_by(date, project_confirmed) %>% 
+    dplyr::summarise(leave_adjusted_workload = sum(leave_adjusted_workload, na.rm=TRUE),
+                     workload = round(leave_adjusted_workload/team_capacity,2)) %>%
+    dplyr::select(-leave_adjusted_workload) %>%
+    dplyr::ungroup() 
+  return(tmp)
+}
+
+#' Create full schedule from database
 #'
 #' @param db_name The name of the database to create 
 #' @export
@@ -142,21 +197,3 @@ get_schedule = function(db_name){
   schedule$team_schedule <- get_team_schedule(tmp)
   return(schedule)
 }
-
-# schedule <- full_sched(date = tmp$date, 
-#                        holiday_name = tmp$holiday_name, 
-#                        project_name = tmp$project_name, 
-#                        project_confirmed = tmp$project_confirmed, 
-#                        project_phase_name = tmp$project_phase_name, 
-#                        staff_name = tmp$staff_name, 
-#                        staff_capacity = tmp$staff_capacity,
-#                        staff_contribution = tmp$staff_contribution,
-#                        id_out_of_office = tmp$id_out_of_office, 
-#                        out_of_office = tmp$out_of_office,
-#                        project_duration = tmp$project_duration, 
-#                        num_holidays = tmp$num_holidays, 
-#                        holiday_expansion_factor = tmp$holiday_expansion_factor,
-#                        num_out_of_office = tmp$num_out_of_office, 
-#                        leave_expansion_factor = tmp$leave_expansion_factor,
-#                        leave_adjusted_workload = tmp$leave_adjusted_workload) 
-

@@ -1,4 +1,4 @@
-#' create a list of employees that are to be assigned to projects
+#' Populate workplanr database with data
 #'
 #' @param staff Names of staff members
 #' @param projects Names of projects
@@ -7,7 +7,8 @@
 #' @param out_of_office Names of staff that are going to be out of the office
 #' @param public_holidays A data frame of dates of public holidays
 #' @param time_estimates Time estimates of how long each phase will take in relation 
-#' @param project_assignmentsAmount of time each staff is expected to dedicate to each [project, phase] 
+#' @param staff_name_for_unassigned_work Dummy staff member to assign work to
+#' @param db_name name of database to create
 #' @return TRUE if script exectues completely
 #' @examples 
 #' library(workplanr)

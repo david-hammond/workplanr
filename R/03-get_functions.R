@@ -1,4 +1,4 @@
-#' create a list of employees that are to be assigned to projects
+#' Get staff table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -8,7 +8,7 @@ get_staff = function(db_name){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
-#' create a list of employees that are to be assigned to projects
+#' Get projects table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -18,7 +18,7 @@ get_projects = function(db_name){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
-#' create a list of employees that are to be assigned to projects
+#' Get project_phases table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -28,7 +28,7 @@ get_project_phases = function(db_name){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
-#' create a list of employees that are to be assigned to projects
+#' Get out_of_office table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -43,7 +43,7 @@ get_out_of_office = function(db_name){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
-#' create a list of employees that are to be assigned to projects
+#' get public_holidays table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -53,7 +53,7 @@ get_public_holidays = function(db_name){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
-#' create a list of employees that are to be assigned to projects
+#' get calendar table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -63,7 +63,7 @@ get_calendar = function(db_name){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
-#' create a list of employees that are to be assigned to projects
+#' gt time_estimates table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal
@@ -75,7 +75,7 @@ get_time_estimates = function(db_name){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
-#' create a list of employees that are to be assigned to projects
+#' Get project_assignments table
 #'
 #' @param db_name The name of the database to create 
 #' @keywords internal

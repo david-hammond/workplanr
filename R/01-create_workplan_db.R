@@ -1,4 +1,4 @@
-#' create a list of employees that are to be assigned to projects
+#' Initialise workplanr database
 #'
 #' @param db_name The name of the database to create 
 

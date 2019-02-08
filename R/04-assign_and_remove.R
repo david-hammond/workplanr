@@ -1,6 +1,10 @@
-#' create a list of employees that are to be assigned to projects
+#' Assign staff member to project phase
 #'
 #' @param db_name The name of the database to create 
+#' @param staff_name staff name
+#' @param project_name project name
+#' @param project_phase_name project_phase_name
+#' @param staff_contribution staff con
 #' @export
 assign_staff = function(db_name, staff_name, project_name, project_phase_name, staff_contribution){
   for (i in length(staff_name)){
@@ -23,9 +27,11 @@ assign_staff = function(db_name, staff_name, project_name, project_phase_name, s
   }
   return(TRUE)
 }
-#' create a list of employees that are to be assigned to projects
-#'
+#' Remove staff member from project phase
 #' @param db_name The name of the database to create 
+#' @param staff_name staff name
+#' @param project_name project name
+#' @param project_phase_name project_phase_name
 #' @export
 remove_staff = function(db_name, staff_name, project_name, project_phase_name){
   for (i in length(staff_name)){
