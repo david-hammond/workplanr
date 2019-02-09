@@ -3,21 +3,17 @@
 \docType{data}
 \name{public_holidays}
 \alias{public_holidays}
-\title{Prices of 50,000 round cut diamonds.}
+\title{Public Holidays}
 \format{A data frame with 53940 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
+  \item{date}{The date of the public holiday}
+  \item{holiday_name}{The name of the holiday}
   ...
 }}
-\source{
-\url{http://www.diamondse.info/}
-}
 \usage{
 public_holidays
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset containing the dates of public holidays in New South Wales, Australia in 2019.
 }
 \keyword{datasets}

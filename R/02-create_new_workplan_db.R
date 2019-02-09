@@ -3,6 +3,7 @@
 #' @param staff Names of staff members
 #' @param projects Names of projects
 #' @param project_phases List of phases in any project in order of execution
+#' @param project_roles List of project roles 
 #' @param out_of_office Names of staff that are going to be out of the office
 #' @param public_holidays A data frame of dates of public holidays
 #' @param roles_responsibilities Data frame for responsibilites of roles across project phases
@@ -24,7 +25,7 @@ create_new_workplan_db = function(staff,
                                staff_name_for_unassigned_work = "unassigned",
                                db_name = "my_workplan.sqlite"){
   tmp <- normalise_inputs(staff, projects, calendar, project_phases, project_roles,
-                   out_of_office, public_holidays, time_estimates, roles_responsibilites)
+                   out_of_office, public_holidays, time_estimates, roles_responsibilities)
   init_db(db_name)
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
   RSQLite::dbWriteTable(con, "staff", tmp$staff, append = T)

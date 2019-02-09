@@ -3,21 +3,21 @@
 \docType{data}
 \name{time_estimates}
 \alias{time_estimates}
-\title{Prices of 50,000 round cut diamonds.}
+\title{Time Estimates}
 \format{A data frame with 53940 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
+  \item{project_name}{The project}
+  \item{project_phase_name}{The pahse of the project}
+  \item{time_estimate}{Amount of time that each phase is expected to be in each project. 
+  A negative number means that the phase occurs before the end date of the project, 
+  a positive number means it happens after the end date of a project, 
+  and 0 means phase will not occur in the project}
   ...
 }}
-\source{
-\url{http://www.diamondse.info/}
-}
 \usage{
 time_estimates
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset containing the estimates of time for each pahse in each project.
 }
 \keyword{datasets}

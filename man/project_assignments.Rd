@@ -3,21 +3,19 @@
 \docType{data}
 \name{project_assignments}
 \alias{project_assignments}
-\title{Prices of 50,000 round cut diamonds.}
+\title{Project Assignments}
 \format{A data frame with 53940 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
+  \item{project_name}{Name of project}
+  \item{project_role_name}{Project roles}
+  \item{staff_name}{Names of staff}
+  \item{staff_contribution}{Approximate amount of time staff will dedicate to performing that role. Needs to be the same scale as staff_capacity in data("staff")}
   ...
 }}
-\source{
-\url{http://www.diamondse.info/}
-}
 \usage{
 project_assignments
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset containing the staff assigned to roles on projects
 }
 \keyword{datasets}

@@ -34,7 +34,7 @@ assign_staff = function(db_name, staff_name, project_name, project_role_name, st
 #' @param db_name The name of the database to create 
 #' @param staff_name staff name
 #' @param project_name project name
-#' @param project_phase_name project_phase_name
+#' @param project_role_name project_phase_name
 #' @export
 remove_staff = function(db_name, staff_name, project_name, project_role_name){
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)

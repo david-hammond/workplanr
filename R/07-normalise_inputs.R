@@ -1,5 +1,15 @@
+#' Populate workplanr database with data
+#'
+#' @param staff Names of staff members
+#' @param projects Names of projects
+#' @param project_phases List of phases in any project in order of execution
+#' @param out_of_office Names of staff that are going to be out of the office
+#' @param public_holidays A data frame of dates of public holidays
+#' @param roles_responsibilities Data frame for responsibilites of roles across project phases
+#' @param time_estimates Time estimates of how long each phase will take in relation 
+#' @keywords internal
 normalise_inputs = function(staff, projects, calendar, project_phases, project_roles,
-                            out_of_office, public_holidays, time_estimates, roles_responsibilites){
+                            out_of_office, public_holidays, time_estimates, roles_responsibilities){
   tmp <- list()
   tmp$staff <- staff
   tmp$staff$id_staff <- 1:nrow(staff)
@@ -22,15 +32,11 @@ normalise_inputs = function(staff, projects, calendar, project_phases, project_r
   tmp$public_holidays$id_public_holidays <- 1:nrow(public_holidays)
   tmp$public_holidays$date = as.character(tmp$public_holidays$date)
   tmp$time_estimates <- time_estimates
-  tmp$time_estimates <- time_estimates %>%
-    tidyr::gather(project_phase_name, time_estimate, -c(project_name))
   tmp$time_estimates <- tmp$time_estimates %>%
     dplyr::left_join(tmp$projects) %>% 
     dplyr::left_join(tmp$project_phases) %>%
     dplyr::select(id_project, id_project_phase, time_estimate)
   tmp$roles_responsibilities <- roles_responsibilities
-  tmp$roles_responsibilities <- roles_responsibilities %>%
-    tidyr::gather(project_phase_name, responsibility_span, -c(project_role_name))
   tmp$roles_responsibilities <- tmp$roles_responsibilities %>%
     dplyr::left_join(tmp$project_roles) %>% 
     dplyr::left_join(tmp$project_phases) %>%

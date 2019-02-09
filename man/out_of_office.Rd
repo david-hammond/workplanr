@@ -3,11 +3,13 @@
 \docType{data}
 \name{out_of_office}
 \alias{out_of_office}
-\title{Prices of 50,000 round cut diamonds.}
+\title{A dataset of periods where staff are out of the office}
 \format{A data frame with 53940 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
+  \item{staff_name}{Staff who will be out of the office.}
+  \item{out_of_office_start}{Date period starts.}
+  \item{out_of_office_end}{Date of period end.}
+  \item{work_related}{Whether out of office period is for work (TRUE) or vacation (FALSE)}
   ...
 }}
 \source{
@@ -17,7 +19,6 @@
 out_of_office
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset containing periods where staff are out of the office
 }
 \keyword{datasets}

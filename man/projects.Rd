@@ -3,21 +3,19 @@
 \docType{data}
 \name{projects}
 \alias{projects}
-\title{Prices of 50,000 round cut diamonds.}
+\title{Data frame of proejct information}
 \format{A data frame with 53940 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
+  \item{project_name}{Project Name}
+  \item{project_confirmed}{Whether the project is confirmed TRUE = confirmed, FALSE = potential work, allows project manager to plan for unconfirmed work}
+  \item{project_start}{Date as character for project start}
+  \item{project_end}{Date of end of project}
   ...
 }}
-\source{
-\url{http://www.diamondse.info/}
-}
 \usage{
 projects
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset of projects, whether they are confirmed, start and end dates
 }
 \keyword{datasets}

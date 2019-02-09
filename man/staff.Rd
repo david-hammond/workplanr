@@ -3,21 +3,18 @@
 \docType{data}
 \name{staff}
 \alias{staff}
-\title{Prices of 50,000 round cut diamonds.}
+\title{Exmaple list of staff}
 \format{A data frame with 53940 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
+  \item{staff_name}{Names of staff}
+  \item{staff_capacity}{Capacity, can be on any scale but easiest to use scale of 100 for full time equivalent, 
+  40 for someone who works two days a week, etc.}
   ...
 }}
-\source{
-\url{http://www.diamondse.info/}
-}
 \usage{
 staff
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset staff_names and staff_capacity
 }
 \keyword{datasets}

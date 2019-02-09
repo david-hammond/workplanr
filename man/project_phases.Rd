@@ -3,21 +3,16 @@
 \docType{data}
 \name{project_phases}
 \alias{project_phases}
-\title{Prices of 50,000 round cut diamonds.}
+\title{Project phases}
 \format{A data frame with 53940 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
+  \item{project_phase_name}{Phases of a project}
   ...
 }}
-\source{
-\url{http://www.diamondse.info/}
-}
 \usage{
 project_phases
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset containing the the project phases
 }
 \keyword{datasets}
