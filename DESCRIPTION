@@ -12,6 +12,7 @@ Depends:
   dplyr (>= 0.7.8)
 Imports:
   tidyr (>= 0.8.2),
+  lubridate (>= 1.7.4),
   bizdays (>= 1.0.6),
   padr (>= 0.4.1),
   RColorBrewer (>= 1.1.2),

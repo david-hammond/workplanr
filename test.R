@@ -27,4 +27,11 @@ assign_staff(db_name = db_name,
 schedule = workplanr::get_schedule(db_name)
 plot_staff_schedule(schedule)
 plot_team_schedule(schedule)
+plot_project_calendar(project = "A", schedule)
+plot_staff_timeline(staff = "Nicholas", schedule)
+plot_phase_days(schedule)
+
+
+
+
 
