@@ -106,7 +106,6 @@ plot_team_schedule = function(tmp){
 #' library(workplanr)
 #' @export
 plot_project_calendar = function(project, schedule){
-  project = "A"
   proj_cal = schedule$full_schedule %>% 
     dplyr::filter(project_name == project) %>%
     dplyr::select(date, project_phase_name)
@@ -139,6 +138,9 @@ plot_project_calendar = function(project, schedule){
     ggplot2::geom_tile(ggplot2::aes(fill=project_phase_name))+
     ggplot2::geom_text(ggplot2::aes(label=ddate))+
     ggplot2::scale_fill_manual(values=c("#8dd3c7","#ffffb3","#fb8072","#d3d3d3"))+
+    ggplot2::geom_point(data = proj_cal[which(as.numeric(abs(proj_cal$days_from_today)) == as.numeric(min(abs(proj_cal$days_from_today))))[1],], 
+                        ggplot2::aes(x=week,y=day), 
+                        size = 16, alpha = 0.4, colour = "#8dd3c7") +
     ggplot2::facet_grid(~month,scales="free",space="free")+
     ggplot2::labs(x="Week",y="", title = paste(main_title)) +
     ggplot2::theme_bw(base_size=10)+
@@ -151,7 +153,9 @@ plot_project_calendar = function(project, schedule){
                    legend.justification="right",
                    legend.direction="horizontal",
                    legend.key.size=ggplot2::unit(0.3,"cm"),
-                   legend.spacing.x=ggplot2::unit(0.2,"cm"))
+                   legend.spacing.x=ggplot2::unit(0.2,"cm")) 
+  
+  
   
   
   return(p)
@@ -169,15 +173,17 @@ plot_staff_timeline <- function(staff, schedule){
     dplyr::filter(staff_name == staff, 
                   dplyr::between(date, 
                                  lubridate::today(), 
-                                 lubridate::today() + 30)) %>% 
+                                 lubridate::today() + 30),
+                  staff_contribution > 0) %>% 
     dplyr::group_by(project_name, project_phase_name) %>%
-    dplyr::summarise(date = max(date)) %>%
+    dplyr::summarise(date = max(date), workload = sum(staff_contribution)) %>%
     dplyr::mutate(deadline = paste(project_name, project_phase_name))
+  
   tmp$dislocations <- sample(c(-1,-0.5,0.5,1), size = nrow(tmp), replace = TRUE)
   main_title = paste("Milestones for", staff, 
                           "over the next month. Next phase shift in", 
                           as.numeric(min(tmp$date) - lubridate::today()), "days")
-  p <- ggplot2::ggplot(tmp) + 
+  p <- ggplot2::ggplot(tmp) + ggplot2::theme_bw() +
     ggrepel::geom_text_repel( ggplot2::aes(x = date, y=dislocations, label = deadline, 
                                                                 colour = project_name), 
                               position="jitter" ) +
@@ -187,7 +193,9 @@ plot_staff_timeline <- function(staff, schedule){
     ggplot2::theme(legend.position = "none", 
                    axis.title.y=ggplot2::element_blank(),
                    axis.text.y=ggplot2::element_blank(),
-                   axis.ticks.y=ggplot2::element_blank()) +
+                   axis.ticks.y=ggplot2::element_blank(),
+                   panel.grid.major = ggplot2::element_blank(), 
+                   panel.grid.minor = ggplot2::element_blank()) +
     ggplot2::labs(title = main_title, x ="", y = "") 
   
   return(p)

@@ -1,4 +1,5 @@
-lapply(list.files("./R/", full.names = T), source)
+#lapply(list.files("./R/", full.names = T), source)
+library(workplanr)
 data("staff", package = "workplanr")
 data("projects", package = "workplanr")
 data("project_phases", package = "workplanr")
@@ -28,7 +29,7 @@ schedule = workplanr::get_schedule(db_name)
 plot_staff_schedule(schedule)
 plot_team_schedule(schedule)
 plot_project_calendar(project = "A", schedule)
-plot_staff_timeline(staff = "Nicholas", schedule)
+plot_staff_timeline(staff = "Nicholas", schedule) 
 plot_phase_days(schedule)
 
 
