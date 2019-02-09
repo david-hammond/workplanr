@@ -28,6 +28,10 @@ init_db = function(db_name = "my_workplan.sqlite"){
               ( `id_project_phase` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
                 `project_phase_name` TEXT)")
   RSQLite::dbClearResult(rs)
+  rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `project_roles` 
+              ( `id_project_role` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+                `project_role_name` TEXT)")
+  RSQLite::dbClearResult(rs)
   rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `out_of_office` 
               ( `id_out_of_office` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
               `id_staff` INTEGER, `out_of_office_start` TEXT, `out_of_office_end` TEXT, 
@@ -40,15 +44,38 @@ init_db = function(db_name = "my_workplan.sqlite"){
   rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `time_estimates` 
               ( `id_time_estimates` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
               `id_project` INTEGER, `id_project_phase` INTEGER, 
-              `time_estimate` INTEGER, FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`) )")
+              `time_estimate` INTEGER, 
+               FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`),
+               FOREIGN KEY(`id_project`) REFERENCES `project_phases`(`id_project`) )")
   RSQLite::dbClearResult(rs)
+  
+  RSQLite::dbClearResult(rs)
+  rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `responsibilites` 
+                             ( `id_responsibilities` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+                             `id_project_phase` INTEGER, `id_project_role` INTEGER, 
+                             `responsibility_span` INTEGER, 
+                             FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`),
+                             FOREIGN KEY(`id_project_role`) REFERENCES `project_phases`(`id_project_role`))")
+  RSQLite::dbClearResult(rs)
+  
   rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `project_assignments` 
               ( `id_project_assignment` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-              `id_project` INTEGER, `id_project_phase` INTEGER, 
+              `id_project` INTEGER, `id_project_phase` INTEGER, `id_project_role` INTEGER, 
               `id_staff` INTEGER, `staff_contribution` INTEGER, 
               FOREIGN KEY(`id_staff`) REFERENCES `staff`(`id_staff`), 
               FOREIGN KEY(`id_project`) REFERENCES `projects`(`id_project`), 
-              FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`) )")
+              FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`) 
+              FOREIGN KEY(`id_project_role`) REFERENCES `project_roles`(`id_project_role`) )")
   RSQLite::dbClearResult(rs)
+  
+  rs <- RSQLite::dbSendQuery(db, statement = "CREATE TABLE `project_unassignments` 
+              ( `id_project_unassignment` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+                             `id_project` INTEGER, `id_project_phase` INTEGER, `id_project_role` INTEGER, 
+                             `staff_name` TEXT, `staff_capacity` INTEGER, `staff_contribution` INTEGER, 
+                             FOREIGN KEY(`id_project`) REFERENCES `projects`(`id_project`), 
+                             FOREIGN KEY(`id_project_role`) REFERENCES `project_roles`(`id_project_role`)
+                             FOREIGN KEY(`id_project_phase`) REFERENCES `project_phases`(`id_project_phase`) )")
+  RSQLite::dbClearResult(rs)
+  
   RSQLite::dbDisconnect(db)
 }

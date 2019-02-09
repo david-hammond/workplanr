@@ -4,7 +4,7 @@
 \alias{remove_staff}
 \title{Remove staff member from project phase}
 \usage{
-remove_staff(db_name, staff_name, project_name, project_phase_name)
+remove_staff(db_name, staff_name, project_name, project_role_name)
 }
 \arguments{
 \item{db_name}{The name of the database to create}

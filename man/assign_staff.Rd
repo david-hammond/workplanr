@@ -4,7 +4,7 @@
 \alias{assign_staff}
 \title{Assign staff member to project phase}
 \usage{
-assign_staff(db_name, staff_name, project_name, project_phase_name,
+assign_staff(db_name, staff_name, project_name, project_role_name,
   staff_contribution)
 }
 \arguments{
@@ -14,7 +14,7 @@ assign_staff(db_name, staff_name, project_name, project_phase_name,
 
 \item{project_name}{project name}
 
-\item{project_phase_name}{project_phase_name}
+\item{project_role_name}{project_phase_name}
 
 \item{staff_contribution}{staff con}
 }

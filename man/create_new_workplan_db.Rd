@@ -4,8 +4,8 @@
 \alias{create_new_workplan_db}
 \title{Populate workplanr database with data}
 \usage{
-create_new_workplan_db(staff, projects, calendar, project_phases,
-  out_of_office, public_holidays, time_estimates,
+create_new_workplan_db(staff, projects, project_phases, project_roles,
+  out_of_office, public_holidays, time_estimates, roles_responsibilites,
   staff_name_for_unassigned_work = "unassigned",
   db_name = "my_workplan.sqlite")
 }
@@ -13,8 +13,6 @@ create_new_workplan_db(staff, projects, calendar, project_phases,
 \item{staff}{Names of staff members}
 
 \item{projects}{Names of projects}
-
-\item{calendar}{Dates of work plan}
 
 \item{project_phases}{List of phases in any project in order of execution}
 
@@ -27,6 +25,8 @@ create_new_workplan_db(staff, projects, calendar, project_phases,
 \item{staff_name_for_unassigned_work}{Dummy staff member to assign work to}
 
 \item{db_name}{name of database to create}
+
+\item{roles_responsibilities}{Data frame for responsibilites of roles across project phases}
 }
 \value{
 TRUE if script exectues completely
