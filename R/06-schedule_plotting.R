@@ -10,21 +10,21 @@ plot_staff_schedule = function(tmp){
   tmp <- tmp$staff_schedule
   myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
                                            space='Lab')
-  p <- ggplot2::ggplot(data = tmp$staff_schedule, ggplot2::aes(date, staff_name, fill = workload)) +
+  p <- ggplot2::ggplot(data = tmp$staff_schedule, 
+                       ggplot2::aes(date, staff_name, fill = workload)) +
     ggplot2::geom_tile(alpha = 0.9) +
-    # ggplot2::scale_x_date(labels = scales::date_format('%b'), 
-    #                       date_breaks = '1 month', 
-    #                       expand = c(0,0)) +
+
     ggplot2::scale_fill_gradientn(colors = myPalette(100), 
                                   labels = scales::percent, name = 'Workload', na.value = "white") +
     ggplot2::labs(x='', y = '', 
-                  title = toupper('STAFF WORKLOAD')) 
+                  title = toupper('STAFF WORKLOAD')) +
+    bdscale::scale_x_bd(business.dates=tmp$staff_schedule$date, max.major.breaks=20,
+                        labels = scales::date_format('%b'), expand = c(0,0))
+  
   
   p <- p + ggrepel::geom_text_repel(data = tmp$projects, 
                                     ggplot2::aes(x = date, y = staff_name, label = project_name), 
-                                    size = 3, hjust = 1) +
-    bdscale::scale_x_bd(business.dates=tmp$staff_schedule$date, max.major.breaks=20,
-                        labels = scales::date_format('%b'), expand = c(0,0))
+                                    size = 3, hjust = 1)   
   
   #add leave
   p <- p + ggplot2::geom_segment(data = tmp$leave, ggplot2::aes(x=start, 

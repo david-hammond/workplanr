@@ -61,14 +61,9 @@ add_project_calendar = function(tmp, db_name){
     dplyr::filter(n > 1) %>%
     dplyr::select(-n)
   
-  tmp = dplyr::left_join(tmp, rs)
+  tmp <- dplyr::left_join(tmp, rs)
   tmp$project_phase_name = as.character(tmp$project_phase_name)
-  if(is.na(tmp$project_name[1])){
-    tmp <- tmp[-(1:min(which(!is.na(tmp$project_name)))), ]
-  }
-  if(is.na(tmp$project_name[nrow(tmp)])){
-    tmp <- tmp[-(nrow(tmp):max(which(!is.na(tmp$project_name)))), ]
-  }
+  tmp <- tmp %>% dplyr::filter(!is.na(project_name))
   RSQLite::dbDisconnect(con)
   return(tmp)
 }
@@ -112,7 +107,6 @@ add_staff_out_of_office = function(tmp, db_name){
 #' @param tmp schedule
 #' @keywords internal
 factor_leave_in_work_allocation = function(tmp){
-  
   tmp <- tmp %>% dplyr::group_by(project_name, project_phase_name, staff_name) %>%
     dplyr::mutate(project_duration = bizdays::bizdays(min(date), max(date), 'normal'), 
            num_holidays = sum(!is.na(unique(holiday_name))),
@@ -124,11 +118,12 @@ factor_leave_in_work_allocation = function(tmp){
     dplyr::ungroup() %>%
     dplyr::mutate(date = as.Date(date)) %>%
     dplyr::filter(!is.na(project_name))
-    
-  tmp$leave_adjusted_workload <- ifelse(is.na(tmp$leave_adjusted_workload), 0, tmp$leave_adjusted_workload)
+  tmp$leave_adjusted_workload <- ifelse(is.na(tmp$leave_adjusted_workload), 0, 
+                                        tmp$leave_adjusted_workload)
   pos = tmp$staff_capacity > 0
   tmp$leave_adjusted_workload[pos] <- tmp$leave_adjusted_workload[pos]/tmp$staff_capacity[pos]
   tmp$staff_capacity[pos] <- tmp$staff_capacity[pos]/tmp$staff_capacity[pos]
+  
   return(tmp)
 }
 
@@ -140,30 +135,27 @@ factor_leave_in_work_allocation = function(tmp){
 get_staff_schedule = function(tmp){
   staff_schedule = tmp %>%
     dplyr::group_by(date, staff_name) %>%
-    dplyr::summarise(workload = sum(leave_adjusted_workload)) %>%
-    dplyr::ungroup() %>%  
-    dplyr::filter(is.finite(workload)) #why inf?
+    dplyr::summarise(workload = sum(staff_contribution)/ifelse(mean(staff_capacity) > 0, 
+                                                               mean(staff_capacity), max(tmp$staff_capacity))) %>%
+    dplyr::ungroup() 
   projects = tmp %>% 
     dplyr::filter(staff_contribution > 0) %>%
     dplyr::group_by(project_name, staff_name) %>%
     dplyr::filter(date == min(as.Date(date))) %>%
-    dplyr::select(project_name, staff_name, date, leave_adjusted_workload) %>%
+    dplyr::select(project_name, staff_name, date, staff_contribution) %>%
     dplyr::group_by(date, staff_name) %>%
     dplyr::distinct() %>%
     dplyr::summarise(project_name = paste(project_name, collapse = ", "),
                      workload = 1) %>%
     dplyr::ungroup() 
   #add leave
-  
   leave <- tmp %>% 
     dplyr::group_by(id_out_of_office, staff_name, out_of_office) %>%
     dplyr::summarise(start = min(date), end = max(date), workload = 1) %>%
     dplyr::filter(!is.na(out_of_office))%>%
     dplyr::ungroup() 
-  
   public_holidays <- tmp %>% 
     dplyr::filter(!is.na(holiday_name))
-  
   tmp = list(staff_schedule = staff_schedule, projects = projects,
              leave = leave, public_holidays = public_holidays)
   return(tmp)
@@ -182,9 +174,9 @@ get_team_schedule = function(tmp){
   team_capacity <- sum(team_capacity$staff_capacity)
   tmp <- tmp %>% 
     dplyr::group_by(date, project_confirmed) %>% 
-    dplyr::summarise(leave_adjusted_workload = sum(leave_adjusted_workload, na.rm=TRUE),
-                     workload = round(leave_adjusted_workload/team_capacity,2)) %>%
-    dplyr::select(-leave_adjusted_workload) %>%
+    dplyr::summarise(staff_contribution = sum(staff_contribution, na.rm=TRUE),
+                     workload = round(staff_contribution/team_capacity,2)) %>%
+    dplyr::select(-staff_contribution) %>%
     dplyr::ungroup() 
   return(tmp)
 }
@@ -198,7 +190,8 @@ get_schedule = function(db_name){
   tmp <- add_project_calendar(tmp, db_name)
   tmp <- add_staff_assignment(tmp, db_name)                            
   tmp <- add_staff_out_of_office(tmp, db_name)
-  tmp <- factor_leave_in_work_allocation(tmp)
+  tmp$date = as.Date(tmp$date)
+#  tmp <- factor_leave_in_work_allocation(tmp)
   schedule <- list()
   schedule$full_schedule <- tmp
   schedule$staff_schedule <- get_staff_schedule(tmp)

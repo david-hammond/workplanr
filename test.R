@@ -25,3 +25,6 @@ assign_staff(db_name = db_name,
              project_role_name = project_assignments$project_role_name,
              staff_contribution = project_assignments$staff_contribution)
 schedule = workplanr::get_schedule(db_name)
+plot_staff_schedule(schedule)
+plot_team_schedule(schedule)
+
