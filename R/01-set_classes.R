@@ -234,8 +234,35 @@ setMethod("as.data.frame", "schedule", definition = function(x){
 #' @slot out_of_office
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
+workplanr_release_schedule <- setClass("release_schedule", slots = c(project_name = "ordered",
+                                                                   project_phase_name = "ordered",
+                                                                   start_date = "Date",
+                                                                   end_date = "Date"))
+
+#' Coerce Object project_teams to a data frame
+#'
+#' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
+#'
+#' @param x A \code{project_teams} object.
+setMethod("as.data.frame", "release_schedule", definition = function(x){
+  x <- data.frame(project_name = x@project_name, project_phase_name = x@project_phase_name,
+                  start_date = x@start_date, end_date = x@end_date)
+  return(x)
+})
+
+#' Base Class for schedule project_assignments
+#'
+#' @slot date List of projects
+#' @slot project_name List of projects
+#' @slot holiday_name
+#' @slot staff_name
+#' @slot workload
+#' @slot id_out_of_office
+#' @slot out_of_office
+#' combination (needs to be at least length(project) x length(roles) in length)
+#' @family classes
 workplanr_staff_schedule <- setClass("staff_schedule", slots = c(date = "Date",
-                                                     staff_name = "character",
+                                                     staff_name = "ordered",
                                                      workload = "numeric",
                                                      project_name = "character", 
                                                      id_out_of_office = "numeric",
@@ -307,100 +334,11 @@ workplanr_class <- setClass("workplan", slots =  list(staff = "staff",
                                                project_assignments = "project_assignments",
                                                project_unassignments = "project_assignments",
                                                schedule = "schedule",
+                                               release_schedule = "release_schedule",
                                                staff_schedule = "staff_schedule",
                                                team_schedule = "team_schedule"))
 
-#' #' Coerce Object workplan to a list of data frames
-#' #'
-#' #' @description Coerce Object workplan to a list of data frames, avoiding using the "slot" notation.
-#' #'
-#' #' @param x A \code{workplan} object.
-#' #' @export
-#' setMethod("as.list", "workplan", definition = function(x){
-#'   x = list(
-#'     resources = as.data.frame(x@resources),
-#'     projects = as.data.frame(x@projects),
-#'     phases = as.data.frame(x@phases),
-#'     roles = as.data.frame(x@roles),
-#'     leave = as.data.frame(x@leave),
-#'     holidays = as.data.frame(x@holidays),
-#'     responsibilities = as.data.frame(x@responsibilities),
-#'     time_estimates = as.data.frame(x@time_estimates),
-#'     project_teams = as.data.frame(x@project_teams),
-#'     full_schedule = as.data.frame(x@full_schedule),
-#'     staff_schedule = as.data.frame(x@staff_schedule),
-#'     team_schedule = as.data.frame(x@team_schedule))
-#'   return(x)
-#' })
 
-
-#' 
-#' #' Base Class for workplan full_schedule
-#' #'
-#' #' @slot projects List of projects
-#' #' @slot phases List of phases in any project in order of execution
-#' #' @slot date Day wourk occurs on
-#' #' @slot role Roles of projects
-#' #' @slot staff Assigned staff to each [project, role] combination 
-#' #' @slot assigned_capacity Amount of time each staff is expected to dedicate to each [project, role] 
-#' #' @slot capacity Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week
-#' #' @slot public_holiday = "character"
-#' #' @slot out_of_office = "character" 
-#' #' @slot project_duration = "numeric"
-#' #' @slot num_holidays = "numeric" 
-#' #' @slot holiday_expansion_factor = "numeric"
-#' #' @slot num_out_of_office = "numeric" 
-#' #' @slot leave_expansion_factor = "numeric"
-#' #' @slot leave_adjusted_workload = "numeric"
-#' #' @family classes
-#' full_sched <- setClass("full_schedule", slots = c(date = "Date", project = "ordered", phase = "ordered", 
-#'                                                   role = "ordered", staff = "character", assigned_capacity = "numeric",
-#'                                                   capacity = "numeric", public_holiday = "character",
-#'                                                   out_of_office = "character", project_duration = "numeric",
-#'                                                   num_holidays = "numeric", holiday_expansion_factor = "numeric",
-#'                                                   num_out_of_office = "numeric", leave_expansion_factor = "numeric",
-#'                                                   leave_adjusted_workload = "numeric"))
-#' 
-#' #' Coerce Object full_schedule to a data frame
-#' #'
-#' #' @description Coerce Object full_schedule to a data frame, avoiding using the "slot" notation.
-#' #'
-#' #' @param x A \code{full_schedule} object.
-#' setMethod("as.data.frame", "full_schedule", definition = function(x){
-#'   x <- data.frame(date = x@date, project = x@project, phase = x@phase,
-#'                   role = x@role, staff = x@staff, assigned_capacity = x@assigned_capacity, capacity = x@capacity,
-#'                   public_holiday = x@public_holiday, out_of_office = x@out_of_office, project_duration = x@project_duration,
-#'                   num_holidays = x@num_holidays, holiday_expansion_factor = x@holiday_expansion_factor,
-#'                   num_out_of_office = x@num_out_of_office, leave_expansion_factor = x@leave_expansion_factor,
-#'                   leave_adjusted_workload = x@leave_adjusted_workload)
-#'   return(x)
-#' })
-#' 
-#' 
-#' #' Base Class for workplan staff_schedule
-#' #'
-#' #' @slot date Day work occurs on
-#' #' @slot staff Assigned staff to each [project, role] combination 
-#' #' @slot projects Names of projects
-#' #' @slot workload Amount of work assigned to staff member 
-#' #' @slot out_of_office Whether a staff member is out of office on a date
-#' #' @slot public_holiday Whether a day is a public holiday
-#' #' @family classes
-#' staff_sched <- setClass("staff_schedule", slots = c(date = "Date", staff = "character", project = "character", workload= "numeric",
-#'                                                     out_of_office = "character", 
-#'                                                     public_holiday = "character"))
-#' 
-#' #' Coerce Object staff_schedule to a data frame
-#' #'
-#' #' @description Coerce Object staff_schedule to a data frame, avoiding using the "slot" notation.
-#' #'
-#' #' @param x A \code{staff_schedule} object.
-#' setMethod("as.data.frame", "staff_schedule", definition = function(x){
-#'   x <- data.frame(date = x@date, staff = x@staff, project = x@project, workload = x@workload, 
-#'                   out_of_office = x@out_of_office, public_holiday = x@public_holiday)
-#'   return(x)
-#' })
-#' 
 #' Coerce Object staff_schedule to a ggplot
 #'
 #' @description Coerce Object full_schedule to ggplot, avoiding using the "slot" notation.
@@ -418,10 +356,14 @@ setMethod("plot", "staff_schedule", definition = function(x){
                                   labels = scales::percent, name = 'Workload', na.value = "white") +
     ggplot2::labs(x='', y = '', 
                   title = toupper('STAFF WORKLOAD')) +
-    bdscale::scale_x_bd(business.dates=tmp$date, max.major.breaks=20,
-                        labels = scales::date_format('%b'), expand = c(0,0))
-  
-  p <- p + ggrepel::geom_text_repel(data = tmp[!is.na(tmp$project_name), ], 
+    ggplot2::scale_x_date(labels = scales::date_format('%b'), 
+                          date_breaks = '1 month', 
+                         expand = c(0,0))
+  project_labels <- tmp %>% 
+    dplyr::select(date, staff_name, project_name, workload) %>%
+    dplyr::distinct() %>% 
+    dplyr::filter(!is.na(project_name))
+  p <- p + ggrepel::geom_text_repel(data = project_labels, 
                                     ggplot2::aes(x = date, y = staff_name, label = project_name), 
                                     size = 3, hjust = 1)   
 
@@ -444,77 +386,102 @@ setMethod("plot", "staff_schedule", definition = function(x){
   public_holidays <- tmp %>% 
     dplyr::filter(!is.na(holiday_name)) 
   p <- p + ggplot2::geom_vline(xintercept = public_holidays$date,
-                               linetype = "dashed", colour = grey(0.5), alpha = 0.6)
+                               linetype = "dashed", colour = grey(0.5), alpha = 0.6) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
   return(p)
 })
-#' 
-#' #' Base Class for workplan team_schedule
-#' #'
-#' #' @slot date Day wourk occurs on
-#' #' @slot workload Amount of work assigned to staff member 
-#' #' @family classes
-#' team_sched <- setClass("team_schedule", slots = c(date = "Date", workload= "numeric"))
-#' 
-#' #' Coerce Object team_schedule to a data frame
-#' #'
-#' #' @description Coerce Object team_schedule to a data frame, avoiding using the "slot" notation.
-#' #'
-#' #' @param x A \code{team_schedule} object.
-#' setMethod("as.data.frame", "team_schedule", definition = function(x){
-#'   x <- data.frame(date = x@date, workload = x@workload)
-#'   return(x)
-#' })
-#' 
-#' 
-#' #' Coerce Object team_schedule to a ggplot
-#' #'
-#' #' @description Coerce Object team_schedule to ggplot, avoiding using the "slot" notation.
-#' #'
-#' #' @param x A \code{team_schedule} object.
-#' #' @export
-#' setMethod("plot", "team_schedule", definition = function(x){
-#'   x <- as.data.frame(x)
-#'   x$maxcapacity <- ifelse(x$workload > 1, 1, x$workload)
-#'   x$teamload <- ifelse(x$workload > 1, "Overloaded", "Covered")
-#'   gg_red <- "#F8766D"
-#'   gg_blue <- "#00BFC4"
-#'   
-#'   # base layer
-#'   p <- ggplot2::ggplot(x, ggplot2::aes(date, workload, fill = teamload)) +
-#'     ggplot2::geom_bar(stat = 'identity',  show.legend = T) +
-#'     ggplot2::scale_fill_manual(values = c(gg_blue, gg_red)) +
-#'     ggplot2::scale_y_continuous(labels = scales::percent) +
-#'     ggplot2::scale_x_date(labels = scales::date_format('%b'), date_breaks = '1 month',
-#'                           expand = c(0,0)) +
-#'     ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD')
-#'   
-#'   
-#'   p <- p + ggplot2::geom_bar(data = x, 
-#'                              ggplot2::aes(date, maxcapacity),
-#'                              stat = 'identity', fill = gg_blue)
-#'   
-#'   return(p)
-#' })
-#' 
-#' 
-#' 
-#' 
 
-#' 
-#' #' Create Excel file for project inputs
-#' #' 
-#' #' This function creates an excel file that can be used to create a new project
-#' #' @param wp Complete workplan object
-#' #' @param excel_file_name File name for project inputs
-#' #' @return NULL
-#' #' @examples 
-#' #' library(workplanr)
-#' #' @export 
-#' create_project_file = function(wp, excel_file_name = "my_project.xlsx"){
-#'   wp = as.list(wp)
-#'   for (i in names(wp)){
-#'     rio::export(wp[[i]], file = excel_file_name, which = i)
-#'   }
-#'   return(NULL)
-#' }
+#' Coerce Object team_schedule to a ggplot
+#'
+#' @description Coerce Object team_schedule to ggplot, avoiding using the "slot" notation.
+#'
+#' @param x A \code{team_schedule} object.
+#' @export
+setMethod("plot", "team_schedule", definition = function(x){
+  tmp <- as.data.frame(x)
+  pos <- tmp$workload == 0
+  tmp$project_confirmed[pos] <- 1
+  worktypes <- c("Potential", "Planned")
+  tmp$project_confirmed = worktypes[tmp$project_confirmed+1]
+  tmp$project_confirmed = factor(tmp$project_confirmed, worktypes, ordered = TRUE)
+  tmp <- tmp %>% dplyr::group_by(date) %>% 
+    dplyr::mutate(total = sum(workload)) %>%
+    dplyr::ungroup() 
+  tmp <- tmp %>% dplyr::group_by(date, project_confirmed) %>% 
+    dplyr::mutate(Work = min(workload, 1), Deficit = ifelse(workload > 1, workload-1, 0)) %>%
+    dplyr::ungroup() %>% dplyr::select(-workload) %>%
+    tidyr::gather(load, value, -c(date, project_confirmed, total)) %>%
+    dplyr::distinct()
+  gg_red <- "#F8766D"
+  gg_blue <- "#00BFC4"
+  cols = c(scales::alpha(gg_red, 0.5),   scales::alpha(gg_blue, 0.5),gg_red, gg_blue)
+  tmp$group = paste(tmp$project_confirmed, tmp$load)
+  
+  tmp <- tmp %>% dplyr::select(date, group, value) %>% 
+    tidyr::spread(group, value, fill = 0)
+  
+  pos <- tmp$`Planned Work` == 1
+  tmp$`Potential Deficit`[pos] = tmp$`Potential Deficit`[pos] + tmp$`Potential Work`[pos]
+  tmp$`Potential Work`[pos] = 0
+  
+  total_potential <- tmp$`Potential Deficit` + tmp$`Potential Work`
+  pos <- tmp$`Planned Deficit` == 0 & (tmp$`Planned Work` + total_potential) > 1
+  tmp$`Potential Work`[pos] <- 1 - tmp$`Planned Work`[pos] 
+  tmp$`Potential Deficit`[pos] <- total_potential[pos] - tmp$`Potential Work`[pos]
+  
+  tmp <- tmp %>% tidyr::gather(group, value, -date)
+  
+  tmp$group = factor(tmp$group, levels = sort(unique(tmp$group))[c(3,4,1,2)], ordered = T)
+  
+  # base layer
+  p <- ggplot2::ggplot(tmp, ggplot2::aes(x = date, y = value, fill =  group)) +
+    ggplot2::geom_bar(stat = 'identity',  show.legend = T) + 
+    ggplot2::scale_fill_manual(values = cols) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
+    ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD', fill = "")  +
+    ggplot2::scale_x_date(labels = scales::date_format('%b'), 
+                          date_breaks = '1 month', 
+                          expand = c(0,0))
+
+  return(p)
+})
+
+#' Coerce Object team_schedule to a ggplot
+#'
+#' @description Coerce Object team_schedule to ggplot, avoiding using the "slot" notation.
+#'
+#' @param x A \code{team_schedule} object.
+#' @export
+setMethod("plot", "release_schedule", definition = function(x){
+  tmp <- as.data.frame(x)
+  tmp$days_left <- (tmp$end_date - tmp$start_date)
+  pos <- tmp$start_date < lubridate::today()
+  tmp$days_left[pos] <- tmp$end_date[pos] - lubridate::today() 
+  tmp$days_left <- ifelse(tmp$days_left < 0, NA, tmp$days_left)
+  tmp$mid <- tmp$start_date +(tmp$end_date - tmp$start_date)/2
+  
+  
+  p <- ggplot2::ggplot(tmp, ggplot2::aes(colour=project_phase_name))
+  p <- p + ggplot2::geom_segment(ggplot2::aes(x=start_date, 
+                                              xend=end_date, 
+                                              y=project_name, 
+                                              yend=project_name), 
+                                 size=10) +
+    ggplot2::scale_x_date(labels = scales::date_format('%b'), 
+                          date_breaks = '1 month', 
+                          expand = c(0,0)) +
+    ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
+  p <- p + ggrepel::geom_label_repel(ggplot2::aes(x = mid, y = project_name, label = days_left), force = 5,
+                                     show.legend = FALSE) +
+    ggplot2::theme_bw()+
+    ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"),
+                   legend.position = c(0.7,0.9), legend.direction = "horizontal") +
+    ggplot2::labs(title = "Release schedule and days left in each phase", x = "", y = "", colour = "Project Phases")
+  
+
+  return(p)
+})
 

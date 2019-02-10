@@ -17,18 +17,17 @@ my_workplan = create_new_workplan(staff = staff,
                        time_estimates = time_estimates,
                        roles_responsibilities = roles_responsibilities,
                        staff_name_for_unassigned_work = "unassigned")
-
+plot(my_workplan@release_schedule)
 data("project_assignments", package = "workplanr")
 my_workplan2 <- assign_staff(workplan = my_workplan, 
              staff_name = project_assignments$staff_name,
              project_name = project_assignments$project_name,
              project_role_name = project_assignments$project_role_name,
              staff_contribution = project_assignments$staff_contribution)
-plot_staff_schedule(schedule)
-plot_team_schedule(schedule)
+plot(my_workplan2@staff_schedule)
+plot(my_workplan2@team_schedule)
 plot_project_calendar(project = "A", schedule)
-plot_staff_timeline(staff = "Nicholas", schedule) 
-plot_phase_days(schedule)
+
 
   
 

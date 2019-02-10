@@ -66,7 +66,7 @@ add_project_assignments = function(schedule, workplan){
 #' @param tmp schedule
 #' @keywords internal
 add_staff_out_of_office = function(schedule, workplan){
-  tmp <- as.data.frame(wplan@out_of_office)
+  tmp <- as.data.frame(workplan@out_of_office)
   tmp <- tmp %>% 
     tidyr::gather(date_type, date, -c(id_out_of_office, staff_name, work_related)) %>%
     dplyr::group_by(id_out_of_office, staff_name, work_related) %>%
@@ -134,9 +134,11 @@ get_staff_schedule = function(workplan){
     dplyr::select(date, staff_name, id_out_of_office, out_of_office, holiday_name) 
   staff_schedule <- staff_schedule %>%
     dplyr::left_join(tmp)
-  
+  staff_schedule$staff_name <- factor(staff_schedule$staff_name, 
+                                      levels = c(rev(workplan@staff@staff_name), unique(workplan@project_unassignments@staff_name)),
+                                      ordered = TRUE)
   staff_schedule <- workplanr_staff_schedule(date = as.Date(staff_schedule$date),
-                                             staff_name = as.character(staff_schedule$staff_name),
+                                             staff_name = staff_schedule$staff_name,
                                              workload = as.numeric(staff_schedule$workload),
                                              project_name = as.character(staff_schedule$project_name),
                                              id_out_of_office = as.numeric(staff_schedule$id_out_of_office),
@@ -169,8 +171,25 @@ get_team_schedule = function(workplan){
   return(tmp)
 }
 
+get_release_schedule = function(workplan){
+  tmp <- as.data.frame(workplan@schedule) %>%
+    dplyr::select(date, project_name, project_phase_name) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(days_until = lubridate::today() - date) %>%
+    dplyr::group_by(project_name, project_phase_name) %>%
+    dplyr::summarise(start_date = min(date), end_date = max(date)) %>%
+    dplyr::arrange(end_date)%>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(project_name = factor(project_name, rev(unique(project_name)), ordered = T))
+  tmp <- workplanr_release_schedule(project_name = tmp$project_name,
+                                    project_phase_name = tmp$project_phase_name,
+                                    start_date = tmp$start_date,
+                                    end_date = tmp$end_date)
+  return(tmp)
+}
 calculate_workplan = function(workplan){
   workplan@schedule <- get_schedule(workplan)
+  workplan@release_schedule <- get_release_schedule(workplan)
   workplan@staff_schedule <- get_staff_schedule(workplan)
   workplan@team_schedule <- get_team_schedule(workplan)
   return(workplan)
