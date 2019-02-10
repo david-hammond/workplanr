@@ -21,7 +21,8 @@ Imports:
   scales (>= 1.0.0),
   grDevices (>= 3.4.3),
   RSQLite (>= 2.1.1),
-  bdscale (>= 2.0.0)
+  bdscale (>= 2.0.0),
+  igraph (>= 1.2.2)
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: knitr,

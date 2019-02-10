@@ -87,4 +87,11 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c( "date_type",
                                                          "due_date",
                                                          "due_days",
                                                          "week",
-                                                         "days_from_today"), add = FALSE)
+                                                         "days_from_today",
+                                                         "influence", 
+                                                         "int",
+                                                         "phases",
+                                                         "project_name_2",
+                                                         "projects",
+                                                         "task_date",
+                                                         "x.breaks"), add = FALSE)
