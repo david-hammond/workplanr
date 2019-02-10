@@ -28,6 +28,16 @@ get_project_phases = function(db_name = "my_workplan.sqlite"){
   RSQLite::dbDisconnect(con)
   return(rs)
 }
+#' Get project_roles table
+#'
+#' @param db_name The name of the database to create 
+#' @keywords internal
+get_project_roles = function(db_name = "my_workplan.sqlite"){
+  con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
+  rs <- RSQLite::dbReadTable(con, "project_roles")
+  RSQLite::dbDisconnect(con)
+  return(rs)
+}
 #' Get out_of_office table
 #'
 #' @param db_name The name of the database to create 
@@ -81,11 +91,26 @@ get_time_estimates = function(db_name = "my_workplan.sqlite"){
 #' @keywords internal
 get_project_assignments = function(db_name = "my_workplan.sqlite"){
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
-  rs <- RSQLite::dbGetQuery(con, "SELECT project_name, project_phase_name, staff_name, staff_capacity, staff_contribution
+  rs <- RSQLite::dbGetQuery(con, "SELECT project_name, project_phase_name, project_role_name, staff_name, staff_capacity, staff_contribution
                                                               FROM project_assignments 
                              INNER JOIN projects ON projects.id_project = project_assignments.id_project
                              INNER JOIN project_phases ON project_phases.id_project_phase =  project_assignments.id_project_phase
-                             INNER JOIN staff ON staff.id_staff =  project_assignments.id_staff;")
+                             INNER JOIN staff ON staff.id_staff =  project_assignments.id_staff
+                             INNER JOIN project_roles ON project_roles.id_project_role = project_assignments.id_project_role;")
+  RSQLite::dbDisconnect(con)
+  return(rs)
+}
+#' Get project_assignments table
+#'
+#' @param db_name The name of the database to create 
+#' @keywords internal
+get_project_unassignments = function(db_name = "my_workplan.sqlite"){
+  con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname= db_name)
+  rs <- RSQLite::dbGetQuery(con, "SELECT project_name, project_phase_name, project_role_name, staff_name, staff_capacity, staff_contribution
+                            FROM project_unassignments 
+                            INNER JOIN projects ON projects.id_project = project_unassignments.id_project
+                            INNER JOIN project_phases ON project_phases.id_project_phase =  project_unassignments.id_project_phase
+                            INNER JOIN project_roles ON project_roles.id_project_role = project_unassignments.id_project_role;")
   RSQLite::dbDisconnect(con)
   return(rs)
 }
