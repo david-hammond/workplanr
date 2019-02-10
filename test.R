@@ -8,8 +8,7 @@ data("out_of_office", package = "workplanr")
 data("public_holidays", package = "workplanr")
 data("time_estimates", package = "workplanr")
 data("roles_responsibilities", package = "workplanr")
-db_name = "my_workplan.sqlite"
-create_new_workplan_db(staff = staff,
+my_workplan = create_new_workplan(staff = staff,
                        projects = projects,
                        project_phases = project_phases,
                        project_roles = project_roles,
@@ -17,15 +16,14 @@ create_new_workplan_db(staff = staff,
                        public_holidays = public_holidays,
                        time_estimates = time_estimates,
                        roles_responsibilities = roles_responsibilities,
-                       staff_name_for_unassigned_work = "unassigned",
-                       db_name = db_name)
+                       staff_name_for_unassigned_work = "unassigned")
+
 data("project_assignments", package = "workplanr")
-assign_staff(db_name = db_name, 
+my_workplan2 <- assign_staff(workplan = my_workplan, 
              staff_name = project_assignments$staff_name,
              project_name = project_assignments$project_name,
              project_role_name = project_assignments$project_role_name,
              staff_contribution = project_assignments$staff_contribution)
-schedule = workplanr::get_schedule(db_name)
 plot_staff_schedule(schedule)
 plot_team_schedule(schedule)
 plot_project_calendar(project = "A", schedule)
