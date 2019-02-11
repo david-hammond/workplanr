@@ -43,7 +43,9 @@ plot(irene_workplan@team_schedule)
 plot(irene_workplan@release_schedule)
 
 plot(my_workplan@release_schedule)
-my_workplan <- shift_project(project = "D", by = 20, workplan = my_workplan) #does not work
+plot(my_workplan@staff_schedule)
+plot(my_workplan@team_schedule)
+my_workplan <- shift_project(project = "D", by = 40, workplan = my_workplan) #does not work
 plot(my_workplan@release_schedule)
 plot(my_workplan@staff_schedule)
 plot(my_workplan@team_schedule)
