@@ -8,9 +8,9 @@
 #' @export
 shift_project = function(project, by = NULL, new_start_date = NULL, new_end_date = NULL, workplan){
   testthat::expect(length(project) == max((c(length(by), length(new_start_date), length(new_end_date)))),
-                   message = "number of projects does not match shift variables")
+                   failure_message = "number of projects does not match shift variables")
   testthat::expect(!(is.null(by) & is.null(new_start_date) & is.null(new_end_date)),
-                   message = "You need to enter either a 'by' value, a 'new_start_date' value or a 'new_end_date' value")
+                   failure_message = "You need to enter either a 'by' value, a 'new_start_date' value or a 'new_end_date' value")
   cals <- bizdays::create.calendar('normal', 
                                    weekdays = c('saturday', 'sunday'), 
                                    holidays = workplan@public_holidays@date,

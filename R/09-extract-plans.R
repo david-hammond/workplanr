@@ -5,7 +5,8 @@
 #' @param workplan schedule
 #' @export
 extract_project_schedule = function(project, workplan){
-  testthat::expect(project %in% workplan@projects@project_name, message = "Project not in workplan")
+  testthat::expect(project %in% workplan@projects@project_name, 
+                   failure_message = "Project not in workplan")
   new_workplan <- new("workplan")
   for (i in setdiff(slotNames(workplan), c("schedule", "release_schedule", "staff_schedule", "team_schedule"))){
     tmp <- slot(workplan, i)
@@ -29,7 +30,8 @@ extract_project_schedule = function(project, workplan){
 #' @param workplan schedule
 #' @export
 extract_staff_schedule = function(staff, workplan){
-  testthat::expect(staff %in% workplan@staff@staff_name, message = "Staff not in workplan")
+  testthat::expect(staff %in% workplan@staff@staff_name, 
+                   failure_message = "Staff not in workplan")
   new_workplan <- new("workplan")
   for (i in setdiff(slotNames(workplan), c("schedule", "release_schedule", "staff_schedule", "team_schedule"))){
     tmp <- slot(workplan, i)
