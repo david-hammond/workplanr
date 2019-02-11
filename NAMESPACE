@@ -2,6 +2,8 @@
 
 export(assign_staff)
 export(create_new_workplan)
+export(extract_project_schedule)
+export(extract_staff_schedule)
 export(get_related_projects)
 export(get_schedule)
 export(plot_phase_days)

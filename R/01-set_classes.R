@@ -402,38 +402,37 @@ setMethod("plot", "staff_schedule", definition = function(x){
 setMethod("plot", "team_schedule", definition = function(x){
   tmp <- as.data.frame(x)
   pos <- tmp$workload == 0
-  tmp$project_confirmed[pos] <- 1
-  worktypes <- c("Potential", "Planned")
-  tmp$project_confirmed = worktypes[tmp$project_confirmed+1]
-  tmp$project_confirmed = factor(tmp$project_confirmed, worktypes, ordered = TRUE)
-  tmp <- tmp %>% dplyr::group_by(date) %>% 
-    dplyr::mutate(total = sum(workload)) %>%
-    dplyr::ungroup() 
-  tmp <- tmp %>% dplyr::group_by(date, project_confirmed) %>% 
-    dplyr::mutate(Work = min(workload, 1), Deficit = ifelse(workload > 1, workload-1, 0)) %>%
-    dplyr::ungroup() %>% dplyr::select(-workload) %>%
-    tidyr::gather(load, value, -c(date, project_confirmed, total)) %>%
+  tmp$project_confirmed[pos] <- TRUE
+  tmp <- tmp %>%
+    dplyr::group_by(date) %>%
+    dplyr::mutate(planned_work = sum(workload[project_confirmed]),
+                  planned_deficit = ifelse(planned_work > 1, planned_work - 1, 0),
+                  potential_work = sum(workload[!project_confirmed]),
+                  potential_deficit = ifelse(potential_work  > 1, potential_work - 1, 0),
+                  total_potential = potential_work +  potential_deficit) %>%
+    dplyr::ungroup()
+  pos <- tmp$planned_work > 1
+  tmp$planned_work[pos] <- 1
+  tmp$potential_deficit[pos] = tmp$potential_deficit[pos] + tmp$potential_work[pos]
+  tmp$potential_work[pos] = 0
+
+  pos <- tmp$planned_deficit == 0 & (tmp$planned_work + tmp$total_potential) > 1
+  tmp$potential_work[pos] <- 1 - tmp$planned_work[pos] 
+  tmp$potential_deficit[pos] <- tmp$total_potential[pos] - tmp$potential_work[pos]
+  
+  tmp <- tmp %>% 
+    dplyr::select(-c(project_confirmed, workload, total_potential)) %>% 
+    tidyr::gather(group, value, -date) %>%
     dplyr::distinct()
   gg_red <- "#F8766D"
   gg_blue <- "#00BFC4"
   cols = c(scales::alpha(gg_red, 0.5),   scales::alpha(gg_blue, 0.5),gg_red, gg_blue)
-  tmp$group = paste(tmp$project_confirmed, tmp$load)
-  
-  tmp <- tmp %>% dplyr::select(date, group, value) %>% 
-    tidyr::spread(group, value, fill = 0)
-  
-  pos <- tmp$`Planned Work` == 1
-  tmp$`Potential Deficit`[pos] = tmp$`Potential Deficit`[pos] + tmp$`Potential Work`[pos]
-  tmp$`Potential Work`[pos] = 0
-  
-  total_potential <- tmp$`Potential Deficit` + tmp$`Potential Work`
-  pos <- tmp$`Planned Deficit` == 0 & (tmp$`Planned Work` + total_potential) > 1
-  tmp$`Potential Work`[pos] <- 1 - tmp$`Planned Work`[pos] 
-  tmp$`Potential Deficit`[pos] <- total_potential[pos] - tmp$`Potential Work`[pos]
-  
-  tmp <- tmp %>% tidyr::gather(group, value, -date)
-  
-  tmp$group = factor(tmp$group, levels = sort(unique(tmp$group))[c(3,4,1,2)], ordered = T)
+  tmp$group <- gsub("_", " ", tmp$group)
+  tmp$group <- gsub("(?<=\\b)([a-z])", "\\U\\1", tolower(tmp$group), perl=TRUE)
+  tmp$group = factor(tmp$group, levels = rev(c("Planned Work",
+                                           "Planned Deficit",
+                                           "Potential Work",
+                                           "Potential Deficit")), ordered = T)
   
   # base layer
   p <- ggplot2::ggplot(tmp, ggplot2::aes(x = date, y = value, fill =  group)) +
@@ -473,7 +472,8 @@ setMethod("plot", "release_schedule", definition = function(x){
                           date_breaks = '1 month', 
                           expand = c(0,0)) +
     ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
-  p <- p + ggrepel::geom_label_repel(ggplot2::aes(x = mid, y = project_name, label = days_left), force = 5,
+  p <- p + ggrepel::geom_label_repel(data = tmp[!is.na(tmp$days_left),], 
+                                     ggplot2::aes(x = mid, y = project_name, label = days_left), force = 5,
                                      show.legend = FALSE) +
     ggplot2::theme_bw() +
     ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),

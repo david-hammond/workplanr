@@ -16,27 +16,41 @@ calculate_start_and_end_dates = function(workplan){
   
   #post end activities
   pos <- tmp$time_estimate > 0
+  if(sum(pos) > 0){
+    post_project_end_phases <- tmp[pos,]
+    post_project_end_phases <- post_project_end_phases %>%
+      dplyr::group_by(project_name) %>%
+      dplyr::mutate(time_from_project_end = cumsum(time_estimate),
+                    time_from_phase_end = -time_estimate,
+                    phase_end = bizdays::offset(project_end, time_from_project_end, 'normal'),
+                    phase_start = bizdays::offset(phase_end, time_from_phase_end, 'normal')) %>%
+      dplyr::ungroup()
+    
+    pre_project_end_phases <- tmp[!pos,]
+    pre_project_end_phases <- pre_project_end_phases %>%
+      dplyr::group_by(project_name) %>% 
+      dplyr::arrange(project_name, desc(project_phase_name)) %>%
+      dplyr::mutate(time_from_project_end = cumsum(time_estimate),
+                    time_from_phase_end = -time_estimate,
+                    phase_start = bizdays::offset(project_end, time_from_project_end, 'normal'),
+                    phase_end = bizdays::offset(phase_start, time_from_phase_end, 'normal')) %>%
+      dplyr::ungroup()
+    
+    tmp <- rbind(pre_project_end_phases, post_project_end_phases)
+  }else{
+    tmp <- tmp %>%
+      dplyr::group_by(project_name) %>% 
+      dplyr::arrange(project_name, desc(project_phase_name)) %>%
+      dplyr::mutate(time_from_project_end = cumsum(time_estimate),
+                    time_from_phase_end = -time_estimate,
+                    phase_start = bizdays::offset(project_end, time_from_project_end, 'normal'),
+                    phase_end = bizdays::offset(phase_start, time_from_phase_end, 'normal')) %>%
+      dplyr::ungroup()
+  }
   
-  post_project_end_phases <- tmp[pos,]
-  post_project_end_phases <- post_project_end_phases %>%
-    dplyr::group_by(project_name) %>%
-    dplyr::mutate(time_from_project_end = cumsum(time_estimate),
-                  time_from_phase_end = -time_estimate,
-                  phase_end = bizdays::offset(project_end, time_from_project_end, 'normal'),
-                  phase_start = bizdays::offset(phase_end, time_from_phase_end, 'normal')) %>%
-    dplyr::ungroup()
   
-  pre_project_end_phases <- tmp[!pos,]
-  pre_project_end_phases <- pre_project_end_phases %>%
-    dplyr::group_by(project_name) %>% 
-    dplyr::arrange(project_name, desc(project_phase_name)) %>%
-    dplyr::mutate(time_from_project_end = cumsum(time_estimate),
-                  time_from_phase_end = -time_estimate,
-                  phase_start = bizdays::offset(project_end, time_from_project_end, 'normal'),
-                  phase_end = bizdays::offset(phase_start, time_from_phase_end, 'normal')) %>%
-    dplyr::ungroup()
   
-  tmp <- rbind(pre_project_end_phases, post_project_end_phases)
+
   #allow for extra time if numbers dont add up
   # pos <- tmp$phase_start > tmp$project_start
   # tmp$phase_start[pos] <-  tmp$project_start[pos]
@@ -90,7 +104,7 @@ add_staff_out_of_office = function(schedule, workplan){
     dplyr::mutate(out_of_office = ifelse(as.numeric(out_of_office) == 1, "Work", "Vacation"),
                   date = as.Date(date)) %>%
     dplyr::mutate(staff_name = as.character(staff_name))
-  schedule <- schedule %>%
+  schedule2 <- schedule %>%
     dplyr::left_join(tmp) 
   return(schedule)
 }
