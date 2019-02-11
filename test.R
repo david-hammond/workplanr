@@ -30,6 +30,7 @@ my_workplan <- assign_staff(workplan = my_workplan,
 plot(my_workplan@release_schedule)
 plot(my_workplan@staff_schedule)
 plot(my_workplan@team_schedule)
+plot(my_workplan@project_dependencies)
 
 project_workplan <- extract_project_schedule(project = "C", my_workplan)
 plot(project_workplan@release_schedule)

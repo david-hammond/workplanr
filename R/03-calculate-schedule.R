@@ -212,11 +212,52 @@ get_release_schedule = function(workplan){
                                     end_date = tmp$end_date)
   return(tmp)
 }
+
+#' Initialise schedule table
+#'
+#' @param db_name The name of the database to create 
+#' @export
+get_project_dependencies = function(workplan){
+  if(length(workplan@staff@staff_name)>1){
+  tmp <- as.data.frame(workplan@schedule)
+  tmp <- tmp %>% 
+    dplyr::select(date, project_name, staff_name) %>%
+    dplyr::filter(staff_name != unique(workplan@project_unassignments@staff_name)) %>%
+    dplyr::group_by(project_name) %>%
+    dplyr::mutate(staff_days_assigned_project_a = n()) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(staff_month = paste(staff_name, lubridate::month(date))) %>%
+    dplyr::select(-c(staff_name, date)) %>%
+    dplyr::rename(project_a = project_name)
+  tmp2 <- tmp %>%
+    dplyr::rename(project_b = project_a,
+                  staff_days_assigned_project_b = staff_days_assigned_project_a) 
+  tmp <- tmp %>%
+    dplyr::left_join(tmp2) %>%
+    dplyr::filter(project_a != project_b) %>%
+    dplyr::group_by(project_a, project_b, 
+                    staff_days_assigned_project_a,
+                    staff_days_assigned_project_b) %>%
+    dplyr::summarise(dependence_level = n())
+  
+  tmp <- workplanr_project_dependencies(project_a = tmp$project_a,
+                                        project_b = tmp$project_b,
+                                        staff_days_assigned_project_a = tmp$staff_days_assigned_project_a,
+                                        staff_days_assigned_project_b = tmp$staff_days_assigned_project_b,
+                                        dependence_level = tmp$dependence_level)
+  }else{
+    tmp <- new("project_dependencies")
+  }
+  
+  
+  return(tmp)
+}
 calculate_workplan = function(workplan){
   workplan@schedule <- get_schedule(workplan)
   workplan@release_schedule <- get_release_schedule(workplan)
   workplan@staff_schedule <- get_staff_schedule(workplan)
   workplan@team_schedule <- get_team_schedule(workplan)
+  workplan@project_dependencies <- get_project_dependencies(workplan)
   return(workplan)
 }
 

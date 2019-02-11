@@ -304,6 +304,36 @@ setMethod("as.data.frame", "team_schedule", definition = function(x){
   return(x)
 })
 
+#' Base Class for project_dependencies
+#'
+#' @slot date List of projects
+#' @slot project_name List of projects
+#' @slot holiday_name
+#' @slot staff_name
+#' @slot workload
+#' @slot id_out_of_office
+#' @slot out_of_office
+#' combination (needs to be at least length(project) x length(roles) in length)
+#' @family classes
+workplanr_project_dependencies <- setClass("project_dependencies", slots = c(project_a = "ordered",
+                                                               project_b = "ordered",
+                                                               staff_days_assigned_project_a = "numeric",
+                                                               staff_days_assigned_project_b = "numeric",
+                                                               dependence_level = "numeric"))
+
+#' Coerce Object project_teams to a data frame
+#'
+#' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
+#'
+#' @param x A \code{project_teams} object.
+setMethod("as.data.frame", "project_dependencies", definition = function(x){
+  x <- data.frame(project_a = x@project_a, project_b = x@project_b, 
+                  staff_days_assigned_project_a = x@staff_days_assigned_project_a,
+                  staff_days_assigned_project_b = x@staff_days_assigned_project_b,
+                  dependence_level = x@dependence_level)
+  return(x)
+})
+
 #' Base Class for workplan workplan
 #'
 #' @slot resources Object of class "resource"
@@ -318,6 +348,7 @@ setMethod("as.data.frame", "team_schedule", definition = function(x){
 #' @slot full_schedule Object of class "full_schedule"
 #' @slot staff_schedule Object of class "staff_schedule"
 #' @slot team_schedule Object of class "team_schedule"
+#' @slot project_dependencies Object of class "project_dependencies
 #' @family classes
 workplanr_class <- setClass("workplan", slots =  list(staff = "staff",
                                                projects = "projects",
@@ -332,7 +363,8 @@ workplanr_class <- setClass("workplan", slots =  list(staff = "staff",
                                                schedule = "schedule",
                                                release_schedule = "release_schedule",
                                                staff_schedule = "staff_schedule",
-                                               team_schedule = "team_schedule"))
+                                               team_schedule = "team_schedule",
+                                               project_dependencies = "project_dependencies"))
 
 
 #' Coerce Object staff_schedule to a ggplot
@@ -480,5 +512,44 @@ setMethod("plot", "release_schedule", definition = function(x){
   
 
   return(p)
+})
+
+
+#' Coerce Object project_dependencies to a ggplot
+#'
+#' @description Coerce Object team_schedule to ggplot, avoiding using the "slot" notation.
+#'
+#' @param x A \code{project_dependencies} object.
+#' @export
+setMethod("plot", "project_dependencies", definition = function(x){
+  tmp <- as.data.frame(x)
+  tmp <- tmp %>%
+    dplyr::mutate(staff_days_assigned_project_a = 
+                    20*(1 + (staff_days_assigned_project_a - 
+                       min(staff_days_assigned_project_a))/
+                    diff(range(staff_days_assigned_project_a))),
+                  dependence_level = 4*(1 + (dependence_level - 
+                                        min(dependence_level))/
+                    diff(range(dependence_level))))
+                  
+  edges <- tmp %>%
+    dplyr::select(project_a, project_b)
+  node_size <- tmp %>% 
+    dplyr::group_by(project_a) %>%
+    dplyr::summarise(size = mean(staff_days_assigned_project_a))
+  g <- igraph::graph_from_data_frame(edges, directed = FALSE)
+  igraph::V(g)$size <- node_size$size
+  igraph::E(g)$weight <- tmp$dependence_level
+  gg_red <- "#F8766D"
+  gg_blue <- "#00BFC4"
+  igraph::V(g)$color <- gg_blue
+  main_title <- paste("Project Dependencies based on Shared Resources")
+  igraph::plot.igraph(g,  
+                      edge.width = igraph::E(g)$weight,
+                      main = paste(main_title),
+                      edge.curved=0.1)
+  
+  
+  return(TRUE)
 })
 

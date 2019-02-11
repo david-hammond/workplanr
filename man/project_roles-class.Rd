@@ -17,6 +17,7 @@ Base Class for workplan roles
 \seealso{
 Other classes: \code{\link{out_of_office-class}},
   \code{\link{project_assignments-class}},
+  \code{\link{project_dependencies-class}},
   \code{\link{project_phases-class}},
   \code{\link{projects-class}},
   \code{\link{public_holidays-class}},

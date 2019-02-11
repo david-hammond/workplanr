@@ -23,6 +23,7 @@ Base Class for workplan projects
 \seealso{
 Other classes: \code{\link{out_of_office-class}},
   \code{\link{project_assignments-class}},
+  \code{\link{project_dependencies-class}},
   \code{\link{project_phases-class}},
   \code{\link{project_roles-class}},
   \code{\link{public_holidays-class}},

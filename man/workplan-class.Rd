@@ -34,11 +34,14 @@ Base Class for workplan workplan
 \item{\code{staff_schedule}}{Object of class "staff_schedule"}
 
 \item{\code{team_schedule}}{Object of class "team_schedule"}
+
+\item{\code{project_dependencies}}{Object of class "project_dependencies}
 }}
 
 \seealso{
 Other classes: \code{\link{out_of_office-class}},
   \code{\link{project_assignments-class}},
+  \code{\link{project_dependencies-class}},
   \code{\link{project_phases-class}},
   \code{\link{project_roles-class}},
   \code{\link{projects-class}},

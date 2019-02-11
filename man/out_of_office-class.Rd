@@ -24,6 +24,7 @@ Base Class for workplan roles
 
 \seealso{
 Other classes: \code{\link{project_assignments-class}},
+  \code{\link{project_dependencies-class}},
   \code{\link{project_phases-class}},
   \code{\link{project_roles-class}},
   \code{\link{projects-class}},
