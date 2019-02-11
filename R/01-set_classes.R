@@ -204,8 +204,6 @@ workplanr_schedule <- setClass("schedule", slots = c(date = "Date",
                                                      staff_name = "character",
                                                      staff_capacity = "numeric",
                                                      staff_contribution = "numeric",
-                                                     id_out_of_office = "numeric",
-                                                     out_of_office = "character",
                                                      holiday_name = "character"))
 
 #' Coerce Object project_teams to a data frame
@@ -217,9 +215,7 @@ setMethod("as.data.frame", "schedule", definition = function(x){
   x <- data.frame(date = x@date, project_name = x@project_name, project_confirmed = x@project_confirmed, 
                   project_phase_name = x@project_phase_name, project_role_name = x@project_role_name, 
                   staff_name = x@staff_name, staff_capacity = x@staff_capacity, 
-                  staff_contribution = x@staff_contribution, id_out_of_office = x@id_out_of_office,
-                  out_of_office = x@out_of_office,
-                  holiday_name = x@holiday_name)
+                  staff_contribution = x@staff_contribution, holiday_name = x@holiday_name)
   return(x)
 })
 
@@ -370,8 +366,9 @@ setMethod("plot", "staff_schedule", definition = function(x){
   #add leave
 
   leave <- tmp %>%
-    dplyr::group_by(staff_name, id_out_of_office, out_of_office, workload) %>%
-    dplyr::summarise(start = min(date), end = max(date)) %>%
+    dplyr::group_by(staff_name, id_out_of_office, out_of_office) %>%
+    dplyr::summarise(start = min(date), end = max(date), 
+                     workload = mean(workload, na.rm = T)) %>%
     dplyr::filter(!is.na(out_of_office))
 
   p <- p + ggplot2::geom_segment(data = leave, ggplot2::aes(x=start, 

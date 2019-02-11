@@ -103,9 +103,9 @@ add_staff_out_of_office = function(schedule, workplan){
     dplyr::rename(out_of_office = work_related) %>%
     dplyr::mutate(out_of_office = ifelse(as.numeric(out_of_office) == 1, "Work", "Vacation"),
                   date = as.Date(date)) %>%
-    dplyr::mutate(staff_name = as.character(staff_name))
-  schedule2 <- schedule %>%
-    dplyr::left_join(tmp) 
+    dplyr::mutate(staff_name = factor(staff_name, levels = levels(schedule$staff_name), ordered = TRUE))
+  schedule <- schedule %>%
+    dplyr::full_join(tmp) 
   return(schedule)
 }
 
@@ -116,7 +116,6 @@ add_staff_out_of_office = function(schedule, workplan){
 get_schedule = function(workplan){
   schedule <- calculate_start_and_end_dates(workplan)
   schedule <- add_project_assignments(schedule, workplan)
-  schedule <- add_staff_out_of_office(schedule, workplan)
   schedule <- workplanr_schedule(date = schedule$date,
                                  project_name = schedule$project_name,
                                  project_confirmed = schedule$project_confirmed,
@@ -125,8 +124,6 @@ get_schedule = function(workplan){
                                  staff_name = schedule$staff_name,
                                  staff_capacity = schedule$staff_capacity,
                                  staff_contribution = schedule$staff_contribution,
-                                 id_out_of_office = schedule$id_out_of_office,
-                                 out_of_office = schedule$out_of_office,
                                  holiday_name = schedule$holiday_name)
   return(schedule)
 }
@@ -155,13 +152,15 @@ get_staff_schedule = function(workplan){
     dplyr::ungroup() 
   staff_schedule <- staff_schedule %>%
     dplyr::left_join(projects)
+  
   tmp <- tmp %>%
-    dplyr::select(date, staff_name, id_out_of_office, out_of_office, holiday_name) 
+    dplyr::select(date, holiday_name) 
   staff_schedule <- staff_schedule %>%
     dplyr::left_join(tmp)
   staff_schedule$staff_name <- factor(staff_schedule$staff_name, 
                                       levels = c(rev(workplan@staff@staff_name), unique(workplan@project_unassignments@staff_name)),
                                       ordered = TRUE)
+  staff_schedule <- add_staff_out_of_office(staff_schedule, workplan)
   staff_schedule <- workplanr_staff_schedule(date = as.Date(staff_schedule$date),
                                              staff_name = staff_schedule$staff_name,
                                              workload = as.numeric(staff_schedule$workload),
@@ -169,6 +168,7 @@ get_staff_schedule = function(workplan){
                                              id_out_of_office = as.numeric(staff_schedule$id_out_of_office),
                                              out_of_office = as.character(staff_schedule$out_of_office),
                                              holiday_name = as.character(staff_schedule$holiday_name))
+
   return(staff_schedule)
 }
 
