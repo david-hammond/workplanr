@@ -4,7 +4,7 @@
 \alias{plot_phase_days}
 \title{Plot staff schedule}
 \usage{
-plot_phase_days(schedule)
+plot_phase_days(workplan)
 }
 \arguments{
 \item{schedule}{Schedule}

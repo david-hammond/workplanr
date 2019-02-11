@@ -5,35 +5,46 @@
 #' @keywords internal
 calculate_start_and_end_dates = function(workplan){
   tmp <- as.data.frame(workplan@projects) %>%
-    dplyr::left_join(as.data.frame(workplan@time_estimates))
+    dplyr::left_join(as.data.frame(workplan@time_estimates)) %>%
+    dplyr::filter(time_estimate != 0)
   
   cals <- bizdays::create.calendar('normal', 
-                           weekdays = c('saturday', 'sunday'), 
-                           holidays = workplan@public_holidays@date,
-                           start.date = min(tmp$project_start) - 2*max(abs(tmp$time_estimate)), 
-                           end.date = max(tmp$project_end) + 2*max(abs(tmp$time_estimate)))
-  tmp <- tmp %>% 
-    tidyr::spread(project_phase_name, time_estimate)
+                                   weekdays = c('saturday', 'sunday'), 
+                                   holidays = workplan@public_holidays@date,
+                                   start.date = min(tmp$project_start) - 2*max(abs(tmp$time_estimate)), 
+                                   end.date = max(tmp$project_end) + 2*max(abs(tmp$time_estimate)))
   
-  end = tmp 
+  #post end activities
+  pos <- tmp$time_estimate > 0
   
-  phases <- as.character(workplan@project_phases@project_phase_name)
-  end[, ncol(end)] = bizdays::offset(end$project_end, end[,ncol(end)], 'normal')
-  for (i in  rev(phases)[-1]){
-    end[,i] = bizdays::offset(end[,(which(names(end) == i)) +1], tmp[,i], 'normal')
-  }
+  post_project_end_phases <- tmp[pos,]
+  post_project_end_phases <- post_project_end_phases %>%
+    dplyr::group_by(project_name) %>%
+    dplyr::mutate(time_from_project_end = cumsum(time_estimate),
+                  time_from_phase_end = -time_estimate,
+                  phase_end = bizdays::offset(project_end, time_from_project_end, 'normal'),
+                  phase_start = bizdays::offset(phase_end, time_from_phase_end, 'normal')) %>%
+    dplyr::ungroup()
   
-  start = tmp
-  for (i in  phases){
-    start[,i] = bizdays::offset(end[,i], tmp[,i], 'normal')
-  }
-  start[, phases[1]] = as.Date(apply(data.frame(start$project_start,start[, phases[1]]), 1, min))
+  pre_project_end_phases <- tmp[!pos,]
+  pre_project_end_phases <- pre_project_end_phases %>%
+    dplyr::group_by(project_name) %>% 
+    dplyr::arrange(project_name, desc(project_phase_name)) %>%
+    dplyr::mutate(time_from_project_end = cumsum(time_estimate),
+                  time_from_phase_end = -time_estimate,
+                  phase_start = bizdays::offset(project_end, time_from_project_end, 'normal'),
+                  phase_end = bizdays::offset(phase_start, time_from_phase_end, 'normal')) %>%
+    dplyr::ungroup()
   
-  tmp = list(start = start, end = end)
-  tmp = lapply(tmp, function(x) x %>% dplyr::select(-c(project_start, project_end)) %>% 
-                 tidyr::gather(project_phase_name, date, -c(project_name, project_confirmed)) %>%
-                 dplyr::mutate(project_phase_name = factor(project_phase_name, phases, ordered = T)))
-  tmp = dplyr::bind_rows(tmp)
+  tmp <- rbind(pre_project_end_phases, post_project_end_phases)
+  #allow for extra time if numbers dont add up
+  # pos <- tmp$phase_start > tmp$project_start
+  # tmp$phase_start[pos] <-  tmp$project_start[pos]
+  
+  tmp <- tmp %>%
+    dplyr::select(project_name, project_confirmed, project_phase_name, phase_start, phase_end) %>%
+    tidyr::gather(date_type, date, -c(project_name, project_confirmed, project_phase_name))
+  
   tmp = tmp %>%
     dplyr::group_by(project_name, project_confirmed, project_phase_name) %>%
     padr::pad() %>%

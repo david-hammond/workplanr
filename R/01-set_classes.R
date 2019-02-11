@@ -459,7 +459,7 @@ setMethod("plot", "release_schedule", definition = function(x){
   tmp$days_left <- (tmp$end_date - tmp$start_date)
   pos <- tmp$start_date < lubridate::today()
   tmp$days_left[pos] <- tmp$end_date[pos] - lubridate::today() 
-  tmp$days_left <- ifelse(tmp$days_left < 0, NA, tmp$days_left)
+  tmp$days_left <- ifelse(tmp$days_left > 0, tmp$days_left, NA)
   tmp$mid <- tmp$start_date +(tmp$end_date - tmp$start_date)/2
   
   
@@ -475,11 +475,11 @@ setMethod("plot", "release_schedule", definition = function(x){
     ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
   p <- p + ggrepel::geom_label_repel(ggplot2::aes(x = mid, y = project_name, label = days_left), force = 5,
                                      show.legend = FALSE) +
-    ggplot2::theme_bw()+
+    ggplot2::theme_bw() +
     ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
                    panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"),
                    legend.position = c(0.7,0.9), legend.direction = "horizontal") +
-    ggplot2::labs(title = "Release schedule and days left in each phase", x = "", y = "", colour = "Project Phases")
+    ggplot2::labs(title = "Release schedule and days left in each phase", x = "", y = "", colour = "")
   
 
   return(p)

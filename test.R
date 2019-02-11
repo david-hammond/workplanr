@@ -26,19 +26,6 @@ my_workplan2 <- assign_staff(workplan = my_workplan,
              staff_contribution = project_assignments$staff_contribution)
 plot(my_workplan2@staff_schedule)
 plot(my_workplan2@team_schedule)
-plot_project_calendar(project = "A", schedule)
-
-
-  
-
-tmp <- schedule$full_schedule %>%
-  dplyr::filter(staff_contribution > 0) %>%
-  select(project_name, staff_name) 
-tmp2 <- tmp %>% dplyr::rename(project_name_2 = project_name) %>%
-  dplyr::left_join(tmp) %>% dplyr::filter(project_name != project_name_2) %>%
-  distinct() %>% dplyr::select(project_name, project_name_2)
-
-g = igraph::graph_from_edgelist(as.matrix(tmp2))
-igraph::V(g)$size = igraph::degree(g, mode = "out")
-plot(g)
+plot(my_workplan2@release_schedule)
+my_workplan2 <- shift_project("D", by = 20, workplan = my_workplan2)
 
