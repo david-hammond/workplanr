@@ -13,3 +13,4 @@
 \description{
 Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
 }
+\keyword{internal}

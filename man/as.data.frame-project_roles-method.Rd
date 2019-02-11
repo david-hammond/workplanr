@@ -13,3 +13,4 @@
 \description{
 Coerce Object roles to a data frame, avoiding using the "slot" notation.
 }
+\keyword{internal}

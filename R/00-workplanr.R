@@ -32,13 +32,12 @@
 #' 
 #'
 #' @name workplanr-package
-#' @aliases iep.charts-package
+#' @aliases workplanr
 #' @title IEP charting functions for R
 #' @author David Hammond \email{anotherdavidhammond@gmail.com}
 #' @name workplanr
 #' @importFrom dplyr "%>%"
 #' @importFrom grDevices grey
-#' @importFrom utils vignette
 #' @keywords package
 NULL
 

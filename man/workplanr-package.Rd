@@ -2,7 +2,7 @@
 % Please edit documentation in R/00-workplanr.R
 \name{workplanr-package}
 \alias{workplanr-package}
-\alias{iep.charts-package}
+\alias{workplanr}
 \title{IEP charting functions for R}
 \description{
 \code{workplanr} package

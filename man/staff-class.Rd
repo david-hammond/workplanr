@@ -33,3 +33,4 @@ Other classes: \code{\link{out_of_office-class}},
   \code{\link{workplan-class}}
 }
 \concept{classes}
+\keyword{internal}

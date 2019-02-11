@@ -13,3 +13,4 @@
 \description{
 Coerce Object leave to a data frame, avoiding using the "slot" notation.
 }
+\keyword{internal}

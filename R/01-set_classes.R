@@ -2,6 +2,7 @@
 #' @slot staff_name Names of staff members
 #' @slot staff_capacity Number of units of work per staff, for example 100 for full time equivalents, 40 for staff who work only 2 days per week
 #' @family classes
+#' @keywords internal
 workplanr_staff <- setClass("staff", slots = c(staff_name = "character", 
                                     staff_capacity = "numeric"))
 
@@ -10,6 +11,7 @@ workplanr_staff <- setClass("staff", slots = c(staff_name = "character",
 #' @description Coerce Object resource to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{resource} object.
+#' @keywords internal
 setMethod("as.data.frame", "staff", definition = function(x){
   x <- data.frame(staff_name = x@staff_name, staff_capacity = x@staff_capacity, 
                   stringsAsFactors = FALSE)
@@ -22,6 +24,7 @@ setMethod("as.data.frame", "staff", definition = function(x){
 #' @slot project_start Expected start date of project
 #' @slot project_end Expected end date of the project
 #' @family classes
+#' @keywords internal
 workplanr_projects <- setClass("projects", slots = c(project_name = "ordered", project_confirmed = "logical", 
                                        project_start = "Date", project_end = "Date"))
 
@@ -30,6 +33,7 @@ workplanr_projects <- setClass("projects", slots = c(project_name = "ordered", p
 #' @description Coerce Object project to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{projects} object.
+#' @keywords internal
 setMethod("as.data.frame", "projects", definition = function(x){
   x <- data.frame(project_name = x@project_name, project_confirmed = x@project_confirmed, 
                   project_start = x@project_start, project_end = x@project_end)
@@ -40,6 +44,7 @@ setMethod("as.data.frame", "projects", definition = function(x){
 #'
 #' @slot project_phase_name List of phases in any project in order of execution
 #' @family classes
+#' @keywords internal
 workplanr_project_phases <- setClass("project_phases", slots = c(project_phase_name = "ordered"))
 
 #' Coerce Object phases to a data frame
@@ -47,6 +52,7 @@ workplanr_project_phases <- setClass("project_phases", slots = c(project_phase_n
 #' @description Coerce Object phases to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{phases} object.
+#' @keywords internal
 setMethod("as.data.frame", "project_phases", definition = function(x){
   x <- data.frame(project_phase_name = x@project_phase_name)
   return(x)
@@ -56,6 +62,7 @@ setMethod("as.data.frame", "project_phases", definition = function(x){
 #'
 #' @slot project_role_name List of roles in any project team in order of responsibility
 #' @family classes
+#' @keywords internal
 workplanr_project_roles <- setClass("project_roles", slots = c(project_role_name ="ordered"))
 
 #' Coerce Object roles to a data frame
@@ -63,6 +70,7 @@ workplanr_project_roles <- setClass("project_roles", slots = c(project_role_name
 #' @description Coerce Object roles to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{role} object.
+#' @keywords internal
 setMethod("as.data.frame", "project_roles", definition = function(x){
   x <- data.frame(project_role_name = x@project_role_name)
   return(x)
@@ -76,6 +84,7 @@ setMethod("as.data.frame", "project_roles", definition = function(x){
 #' @slot out_of_office_end Ending date for leave
 #' @slot work_related Type of leave, can be user defined but recommend "leave" or "work trip"
 #' @family classes
+#' @keywords internal
 workplanr_out_of_office <- setClass("out_of_office", slots = c(id_out_of_office = "numeric", staff_name = "character", 
                                             out_of_office_start = "Date", 
                                             out_of_office_end = "Date", work_related = "logical"))
@@ -85,6 +94,7 @@ workplanr_out_of_office <- setClass("out_of_office", slots = c(id_out_of_office 
 #' @description Coerce Object leave to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{leave} object.
+#' @keywords internal
 setMethod("as.data.frame", "out_of_office", definition = function(x){
   x <- data.frame(id_out_of_office = x@id_out_of_office, staff_name = x@staff_name, 
                   out_of_office_start = x@out_of_office_start, 
@@ -98,6 +108,7 @@ setMethod("as.data.frame", "out_of_office", definition = function(x){
 #' @slot date Date of public holiday
 #' @slot name Name of public holiday
 #' @family classes
+#' @keywords internal
 workplanr_holidays <- setClass("public_holidays", slots = c(date="Date", holiday_name = "character"))
 
 #' Coerce Object public_holidays to a data frame
@@ -105,6 +116,7 @@ workplanr_holidays <- setClass("public_holidays", slots = c(date="Date", holiday
 #' @description Coerce Object public_holidays to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{public_holidays} object.
+#' @keywords internal
 setMethod("as.data.frame", "public_holidays", definition = function(x){
   x <- data.frame(date = x@date, holiday_name = x@holiday_name,
                   stringsAsFactors = FALSE)
@@ -117,6 +129,7 @@ setMethod("as.data.frame", "public_holidays", definition = function(x){
 #' @slot project_phase_name List of roles in any project team in order of responsibility
 #' @slot responsibility_span a binary matrix of if role i is in volved in phase j
 #' @family classes
+#' @keywords internal
 workplanr_roles_responsibilities <- setClass("roles_responsibilities", slots = c(project_role_name ="ordered", 
                                                      project_phase_name ="ordered", 
                                                      responsibility_span ="logical"))
@@ -126,6 +139,7 @@ workplanr_roles_responsibilities <- setClass("roles_responsibilities", slots = c
 #' @description Coerce Object responsibilities to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{roles_responsibilities} object.
+#' @keywords internal
 setMethod("as.data.frame", "roles_responsibilities", definition = function(x){
   x <- data.frame(project_role_name = x@project_role_name, 
                   project_phase_name = x@project_phase_name, 
@@ -140,6 +154,7 @@ setMethod("as.data.frame", "roles_responsibilities", definition = function(x){
 #' @slot time_estimates Time estimates of how long each phase will take in relation 
 #' to project end, negative = phase will occur before project end, positive = phase will occur after project end
 #' @family classes
+#' @keywords internal
 workplanr_time_estimates <- setClass("time_estimates", slots = c(project_name = "ordered", 
                                              project_phase_name = "ordered", 
                                              time_estimate = "numeric"))
@@ -149,6 +164,7 @@ workplanr_time_estimates <- setClass("time_estimates", slots = c(project_name = 
 #' @description Coerce Object time_estimates to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{time_estimates} object.
+#' @keywords internal
 setMethod("as.data.frame", "time_estimates", definition = function(x){
   x <- data.frame(project_name = x@project_name, 
                   project_phase_name = x@project_phase_name, 
@@ -165,6 +181,7 @@ setMethod("as.data.frame", "time_estimates", definition = function(x){
 #' @slot staff_contribution Amount of time each staff is expected to dedicate to each [project, role] 
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
+#' @keywords internal
 workplanr_project_assignments <- setClass("project_assignments", slots = c(project_name = "ordered", project_role_name = "ordered", 
                                                                            project_phase_name = "ordered", staff_name = "character", 
                                                                            staff_contribution = "numeric"))
@@ -174,6 +191,7 @@ workplanr_project_assignments <- setClass("project_assignments", slots = c(proje
 #' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{project_teams} object.
+#' @keywords internal
 setMethod("as.data.frame", "project_assignments", definition = function(x){
   x <- data.frame(project_name = x@project_name, project_role_name = x@project_role_name, 
                   project_phase_name = x@project_phase_name, staff_name = x@staff_name, staff_contribution = x@staff_contribution)
@@ -196,6 +214,7 @@ setMethod("as.data.frame", "project_assignments", definition = function(x){
 #' @slot out_of_office
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
+#' @keywords internal
 workplanr_schedule <- setClass("schedule", slots = c(date = "Date",
                                                      project_name = "ordered", 
                                                      project_confirmed = "logical",
@@ -211,6 +230,7 @@ workplanr_schedule <- setClass("schedule", slots = c(date = "Date",
 #' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{project_teams} object.
+#' @keywords internal
 setMethod("as.data.frame", "schedule", definition = function(x){
   x <- data.frame(date = x@date, project_name = x@project_name, project_confirmed = x@project_confirmed, 
                   project_phase_name = x@project_phase_name, project_role_name = x@project_role_name, 
@@ -230,6 +250,7 @@ setMethod("as.data.frame", "schedule", definition = function(x){
 #' @slot out_of_office
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
+#' @keywords internal
 workplanr_release_schedule <- setClass("release_schedule", slots = c(project_name = "ordered",
                                                                    project_phase_name = "ordered",
                                                                    start_date = "Date",
@@ -240,6 +261,7 @@ workplanr_release_schedule <- setClass("release_schedule", slots = c(project_nam
 #' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{project_teams} object.
+#' @keywords internal
 setMethod("as.data.frame", "release_schedule", definition = function(x){
   x <- data.frame(project_name = x@project_name, project_phase_name = x@project_phase_name,
                   start_date = x@start_date, end_date = x@end_date)
@@ -257,6 +279,7 @@ setMethod("as.data.frame", "release_schedule", definition = function(x){
 #' @slot out_of_office
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
+#' @keywords internal
 workplanr_staff_schedule <- setClass("staff_schedule", slots = c(date = "Date",
                                                      staff_name = "ordered",
                                                      workload = "numeric",
@@ -270,6 +293,7 @@ workplanr_staff_schedule <- setClass("staff_schedule", slots = c(date = "Date",
 #' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{project_teams} object.
+#' @keywords internal
 setMethod("as.data.frame", "staff_schedule", definition = function(x){
   x <- data.frame(date = x@date, staff_name = x@staff_name, workload = x@workload,
                   project_name = x@project_name, id_out_of_office = x@id_out_of_office,
@@ -289,6 +313,7 @@ setMethod("as.data.frame", "staff_schedule", definition = function(x){
 #' @slot out_of_office
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
+#' @keywords internal
 workplanr_team_schedule <- setClass("team_schedule", slots = c(date = "Date",
                                                                  project_confirmed = "logical",
                                                                  workload = "numeric"))
@@ -298,6 +323,7 @@ workplanr_team_schedule <- setClass("team_schedule", slots = c(date = "Date",
 #' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{project_teams} object.
+#' @keywords internal
 setMethod("as.data.frame", "team_schedule", definition = function(x){
   x <- data.frame(date = x@date, project_confirmed = x@project_confirmed, 
                   workload = x@workload)
@@ -315,6 +341,7 @@ setMethod("as.data.frame", "team_schedule", definition = function(x){
 #' @slot out_of_office
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
+#' @keywords internal
 workplanr_project_dependencies <- setClass("project_dependencies", slots = c(project_a = "ordered",
                                                                project_b = "ordered",
                                                                staff_days_assigned_project_a = "numeric",
@@ -326,6 +353,7 @@ workplanr_project_dependencies <- setClass("project_dependencies", slots = c(pro
 #' @description Coerce Object project_teams to a data frame, avoiding using the "slot" notation.
 #'
 #' @param x A \code{project_teams} object.
+#' @keywords internal
 setMethod("as.data.frame", "project_dependencies", definition = function(x){
   x <- data.frame(project_a = x@project_a, project_b = x@project_b, 
                   staff_days_assigned_project_a = x@staff_days_assigned_project_a,

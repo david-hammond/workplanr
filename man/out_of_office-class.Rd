@@ -38,3 +38,4 @@ Other classes: \code{\link{project_assignments-class}},
   \code{\link{workplan-class}}
 }
 \concept{classes}
+\keyword{internal}
