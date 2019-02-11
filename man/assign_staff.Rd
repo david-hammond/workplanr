@@ -4,11 +4,11 @@
 \alias{assign_staff}
 \title{Assign staff member to project phase}
 \usage{
-assign_staff(db_name, staff_name, project_name, project_role_name,
+assign_staff(workplan, staff_name, project_name, project_role_name,
   staff_contribution)
 }
 \arguments{
-\item{db_name}{The name of the database to create}
+\item{workplan}{The name of the database to create}
 
 \item{staff_name}{staff name}
 

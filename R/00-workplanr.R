@@ -32,13 +32,13 @@
 #' 
 #'
 #' @name workplanr-package
-#' @aliases iep.charts-package
+#' @aliases workplanr
 #' @title IEP charting functions for R
 #' @author David Hammond \email{anotherdavidhammond@gmail.com}
 #' @name workplanr
 #' @importFrom dplyr "%>%"
 #' @importFrom grDevices grey
-#' @importFrom utils vignette
+#' @importFrom methods new slot slot<- slotNames
 #' @keywords package
 NULL
 
@@ -91,7 +91,23 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c( "date_type",
                                                          "influence", 
                                                          "int",
                                                          "phases",
-                                                         "project_name_2",
                                                          "projects",
                                                          "task_date",
-                                                         "x.breaks"), add = FALSE)
+                                                         "x.breaks",
+                                                         "dependence_level",
+                                                         "end_date",
+                                                         "mid",
+                                                         "phase_end phase_start",
+                                                         "planned_work",
+                                                         "potential_deficit",
+                                                         "potential_work",
+                                                         "project_a",
+                                                         "project_b",
+                                                         "staff_days_assigned_project_a",
+                                                         "start_date",
+                                                         "time_from_phase_end",
+                                                         "time_from_project_end",
+                                                         "total_potential",
+                                                         "phase_end", 
+                                                         "phase_start",
+                                                         "day_shift"), add = FALSE)
