@@ -7,7 +7,7 @@
 calculate_start_and_end_dates(workplan)
 }
 \arguments{
-\item{db_name}{The name of the database to create}
+\item{workplan}{The name of the database to create}
 }
 \description{
 Initialise schedule table

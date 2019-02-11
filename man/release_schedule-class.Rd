@@ -11,11 +11,13 @@ Base Class for schedule project_assignments
 \section{Slots}{
 
 \describe{
-\item{\code{date}}{List of projects}
-
 \item{\code{project_name}}{List of projects}
 
-\item{\code{out_of_office}}{combination (needs to be at least length(project) x length(roles) in length)}
+\item{\code{project_phase_name}}{Names of phases}
+
+\item{\code{start_date}}{Start date of phase}
+
+\item{\code{end_date}}{end date of Phase}
 }}
 
 \seealso{

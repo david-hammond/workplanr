@@ -15,11 +15,20 @@ Base Class for schedule project_assignments
 
 \item{\code{project_name}}{List of projects}
 
+\item{\code{project_confirmed}}{project confirmed}
+
 \item{\code{project_phase_name}}{Phases}
 
 \item{\code{project_role_name}}{Roles of projects}
 
-\item{\code{out_of_office}}{combination (needs to be at least length(project) x length(roles) in length)}
+\item{\code{staff_name}}{Names of staff}
+
+\item{\code{staff_capacity}}{Capacity of staff}
+
+\item{\code{staff_contribution}}{Contibution of styaff to project}
+
+\item{\code{holiday_name}}{names of public holidays
+combination (needs to be at least length(project) x length(roles) in length)}
 }}
 
 \seealso{

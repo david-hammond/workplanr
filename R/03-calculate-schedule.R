@@ -1,7 +1,7 @@
 
 #' Initialise schedule table
 #'
-#' @param db_name The name of the database to create 
+#' @param workplan The name of the database to create 
 #' @keywords internal
 calculate_start_and_end_dates = function(workplan){
   tmp <- as.data.frame(workplan@projects) %>%
@@ -16,11 +16,12 @@ calculate_start_and_end_dates = function(workplan){
   
   #post end activities
   pos <- tmp$time_estimate > 0
-  if(sum(pos) > 0){
+  if(sum(pos) > 0){ #if there are pre and post phases
     post_project_end_phases <- tmp[pos,]
     post_project_end_phases <- post_project_end_phases %>%
       dplyr::group_by(project_name) %>%
-      dplyr::mutate(time_from_project_end = cumsum(time_estimate),
+      dplyr::mutate(day_shift = match(project_phase_name, rev(workplan@project_phases@project_phase_name)) - 1,
+                    time_from_project_end = cumsum(time_estimate) + day_shift,
                     time_from_phase_end = -time_estimate,
                     phase_end = bizdays::offset(project_end, time_from_project_end, 'normal'),
                     phase_start = bizdays::offset(phase_end, time_from_phase_end, 'normal')) %>%
@@ -29,18 +30,18 @@ calculate_start_and_end_dates = function(workplan){
     pre_project_end_phases <- tmp[!pos,]
     pre_project_end_phases <- pre_project_end_phases %>%
       dplyr::group_by(project_name) %>% 
-      dplyr::arrange(project_name, desc(project_phase_name)) %>%
-      dplyr::mutate(time_from_project_end = cumsum(time_estimate),
+      dplyr::arrange(project_name, dplyr::desc(project_phase_name)) %>%
+      dplyr::mutate(day_shift = match(project_phase_name, rev(workplan@project_phases@project_phase_name)) - 1,
+                    time_from_project_end = cumsum(time_estimate) - day_shift,
                     time_from_phase_end = -time_estimate,
                     phase_start = bizdays::offset(project_end, time_from_project_end, 'normal'),
                     phase_end = bizdays::offset(phase_start, time_from_phase_end, 'normal')) %>%
       dplyr::ungroup()
-    
-    tmp <- rbind(pre_project_end_phases, post_project_end_phases)
+    tmp <- rbind(pre_project_end_phases, post_project_end_phases[,names(pre_project_end_phases)])
   }else{
     tmp <- tmp %>%
       dplyr::group_by(project_name) %>% 
-      dplyr::arrange(project_name, desc(project_phase_name)) %>%
+      dplyr::arrange(project_name, dplyr::desc(project_phase_name)) %>%
       dplyr::mutate(time_from_project_end = cumsum(time_estimate),
                     time_from_phase_end = -time_estimate,
                     phase_start = bizdays::offset(project_end, time_from_project_end, 'normal'),
@@ -74,8 +75,8 @@ calculate_start_and_end_dates = function(workplan){
 }
 #' Add staff assignments to schedulke
 #'
-#' @param db_name The name of the database to create 
-#' @param tmp schedule
+#' @param schedule The name of the database to create 
+#' @param workplan schedule
 #' @keywords internal
 add_project_assignments = function(schedule, workplan){
     schedule <- schedule %>%
@@ -85,10 +86,10 @@ add_project_assignments = function(schedule, workplan){
       dplyr::left_join(as.data.frame(workplan@staff))
   return(schedule)
 }
-#' Add out of office times to schedule
+#' Add staff assignments to schedulke
 #'
-#' @param db_name The name of the database to create 
-#' @param tmp schedule
+#' @param schedule The name of the database to create 
+#' @param workplan schedule
 #' @keywords internal
 add_staff_out_of_office = function(schedule, workplan){
   tmp <- as.data.frame(workplan@out_of_office)
@@ -109,10 +110,10 @@ add_staff_out_of_office = function(schedule, workplan){
   return(schedule)
 }
 
-#' Create full schedule from database
+#' Add staff assignments to schedulke
 #'
-#' @param db_name The name of the database to create 
-#' @export
+#' @param workplan schedule
+#' @keywords internal
 get_schedule = function(workplan){
   schedule <- calculate_start_and_end_dates(workplan)
   schedule <- add_project_assignments(schedule, workplan)
@@ -130,10 +131,9 @@ get_schedule = function(workplan){
 
 
 
-#' Create staff schedule from full schedule
+#' Add staff assignments to schedulke
 #'
-#' @param tmp Scheudle
-#' @return staff_schedule if script exectues completely
+#' @param workplan schedule
 #' @keywords internal
 get_staff_schedule = function(workplan){
   tmp <- as.data.frame(workplan@schedule)
@@ -161,6 +161,8 @@ get_staff_schedule = function(workplan){
                                       levels = c(rev(workplan@staff@staff_name), unique(workplan@project_unassignments@staff_name)),
                                       ordered = TRUE)
   staff_schedule <- add_staff_out_of_office(staff_schedule, workplan)
+  staff_schedule <- staff_schedule %>%
+    dplyr::distinct()
   staff_schedule <- workplanr_staff_schedule(date = as.Date(staff_schedule$date),
                                              staff_name = staff_schedule$staff_name,
                                              workload = as.numeric(staff_schedule$workload),
@@ -172,10 +174,9 @@ get_staff_schedule = function(workplan){
   return(staff_schedule)
 }
 
-#' Create team schedule from full schedule
+#' Add staff assignments to schedulke
 #'
-#' @param tmp Scheudle
-#' @return staff_schedule if script exectues completely
+#' @param workplan schedule
 #' @keywords internal
 get_team_schedule = function(workplan){
   tmp <- as.data.frame(workplan@schedule)
@@ -195,7 +196,10 @@ get_team_schedule = function(workplan){
                                  workload = as.numeric(tmp$workload))
   return(tmp)
 }
-
+#' Add staff assignments to schedulke
+#'
+#' @param workplan schedule
+#' @keywords internal
 get_release_schedule = function(workplan){
   tmp <- as.data.frame(workplan@schedule) %>%
     dplyr::select(date, project_name, project_phase_name) %>%
@@ -213,38 +217,38 @@ get_release_schedule = function(workplan){
   return(tmp)
 }
 
-#' Initialise schedule table
+#' Add staff assignments to schedulke
 #'
-#' @param db_name The name of the database to create 
-#' @export
+#' @param workplan schedule
+#' @keywords internal
 get_project_dependencies = function(workplan){
-  if(length(workplan@staff@staff_name)>1){
-  tmp <- as.data.frame(workplan@schedule)
-  tmp <- tmp %>% 
-    dplyr::select(date, project_name, staff_name) %>%
-    dplyr::filter(staff_name != unique(workplan@project_unassignments@staff_name)) %>%
-    dplyr::group_by(project_name) %>%
-    dplyr::mutate(staff_days_assigned_project_a = n()) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(staff_month = paste(staff_name, lubridate::month(date))) %>%
-    dplyr::select(-c(staff_name, date)) %>%
-    dplyr::rename(project_a = project_name)
-  tmp2 <- tmp %>%
-    dplyr::rename(project_b = project_a,
-                  staff_days_assigned_project_b = staff_days_assigned_project_a) 
-  tmp <- tmp %>%
-    dplyr::left_join(tmp2) %>%
-    dplyr::filter(project_a != project_b) %>%
-    dplyr::group_by(project_a, project_b, 
-                    staff_days_assigned_project_a,
-                    staff_days_assigned_project_b) %>%
-    dplyr::summarise(dependence_level = n())
-  
-  tmp <- workplanr_project_dependencies(project_a = tmp$project_a,
-                                        project_b = tmp$project_b,
-                                        staff_days_assigned_project_a = tmp$staff_days_assigned_project_a,
-                                        staff_days_assigned_project_b = tmp$staff_days_assigned_project_b,
-                                        dependence_level = tmp$dependence_level)
+  # testthat::expect(length(unique(workplan@schedule@staff_name))>1,
+  #                  message = "Can't currently calulate inter-project-dependencies for only one staff member")
+  if(length(unique(workplan@schedule@staff_name))>1){
+    tmp <- as.data.frame(workplan@schedule)
+    tmp <- tmp %>% 
+      dplyr::select(date, project_name, staff_name) %>%
+      dplyr::filter(staff_name != unique(workplan@project_unassignments@staff_name)) %>%
+      dplyr::group_by(project_name) %>%
+      dplyr::mutate(staff_days_assigned_project_a = n()) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(staff_month = paste(staff_name, lubridate::month(date))) %>%
+      dplyr::select(-c(staff_name, date)) %>%
+      dplyr::rename(project_a = project_name)
+    tmp2 <- tmp %>%
+      dplyr::select(-staff_days_assigned_project_a) %>%
+      dplyr::rename(project_b = project_a) 
+    tmp <- tmp %>%
+      dplyr::left_join(tmp2) %>%
+      dplyr::filter(project_a != project_b) %>%
+      dplyr::group_by(project_a, project_b, 
+                      staff_days_assigned_project_a) %>%
+      dplyr::summarise(dependence_level = n())
+    
+    tmp <- workplanr_project_dependencies(project_a = tmp$project_a,
+                                          project_b = tmp$project_b,
+                                          staff_days_assigned_project_a = tmp$staff_days_assigned_project_a,
+                                          dependence_level = tmp$dependence_level)
   }else{
     tmp <- new("project_dependencies")
   }
@@ -252,6 +256,10 @@ get_project_dependencies = function(workplan){
   
   return(tmp)
 }
+#' Add staff assignments to schedulke
+#'
+#' @param workplan schedule
+#' @keywords internal
 calculate_workplan = function(workplan){
   workplan@schedule <- get_schedule(workplan)
   workplan@release_schedule <- get_release_schedule(workplan)

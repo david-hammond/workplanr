@@ -7,9 +7,9 @@
 add_project_assignments(schedule, workplan)
 }
 \arguments{
-\item{db_name}{The name of the database to create}
+\item{schedule}{The name of the database to create}
 
-\item{tmp}{schedule}
+\item{workplan}{schedule}
 }
 \description{
 Add staff assignments to schedulke

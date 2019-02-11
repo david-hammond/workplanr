@@ -7,6 +7,9 @@
 #' @param staff_contribution staff con
 #' @export
 assign_staff = function(workplan, staff_name, project_name, project_role_name, staff_contribution){
+  staff_name_check(staff_name, workplan)
+  project_name_check(project_name, workplan)
+  project_role_name_check(project_role_name, workplan)
   for (i in 1:length(staff_name)){
     pos = which(workplan@project_assignments@project_name == project_name[i] &
                   workplan@project_assignments@project_role_name == project_role_name[i] &
@@ -25,7 +28,10 @@ assign_staff = function(workplan, staff_name, project_name, project_role_name, s
 #' @param project_name project name
 #' @param project_role_name project_phase_name
 #' @export
-remove_staff = function(db_name, staff_name, project_name, project_role_name){
+remove_staff = function(workplan, staff_name, project_name, project_role_name){
+  staff_name_check(staff_name, workplan)
+  project_name_check(project_name, workplan)
+  project_role_name_check(project_role_name, workplan)
   for (i in 1:length(staff_name)){
     pos = which(workplan@project_assignments@project_name == project_name[i] &
                   workplan@project_assignments@project_role_name == project_role_name[i] &

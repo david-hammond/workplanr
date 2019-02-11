@@ -3,6 +3,7 @@
 #' @param staff Names of staff members
 #' @param projects Names of projects
 #' @param project_phases List of phases in any project in order of execution
+#' @param project_roles List of project roles
 #' @param out_of_office Names of staff that are going to be out of the office
 #' @param public_holidays A data frame of dates of public holidays
 #' @param roles_responsibilities Data frame for responsibilites of roles across project phases
@@ -30,6 +31,7 @@ create_new_workplan = function(staff, projects, project_phases, project_roles,
   workplan@project_roles <- workplanr_project_roles(project_role_name = factor(unique(as.character(project_roles$project_role_name)),
                                                                           levels = unique(as.character(project_roles$project_role_name)),
                                                                           ordered = TRUE))
+  staff_name_check(out_of_office$staff_name, workplan)
   workplan@out_of_office <- workplanr_out_of_office(id_out_of_office = 1:nrow(out_of_office),
                                                staff_name = as.character(out_of_office$staff_name),
                                                out_of_office_start = as.Date(out_of_office$out_of_office_start),
@@ -37,6 +39,8 @@ create_new_workplan = function(staff, projects, project_phases, project_roles,
                                                work_related = as.logical(out_of_office$work_related))
   workplan@public_holidays <- workplanr_holidays(date = as.Date(public_holidays$date),
                                             holiday_name = as.character(public_holidays$holiday_name))
+  project_role_name_check(roles_responsibilities$project_role_name, workplan)
+  project_phase_name_check(roles_responsibilities$project_phase_name, workplan)
   workplan@roles_responsibilities <- workplanr_roles_responsibilities(project_role_name = factor(as.character(roles_responsibilities$project_role_name),
                                                                                            levels = levels(workplan@project_roles@project_role_name),
                                                                                            ordered = TRUE),
@@ -44,6 +48,8 @@ create_new_workplan = function(staff, projects, project_phases, project_roles,
                                                                                             levels = levels(workplan@project_phases@project_phase_name),
                                                                                             ordered = TRUE),
                                                                 responsibility_span = as.logical(roles_responsibilities$responsibility_span))
+  project_name_check(time_estimates$project_name, workplan)
+  project_phase_name_check(time_estimates$project_phase_name, workplan)
   workplan@time_estimates <- workplanr_time_estimates(project_name = factor(as.character(time_estimates$project_name),
                                                                        levels = levels(workplan@projects@project_name),
                                                                        ordered = TRUE),
@@ -51,11 +57,13 @@ create_new_workplan = function(staff, projects, project_phases, project_roles,
                                                                              levels = levels(workplan@project_phases@project_phase_name),
                                                                              ordered = TRUE),
                                                  time_estimate = as.numeric(time_estimates$time_estimate))
+  
   project_assignments <- expand.grid(staff_name = workplan@staff@staff_name, 
                                      project_role_name = workplan@project_roles@project_role_name,
                                      project_phase_name = workplan@project_phases@project_phase_name, 
                                      project_name = workplan@projects@project_name,
                                      KEEP.OUT.ATTRS = FALSE)
+  
   project_assignments$staff_contribution <- 0
   project_assignments <- project_assignments %>% 
     dplyr::left_join(as.data.frame(workplan@time_estimates)) %>%
@@ -88,3 +96,4 @@ create_new_workplan = function(staff, projects, project_phases, project_roles,
 
   return(workplan)
 }
+

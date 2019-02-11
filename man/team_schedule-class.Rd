@@ -13,9 +13,9 @@ Base Class for schedule project_assignments
 \describe{
 \item{\code{date}}{List of projects}
 
-\item{\code{project_name}}{List of projects}
+\item{\code{project_confirmed}}{List of projects}
 
-\item{\code{out_of_office}}{combination (needs to be at least length(project) x length(roles) in length)}
+\item{\code{workload}}{workload}
 }}
 
 \seealso{

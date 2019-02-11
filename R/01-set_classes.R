@@ -202,16 +202,13 @@ setMethod("as.data.frame", "project_assignments", definition = function(x){
 #'
 #' @slot date List of projects
 #' @slot project_name List of projects
-#' @slot project_confirmed
+#' @slot project_confirmed project confirmed
 #' @slot project_phase_name Phases
 #' @slot project_role_name Roles of projects
-#' @slot holiday_name
-#' @slot project_role_name
-#' @slot staff_name
-#' @slot staff_capacity
-#' @slot staff_contribution
-#' @slot id_out_of_office
-#' @slot out_of_office
+#' @slot staff_name Names of staff
+#' @slot staff_capacity Capacity of staff
+#' @slot staff_contribution Contibution of styaff to project
+#' @slot holiday_name names of public holidays
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
 #' @keywords internal
@@ -241,14 +238,10 @@ setMethod("as.data.frame", "schedule", definition = function(x){
 
 #' Base Class for schedule project_assignments
 #'
-#' @slot date List of projects
 #' @slot project_name List of projects
-#' @slot holiday_name
-#' @slot staff_name
-#' @slot workload
-#' @slot id_out_of_office
-#' @slot out_of_office
-#' combination (needs to be at least length(project) x length(roles) in length)
+#' @slot project_phase_name Names of phases
+#' @slot start_date Start date of phase
+#' @slot end_date end date of Phase
 #' @family classes
 #' @keywords internal
 workplanr_release_schedule <- setClass("release_schedule", slots = c(project_name = "ordered",
@@ -271,12 +264,11 @@ setMethod("as.data.frame", "release_schedule", definition = function(x){
 #' Base Class for schedule project_assignments
 #'
 #' @slot date List of projects
-#' @slot project_name List of projects
-#' @slot holiday_name
-#' @slot staff_name
-#' @slot workload
-#' @slot id_out_of_office
-#' @slot out_of_office
+#' @slot staff_name List of staff
+#' @slot workload Workload
+#' @slot project_name Project names
+#' @slot id_out_of_office id out of office
+#' @slot holiday_name public holidays
 #' combination (needs to be at least length(project) x length(roles) in length)
 #' @family classes
 #' @keywords internal
@@ -305,13 +297,8 @@ setMethod("as.data.frame", "staff_schedule", definition = function(x){
 #' Base Class for schedule project_assignments
 #'
 #' @slot date List of projects
-#' @slot project_name List of projects
-#' @slot holiday_name
-#' @slot staff_name
-#' @slot workload
-#' @slot id_out_of_office
-#' @slot out_of_office
-#' combination (needs to be at least length(project) x length(roles) in length)
+#' @slot project_confirmed List of projects
+#' @slot workload workload
 #' @family classes
 #' @keywords internal
 workplanr_team_schedule <- setClass("team_schedule", slots = c(date = "Date",
@@ -332,14 +319,10 @@ setMethod("as.data.frame", "team_schedule", definition = function(x){
 
 #' Base Class for project_dependencies
 #'
-#' @slot date List of projects
-#' @slot project_name List of projects
-#' @slot holiday_name
-#' @slot staff_name
-#' @slot workload
-#' @slot id_out_of_office
-#' @slot out_of_office
-#' combination (needs to be at least length(project) x length(roles) in length)
+#' @slot project_a List of projects
+#' @slot project_b List of projects
+#' @slot staff_assigned_to_project_a assignements
+#' @slot dependence_level dependence
 #' @family classes
 #' @keywords internal
 workplanr_project_dependencies <- setClass("project_dependencies", slots = c(project_a = "ordered",
@@ -357,7 +340,6 @@ workplanr_project_dependencies <- setClass("project_dependencies", slots = c(pro
 setMethod("as.data.frame", "project_dependencies", definition = function(x){
   x <- data.frame(project_a = x@project_a, project_b = x@project_b, 
                   staff_days_assigned_project_a = x@staff_days_assigned_project_a,
-                  staff_days_assigned_project_b = x@staff_days_assigned_project_b,
                   dependence_level = x@dependence_level)
   return(x)
 })
@@ -403,13 +385,16 @@ workplanr_class <- setClass("workplan", slots =  list(staff = "staff",
 #' @export
 setMethod("plot", "staff_schedule", definition = function(x){
   tmp <- as.data.frame(x)
+  tmp <- tmp %>%
+    dplyr::filter(date <= max(date[!is.na(workload)]))
   myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
                                            space='Lab')
   p <- ggplot2::ggplot(data = tmp, 
                        ggplot2::aes(date, staff_name, fill = workload)) +
     ggplot2::geom_tile(alpha = 0.9) +
     ggplot2::scale_fill_gradientn(colors = myPalette(100), 
-                                  labels = scales::percent, name = 'Workload', na.value = "white") +
+                                  labels = scales::percent, name = 'Workload', na.value = "white",
+                                  limits = c(0, max(tmp$workload))) +
     ggplot2::labs(x='', y = '', 
                   title = toupper('STAFF WORKLOAD')) +
     ggplot2::scale_x_date(labels = scales::date_format('%b'), 
@@ -485,7 +470,7 @@ setMethod("plot", "team_schedule", definition = function(x){
   gg_blue <- "#00BFC4"
   cols = c(scales::alpha(gg_red, 0.5),   scales::alpha(gg_blue, 0.5),gg_red, gg_blue)
   tmp$group <- gsub("_", " ", tmp$group)
-  tmp$group <- gsub("(?<=\\b)([a-z])", "\\U\\1", tolower(tmp$group), perl=TRUE)
+  tmp$group <- proper_capitalise(tolower(tmp$group))
   tmp$group = factor(tmp$group, levels = rev(c("Planned Work",
                                            "Planned Deficit",
                                            "Potential Work",

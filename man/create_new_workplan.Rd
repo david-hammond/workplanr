@@ -15,6 +15,8 @@ create_new_workplan(staff, projects, project_phases, project_roles,
 
 \item{project_phases}{List of phases in any project in order of execution}
 
+\item{project_roles}{List of project roles}
+
 \item{out_of_office}{Names of staff that are going to be out of the office}
 
 \item{public_holidays}{A data frame of dates of public holidays}

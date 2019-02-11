@@ -11,11 +11,13 @@ Base Class for project_dependencies
 \section{Slots}{
 
 \describe{
-\item{\code{date}}{List of projects}
+\item{\code{project_a}}{List of projects}
 
-\item{\code{project_name}}{List of projects}
+\item{\code{project_b}}{List of projects}
 
-\item{\code{out_of_office}}{combination (needs to be at least length(project) x length(roles) in length)}
+\item{\code{staff_assigned_to_project_a}}{assignements}
+
+\item{\code{dependence_level}}{dependence}
 }}
 
 \seealso{

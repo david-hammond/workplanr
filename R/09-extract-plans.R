@@ -1,7 +1,8 @@
 
-#' Initialise schedule table
+#' Add staff assignments to schedulke
 #'
-#' @param db_name The name of the database to create 
+#' @param project The name of the database to create 
+#' @param workplan schedule
 #' @export
 extract_project_schedule = function(project, workplan){
   testthat::expect(project %in% workplan@projects@project_name, message = "Project not in workplan")
@@ -22,9 +23,10 @@ extract_project_schedule = function(project, workplan){
 }
 
 
-#' Initialise schedule table
+#' Add staff assignments to schedulke
 #'
-#' @param db_name The name of the database to create 
+#' @param staff The name of the database to create 
+#' @param workplan schedule
 #' @export
 extract_staff_schedule = function(staff, workplan){
   testthat::expect(staff %in% workplan@staff@staff_name, message = "Staff not in workplan")

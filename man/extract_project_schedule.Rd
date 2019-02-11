@@ -2,13 +2,15 @@
 % Please edit documentation in R/09-extract-plans.R
 \name{extract_project_schedule}
 \alias{extract_project_schedule}
-\title{Initialise schedule table}
+\title{Add staff assignments to schedulke}
 \usage{
 extract_project_schedule(project, workplan)
 }
 \arguments{
-\item{db_name}{The name of the database to create}
+\item{project}{The name of the database to create}
+
+\item{workplan}{schedule}
 }
 \description{
-Initialise schedule table
+Add staff assignments to schedulke
 }

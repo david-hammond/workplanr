@@ -2,17 +2,14 @@
 % Please edit documentation in R/03-calculate-schedule.R
 \name{get_team_schedule}
 \alias{get_team_schedule}
-\title{Create team schedule from full schedule}
+\title{Add staff assignments to schedulke}
 \usage{
 get_team_schedule(workplan)
 }
 \arguments{
-\item{tmp}{Scheudle}
-}
-\value{
-staff_schedule if script exectues completely
+\item{workplan}{schedule}
 }
 \description{
-Create team schedule from full schedule
+Add staff assignments to schedulke
 }
 \keyword{internal}

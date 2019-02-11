@@ -2,16 +2,16 @@
 % Please edit documentation in R/03-calculate-schedule.R
 \name{add_staff_out_of_office}
 \alias{add_staff_out_of_office}
-\title{Add out of office times to schedule}
+\title{Add staff assignments to schedulke}
 \usage{
 add_staff_out_of_office(schedule, workplan)
 }
 \arguments{
-\item{db_name}{The name of the database to create}
+\item{schedule}{The name of the database to create}
 
-\item{tmp}{schedule}
+\item{workplan}{schedule}
 }
 \description{
-Add out of office times to schedule
+Add staff assignments to schedulke
 }
 \keyword{internal}

@@ -20,11 +20,11 @@ Imports:
   ggrepel (>= 0.0.8),
   scales (>= 1.0.0),
   grDevices (>= 3.4.3),
-  RSQLite (>= 2.1.1),
-  bdscale (>= 2.0.0),
-  igraph (>= 1.2.2)
+  igraph (>= 1.2.2),
+  methods (>= 3.4.3)
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr

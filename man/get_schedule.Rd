@@ -2,13 +2,14 @@
 % Please edit documentation in R/03-calculate-schedule.R
 \name{get_schedule}
 \alias{get_schedule}
-\title{Create full schedule from database}
+\title{Add staff assignments to schedulke}
 \usage{
 get_schedule(workplan)
 }
 \arguments{
-\item{db_name}{The name of the database to create}
+\item{workplan}{schedule}
 }
 \description{
-Create full schedule from database
+Add staff assignments to schedulke
 }
+\keyword{internal}
