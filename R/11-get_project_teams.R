@@ -12,12 +12,9 @@ get_project_teams = function(project, workplan){
   
   i <- unique(tmp$project_name)
   tmp <- tmp[tmp$project_name == i,]
-  tmp <- as.data.frame(apply(tmp, 2, proper_capitalise))
-  i <- paste("Project", unique(tmp$project_name))
   j <- tmp$project_role_name[1]
   k <- paste(tmp$staff_name[tmp$project_role_name == j], collapse = ", ")
-  l <- paste(j, k, sep = ": ")
-  i <- paste(i, l, sep = "\n")
+  i <- paste(j, k, sep = ": ")
   teams <- data.tree::Node$new(i)
   tmp <- tmp %>%
       dplyr::filter(project_role_name != j)
@@ -27,7 +24,6 @@ get_project_teams = function(project, workplan){
       staff <- role$AddChild(j)
   }
   data.tree::SetNodeStyle(teams,  shape = "box")
-  plot(teams)
-  #  tmp <- workplanr_project_teams(project_teams = tmp)
+
   return(teams)
 }
