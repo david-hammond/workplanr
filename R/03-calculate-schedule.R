@@ -70,7 +70,6 @@ calculate_start_and_end_dates = function(workplan){
     dplyr::left_join(as.data.frame(workplan@public_holidays)) %>%
     dplyr::select(date, project_name, project_confirmed, project_phase_name, holiday_name) %>%
     dplyr::arrange(date)
-  bizdays::remove.calendars('normal')
   return(tmp)
 }
 #' Add staff assignments to schedulke

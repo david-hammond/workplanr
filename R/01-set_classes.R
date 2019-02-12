@@ -498,8 +498,7 @@ setMethod("plot", "team_schedule", definition = function(x){
 setMethod("plot", "release_schedule", definition = function(x){
   tmp <- as.data.frame(x)
   tmp$days_left <- (tmp$end_date - tmp$start_date)
-  pos <- tmp$start_date < lubridate::today()
-  tmp$days_left[pos] <- tmp$end_date[pos] - lubridate::today() 
+  tmp$days_left <- bizdays::bizdays(lubridate::today(), tmp$end_date, 'normal')
   tmp$days_left <- ifelse(tmp$days_left > 0, tmp$days_left, NA)
   tmp$mid <- tmp$start_date +(tmp$end_date - tmp$start_date)/2
   
