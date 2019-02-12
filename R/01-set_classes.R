@@ -499,10 +499,9 @@ setMethod("plot", "release_schedule", definition = function(x){
   tmp <- as.data.frame(x)
   ref_dates <- apply(data.frame(lubridate::today(), tmp$start_date), 1, max)
   tmp$days_left <- bizdays::bizdays(ref_dates, tmp$end_date, 'normal')
-  tmp$days_left <- ifelse(tmp$days_left > 0, tmp$days_left, NA)
   tmp$mid <- tmp$start_date +(tmp$end_date - tmp$start_date)/2
-  
-  
+  tmp$due <- paste0(format(tmp$end_date, "%d/%m"), " (", tmp$days_left, ")")
+  tmp$due <- ifelse(tmp$days_left > 0, tmp$due, NA)
   p <- ggplot2::ggplot(tmp, ggplot2::aes(colour=project_phase_name))
   p <- p + ggplot2::geom_segment(ggplot2::aes(x=start_date, 
                                               xend=end_date, 
@@ -513,9 +512,9 @@ setMethod("plot", "release_schedule", definition = function(x){
                           date_breaks = '1 month', 
                           expand = c(0,0)) +
     ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
-  p <- p + ggrepel::geom_label_repel(data = tmp[!is.na(tmp$days_left),], 
-                                     ggplot2::aes(x = mid, y = project_name, label = days_left), force = 5,
-                                     show.legend = FALSE) +
+  p <- p + ggrepel::geom_label_repel(data = tmp[!is.na(tmp$due),], 
+                                     ggplot2::aes(x = mid, y = project_name, label = due), force = 5,
+                                     show.legend = FALSE, size = 3) +
     ggplot2::theme_bw() +
     ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
                    panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"),
