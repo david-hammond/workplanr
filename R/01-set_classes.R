@@ -518,7 +518,8 @@ setMethod("plot", "release_schedule", definition = function(x){
     ggplot2::theme_bw() +
     ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
                    panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"),
-                   legend.position = c(0.7,0.9), legend.direction = "horizontal") +
+                   legend.position = c(0.7,0.9), legend.direction = "horizontal",
+                   legend.text= ggplot2::element_text(size=8)) +
     ggplot2::labs(title = "Release schedule and days left in each phase", x = "", y = "", colour = "")
   
 
