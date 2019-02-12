@@ -260,12 +260,50 @@ get_project_dependencies = function(workplan){
 #'
 #' @param workplan schedule
 #' @keywords internal
+get_project_teams = function(workplan){
+  tmp <- as.data.frame(my_workplan@schedule)
+  tmp <- tmp %>% 
+    dplyr::filter(staff_contribution > 0) %>%
+    dplyr::select(project_name, project_role_name, staff_name) %>%
+    dplyr::distinct() %>%
+    dplyr::arrange(project_name, project_role_name)
+  
+  tmp <- split(tmp, tmp$project_name)
+  
+  tmp <- lapply(tmp, function(x) {
+    x <- apply(x, 2, proper_capitalise)
+    i <- paste("Project", unique(x$project_name))
+    j <- x$project_role_name[1]
+    k <- paste(x$staff_name[x$project_role_name == j], collapse = ", ")
+    l <- paste(j, k, sep = ": ")
+    i <- paste(i, l, sep = "\n")
+    project <- data.tree::Node$new(i)
+    x <- x %>%
+      dplyr::filter(project_role_name != j)
+    
+    for (i in unique(x$project_role_name)){
+      role <- project$AddChild(i)
+      for (j in unique(x$staff_name[x$project_role_name == i]))
+        staff <- role$AddChild(j)
+    }
+    data.tree::SetNodeStyle(project,  shape = "box")  
+    return(project)
+  }
+  )
+  tmp <- workplanr_get_project_teams(project_teams = tmp)
+  return(tmp)
+}
+#' Add staff assignments to schedulke
+#'
+#' @param workplan schedule
+#' @keywords internal
 calculate_workplan = function(workplan){
   workplan@schedule <- get_schedule(workplan)
   workplan@release_schedule <- get_release_schedule(workplan)
   workplan@staff_schedule <- get_staff_schedule(workplan)
   workplan@team_schedule <- get_team_schedule(workplan)
   workplan@project_dependencies <- get_project_dependencies(workplan)
+ # workplan@project_team <- get_project_teams(workplan)
   return(workplan)
 }
 
