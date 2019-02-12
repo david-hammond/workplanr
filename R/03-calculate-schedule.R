@@ -53,8 +53,9 @@ calculate_start_and_end_dates = function(workplan){
   
 
   #allow for extra time if numbers dont add up
-  # pos <- tmp$phase_start > tmp$project_start
-  # tmp$phase_start[pos] <-  tmp$project_start[pos]
+  pos <- tmp$project_phase_name == workplan@project_phases@project_phase_name[1] &
+    tmp$phase_start > tmp$project_start
+  tmp$phase_start[pos] <-  tmp$project_start[pos]
   
   tmp <- tmp %>%
     dplyr::select(project_name, project_confirmed, project_phase_name, phase_start, phase_end) %>%
