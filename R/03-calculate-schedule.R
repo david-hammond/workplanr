@@ -53,8 +53,9 @@ calculate_start_and_end_dates = function(workplan){
   
 
   #allow for extra time if numbers dont add up
-  # pos <- tmp$phase_start > tmp$project_start
-  # tmp$phase_start[pos] <-  tmp$project_start[pos]
+  pos <- tmp$project_phase_name == workplan@project_phases@project_phase_name[1] &
+    tmp$phase_start > tmp$project_start
+  tmp$phase_start[pos] <-  tmp$project_start[pos]
   
   tmp <- tmp %>%
     dplyr::select(project_name, project_confirmed, project_phase_name, phase_start, phase_end) %>%
@@ -70,7 +71,6 @@ calculate_start_and_end_dates = function(workplan){
     dplyr::left_join(as.data.frame(workplan@public_holidays)) %>%
     dplyr::select(date, project_name, project_confirmed, project_phase_name, holiday_name) %>%
     dplyr::arrange(date)
-  bizdays::remove.calendars('normal')
   return(tmp)
 }
 #' Add staff assignments to schedulke
@@ -84,6 +84,8 @@ add_project_assignments = function(schedule, workplan){
     dplyr::filter(staff_contribution > 0) %>%
       dplyr::mutate(staff_name = as.character(staff_name)) %>%
       dplyr::left_join(as.data.frame(workplan@staff))
+    pos <- is.na(schedule$staff_capacity)
+    schedule$staff_capacity[pos] <- 0 
   return(schedule)
 }
 #' Add staff assignments to schedulke
@@ -139,8 +141,10 @@ get_staff_schedule = function(workplan){
   tmp <- as.data.frame(workplan@schedule)
   staff_schedule <- tmp %>%
     dplyr::group_by(date, staff_name) %>%
-    dplyr::summarise(workload = sum(staff_contribution)/max(c(staff_capacity, max(workplan@staff@staff_capacity)), na.rm = T)) %>%
-    dplyr::ungroup() 
+    dplyr::summarise(workload = sum(staff_contribution)/
+                       max(c(staff_capacity, max(workplan@staff@staff_capacity)), na.rm = T)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(workload = ifelse(is.na(workload), 0, workload))
   projects = tmp %>% 
     dplyr::filter(staff_contribution > 0) %>%
     dplyr::group_by(project_name, staff_name) %>%
@@ -189,7 +193,6 @@ get_team_schedule = function(workplan){
     dplyr::group_by(date, project_confirmed) %>% 
     dplyr::summarise(staff_contribution = sum(staff_contribution, na.rm=TRUE),
                      workload = round(staff_contribution/team_capacity,2)) %>%
-    dplyr::select(-staff_contribution) %>%
     dplyr::ungroup() 
   tmp <- workplanr_team_schedule(date = as.Date(tmp$date),
                                  project_confirmed = as.logical(tmp$project_confirmed),
@@ -260,12 +263,50 @@ get_project_dependencies = function(workplan){
 #'
 #' @param workplan schedule
 #' @keywords internal
+get_project_teams = function(workplan){
+  tmp <- as.data.frame(my_workplan@schedule)
+  tmp <- tmp %>% 
+    dplyr::filter(staff_contribution > 0) %>%
+    dplyr::select(project_name, project_role_name, staff_name) %>%
+    dplyr::distinct() %>%
+    dplyr::arrange(project_name, project_role_name)
+  
+  tmp <- split(tmp, tmp$project_name)
+  
+  tmp <- lapply(tmp, function(x) {
+    x <- apply(x, 2, proper_capitalise)
+    i <- paste("Project", unique(x$project_name))
+    j <- x$project_role_name[1]
+    k <- paste(x$staff_name[x$project_role_name == j], collapse = ", ")
+    l <- paste(j, k, sep = ": ")
+    i <- paste(i, l, sep = "\n")
+    project <- data.tree::Node$new(i)
+    x <- x %>%
+      dplyr::filter(project_role_name != j)
+    
+    for (i in unique(x$project_role_name)){
+      role <- project$AddChild(i)
+      for (j in unique(x$staff_name[x$project_role_name == i]))
+        staff <- role$AddChild(j)
+    }
+    data.tree::SetNodeStyle(project,  shape = "box")  
+    return(project)
+  }
+  )
+  tmp <- workplanr_get_project_teams(project_teams = tmp)
+  return(tmp)
+}
+#' Add staff assignments to schedulke
+#'
+#' @param workplan schedule
+#' @keywords internal
 calculate_workplan = function(workplan){
   workplan@schedule <- get_schedule(workplan)
   workplan@release_schedule <- get_release_schedule(workplan)
   workplan@staff_schedule <- get_staff_schedule(workplan)
   workplan@team_schedule <- get_team_schedule(workplan)
   workplan@project_dependencies <- get_project_dependencies(workplan)
+ # workplan@project_team <- get_project_teams(workplan)
   return(workplan)
 }
 

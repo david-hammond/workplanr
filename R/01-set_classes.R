@@ -386,15 +386,25 @@ workplanr_class <- setClass("workplan", slots =  list(staff = "staff",
 setMethod("plot", "staff_schedule", definition = function(x){
   tmp <- as.data.frame(x)
   tmp <- tmp %>%
-    dplyr::filter(date <= max(date[!is.na(workload)]))
-  myPalette <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(11, 'RdGy')[c(6,2)], 
-                                           space='Lab')
+    dplyr::filter(date <= max(date[!is.na(workload)]), 
+                  !is.na(workload))
+  #TODO: make function calc beaks
+  bins <- c(0,0.25, 0.5, 0.75, 1, 1.25, 2, max(tmp$workload))
+  labels <- c("[0 - 25%]", "[25% - 50%]", "[50% - 75%]", "[75% - 100%]", "[100% - 125%]",
+                       "[125% - 200%]", paste0("[200% - ", round(100*max(tmp$workload),0), "%]"))
+  work_classes <- classInt::classIntervals(tmp$workload, n = length(bins)-1, style = "fixed",
+                                fixedBreaks = bins)
+  tmp$workload = cut(tmp$workload, bins, labels = labels)
+  tmp$workload = forcats::fct_rev(tmp$workload)
+ # labels = scales::percent, 
   p <- ggplot2::ggplot(data = tmp, 
                        ggplot2::aes(date, staff_name, fill = workload)) +
-    ggplot2::geom_tile(alpha = 0.9) +
-    ggplot2::scale_fill_gradientn(colors = myPalette(100), 
-                                  labels = scales::percent, name = 'Workload', na.value = "white",
-                                  limits = c(0, max(tmp$workload))) +
+    ggplot2::geom_tile(alpha = 0.6) +
+    ggplot2::scale_fill_manual(values = 
+                                 rev(RColorBrewer::brewer.pal(n = 
+                                                                max(length(unique(tmp$workload),3)), 
+                                                              "Reds")), 
+                                  name = 'Workload', na.value = "white") +
     ggplot2::labs(x='', y = '', 
                   title = toupper('STAFF WORKLOAD')) +
     ggplot2::scale_x_date(labels = scales::date_format('%b'), 
@@ -413,7 +423,7 @@ setMethod("plot", "staff_schedule", definition = function(x){
   leave <- tmp %>%
     dplyr::group_by(staff_name, id_out_of_office, out_of_office) %>%
     dplyr::summarise(start = min(date), end = max(date), 
-                     workload = mean(workload, na.rm = T)) %>%
+                     workload = tmp$workload[1]) %>%
     dplyr::filter(!is.na(out_of_office))
 
   p <- p + ggplot2::geom_segment(data = leave, ggplot2::aes(x=start, 
@@ -421,9 +431,11 @@ setMethod("plot", "staff_schedule", definition = function(x){
                                                                 y=staff_name, 
                                                                 yend=staff_name, colour = out_of_office), size=2, alpha = 0.6)
   p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=start, 
-                                                              y=staff_name, colour = out_of_office), size=3)
+                                                              y=staff_name, colour = out_of_office), size=3,
+                               show.legend = FALSE)
   p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=end, 
-                                                              y=staff_name, colour = out_of_office), size=3)
+                                                              y=staff_name, colour = out_of_office), size=3,
+                               show.legend = FALSE)
   p <- p + ggplot2::labs(fill ="Workload" ,colour="Out of Office")
   public_holidays <- tmp %>% 
     dplyr::filter(!is.na(holiday_name)) 
@@ -497,13 +509,11 @@ setMethod("plot", "team_schedule", definition = function(x){
 #' @export
 setMethod("plot", "release_schedule", definition = function(x){
   tmp <- as.data.frame(x)
-  tmp$days_left <- (tmp$end_date - tmp$start_date)
-  pos <- tmp$start_date < lubridate::today()
-  tmp$days_left[pos] <- tmp$end_date[pos] - lubridate::today() 
-  tmp$days_left <- ifelse(tmp$days_left > 0, tmp$days_left, NA)
+  ref_dates <- apply(data.frame(lubridate::today(), tmp$start_date), 1, max)
+  tmp$days_left <- bizdays::bizdays(ref_dates, tmp$end_date, 'normal')
   tmp$mid <- tmp$start_date +(tmp$end_date - tmp$start_date)/2
-  
-  
+  tmp$due <- paste0(format(tmp$end_date, "%d/%m"), " (", tmp$days_left, ")")
+  tmp$due <- ifelse(tmp$days_left > 0, tmp$due, NA)
   p <- ggplot2::ggplot(tmp, ggplot2::aes(colour=project_phase_name))
   p <- p + ggplot2::geom_segment(ggplot2::aes(x=start_date, 
                                               xend=end_date, 
@@ -514,13 +524,14 @@ setMethod("plot", "release_schedule", definition = function(x){
                           date_breaks = '1 month', 
                           expand = c(0,0)) +
     ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
-  p <- p + ggrepel::geom_label_repel(data = tmp[!is.na(tmp$days_left),], 
-                                     ggplot2::aes(x = mid, y = project_name, label = days_left), force = 5,
-                                     show.legend = FALSE) +
+  p <- p + ggrepel::geom_label_repel(data = tmp[!is.na(tmp$due),], 
+                                     ggplot2::aes(x = mid, y = project_name, label = due), force = 5,
+                                     show.legend = FALSE, size = 3) +
     ggplot2::theme_bw() +
     ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
                    panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"),
-                   legend.position = c(0.7,0.9), legend.direction = "horizontal") +
+                   legend.position = c(0.7,0.9), legend.direction = "horizontal",
+                   legend.text= ggplot2::element_text(size=8)) +
     ggplot2::labs(title = "Release schedule and days left in each phase", x = "", y = "", colour = "")
   
 

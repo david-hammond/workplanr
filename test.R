@@ -31,7 +31,7 @@ plot(my_workplan@release_schedule)
 plot(my_workplan@staff_schedule)
 plot(my_workplan@team_schedule)
 plot(my_workplan@project_dependencies)
-
+get_project_teams("A", my_workplan)
 project_workplan <- extract_project_schedule(project = "C", my_workplan)
 plot(project_workplan@release_schedule)
 plot(project_workplan@staff_schedule)
