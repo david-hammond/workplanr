@@ -487,7 +487,7 @@ setMethod("plot", "team_schedule", definition = function(x){
                                            "Planned Deficit",
                                            "Potential Work",
                                            "Potential Deficit")), ordered = T)
-  main_title <- paste0("Planned Team workload - ", format(lubridate::today(), "%d %B %Y"))
+  main_title <- paste0("Planned Team Workload - ", format(lubridate::today(), "%d %B %Y"))
   # base layer
   p <- ggplot2::ggplot(tmp, ggplot2::aes(x = date, y = value, fill =  group)) +
     ggplot2::geom_bar(stat = 'identity',  show.legend = T) + 
