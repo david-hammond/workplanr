@@ -152,7 +152,7 @@ get_staff_schedule = function(workplan){
     dplyr::select(project_name, staff_name, date, staff_contribution) %>%
     dplyr::group_by(date, staff_name) %>%
     dplyr::distinct() %>%
-    dplyr::summarise(project_name = paste(project_name, collapse = ", ")) %>%
+    dplyr::summarise(project_name = paste(unique(project_name), collapse = ", ")) %>%
     dplyr::ungroup() 
   staff_schedule <- staff_schedule %>%
     dplyr::left_join(projects)
@@ -162,7 +162,8 @@ get_staff_schedule = function(workplan){
   staff_schedule <- staff_schedule %>%
     dplyr::left_join(tmp)
   staff_schedule$staff_name <- factor(staff_schedule$staff_name, 
-                                      levels = c(rev(workplan@staff@staff_name), unique(workplan@project_unassignments@staff_name)),
+                                      levels = c(rev(workplan@staff@staff_name), 
+                                                 unique(workplan@project_unassignments@staff_name)),
                                       ordered = TRUE)
   staff_schedule <- add_staff_out_of_office(staff_schedule, workplan)
   staff_schedule <- staff_schedule %>%
