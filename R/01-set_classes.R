@@ -388,6 +388,7 @@ setMethod("plot", "staff_schedule", definition = function(x){
   tmp <- tmp %>%
     dplyr::filter(date <= max(date[!is.na(workload)]), 
                   !is.na(workload))
+  #TODO: make function calc beaks
   bins <- c(0,0.25, 0.5, 0.75, 1, 1.25, 2, max(tmp$workload))
   labels <- c("[0 - 25%]", "[25% - 50%]", "[50% - 75%]", "[75% - 100%]", "[100% - 125%]",
                        "[125% - 200%]", paste0("[200% - ", round(100*max(tmp$workload),0), "%]"))
@@ -400,7 +401,9 @@ setMethod("plot", "staff_schedule", definition = function(x){
                        ggplot2::aes(date, staff_name, fill = workload)) +
     ggplot2::geom_tile(alpha = 0.6) +
     ggplot2::scale_fill_manual(values = 
-                                 rev(RColorBrewer::brewer.pal(n = length(unique(tmp$workload)), "Reds")), 
+                                 rev(RColorBrewer::brewer.pal(n = 
+                                                                max(length(unique(tmp$workload),3)), 
+                                                              "Reds")), 
                                   name = 'Workload', na.value = "white") +
     ggplot2::labs(x='', y = '', 
                   title = toupper('STAFF WORKLOAD')) +
