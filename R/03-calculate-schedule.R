@@ -84,6 +84,8 @@ add_project_assignments = function(schedule, workplan){
     dplyr::filter(staff_contribution > 0) %>%
       dplyr::mutate(staff_name = as.character(staff_name)) %>%
       dplyr::left_join(as.data.frame(workplan@staff))
+    pos <- is.na(schedule$staff_capacity)
+    schedule$staff_capacity[pos] <- 0 
   return(schedule)
 }
 #' Add staff assignments to schedulke
@@ -139,7 +141,8 @@ get_staff_schedule = function(workplan){
   tmp <- as.data.frame(workplan@schedule)
   staff_schedule <- tmp %>%
     dplyr::group_by(date, staff_name) %>%
-    dplyr::summarise(workload = sum(staff_contribution)/max(c(staff_capacity, max(workplan@staff@staff_capacity)), na.rm = T)) %>%
+    dplyr::summarise(workload = sum(staff_contribution)/
+                       max(c(staff_capacity, max(workplan@staff@staff_capacity)), na.rm = T)) %>%
     dplyr::ungroup() 
   projects = tmp %>% 
     dplyr::filter(staff_contribution > 0) %>%
@@ -189,7 +192,7 @@ get_team_schedule = function(workplan){
     dplyr::group_by(date, project_confirmed) %>% 
     dplyr::summarise(staff_contribution = sum(staff_contribution, na.rm=TRUE),
                      workload = round(staff_contribution/team_capacity,2)) %>%
-    dplyr::select(-staff_contribution) %>%
+    #dplyr::select(-staff_contribution) %>%
     dplyr::ungroup() 
   tmp <- workplanr_team_schedule(date = as.Date(tmp$date),
                                  project_confirmed = as.logical(tmp$project_confirmed),
