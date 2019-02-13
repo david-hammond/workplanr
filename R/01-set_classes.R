@@ -514,7 +514,7 @@ setMethod("plot", "release_schedule", definition = function(x){
   ref_dates <- apply(data.frame(lubridate::today(), tmp$start_date), 1, max)
   tmp$days_left <- bizdays::bizdays(ref_dates, tmp$end_date, 'normal')
   tmp$mid <- tmp$start_date +(tmp$end_date - tmp$start_date)/2
-  tmp$due <- paste0(format(tmp$start_date_date, "%d/%m"), " (", tmp$days_left, ")")
+  tmp$due <- paste0(format(tmp$start_date, "%d/%m"), " (", tmp$days_left, ")")
   tmp$due <- ifelse(tmp$days_left > 0, tmp$due, NA)
   p <- ggplot2::ggplot(tmp, ggplot2::aes(colour=project_phase_name))
   p <- p + ggplot2::geom_segment(ggplot2::aes(x=start_date, 
