@@ -143,7 +143,8 @@ get_staff_schedule = function(workplan){
     dplyr::group_by(date, staff_name) %>%
     dplyr::summarise(workload = sum(staff_contribution)/
                        max(c(staff_capacity, max(workplan@staff@staff_capacity)), na.rm = T)) %>%
-    dplyr::ungroup() 
+    dplyr::ungroup() %>%
+    dplyr::mutate(workload = ifelse(is.na(workload), 0, workload))
   projects = tmp %>% 
     dplyr::filter(staff_contribution > 0) %>%
     dplyr::group_by(project_name, staff_name) %>%
@@ -192,7 +193,6 @@ get_team_schedule = function(workplan){
     dplyr::group_by(date, project_confirmed) %>% 
     dplyr::summarise(staff_contribution = sum(staff_contribution, na.rm=TRUE),
                      workload = round(staff_contribution/team_capacity,2)) %>%
-    #dplyr::select(-staff_contribution) %>%
     dplyr::ungroup() 
   tmp <- workplanr_team_schedule(date = as.Date(tmp$date),
                                  project_confirmed = as.logical(tmp$project_confirmed),
