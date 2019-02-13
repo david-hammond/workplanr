@@ -396,17 +396,16 @@ setMethod("plot", "staff_schedule", definition = function(x){
                                 fixedBreaks = bins)
   tmp$workload = cut(tmp$workload, bins, labels = labels)
   tmp$workload = forcats::fct_rev(tmp$workload)
+  main_title <- paste0("Planned Staff Workload - ", format(lubridate::today(), "%d %B %Y"))
  # labels = scales::percent, 
   p <- ggplot2::ggplot(data = tmp, 
                        ggplot2::aes(date, staff_name, fill = workload)) +
     ggplot2::geom_tile(alpha = 0.6) +
     ggplot2::scale_fill_manual(values = 
-                                 rev(RColorBrewer::brewer.pal(n = 
-                                                                max(length(unique(tmp$workload),3)), 
+                                 rev(RColorBrewer::brewer.pal(n = max(length(unique(tmp$workload)),3), 
                                                               "Reds")), 
                                   name = 'Workload', na.value = "white") +
-    ggplot2::labs(x='', y = '', 
-                  title = toupper('STAFF WORKLOAD')) +
+    ggplot2::labs(x='', y = '', title = main_title) +
     ggplot2::scale_x_date(labels = scales::date_format('%b'), 
                           date_breaks = '1 month', 
                          expand = c(0,0))
@@ -416,7 +415,8 @@ setMethod("plot", "staff_schedule", definition = function(x){
     dplyr::filter(!is.na(project_name))
   p <- p + ggrepel::geom_text_repel(data = project_labels, 
                                     ggplot2::aes(x = date, y = staff_name, label = project_name), 
-                                    size = 3, hjust = 1)   
+                                    size = 3, hjust = 1)   +
+    ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
 
   #add leave
 
@@ -487,16 +487,18 @@ setMethod("plot", "team_schedule", definition = function(x){
                                            "Planned Deficit",
                                            "Potential Work",
                                            "Potential Deficit")), ordered = T)
-  
+  main_title <- paste0("Planned Team workload - ", format(lubridate::today(), "%d %B %Y"))
   # base layer
   p <- ggplot2::ggplot(tmp, ggplot2::aes(x = date, y = value, fill =  group)) +
     ggplot2::geom_bar(stat = 'identity',  show.legend = T) + 
     ggplot2::scale_fill_manual(values = cols) +
     ggplot2::scale_y_continuous(labels = scales::percent) +
-    ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD', fill = "")  +
+    ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = main_title, fill = "")  +
     ggplot2::scale_x_date(labels = scales::date_format('%b'), 
                           date_breaks = '1 month', 
-                          expand = c(0,0))
+                          expand = c(0,0)) +
+    ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
+  
 
   return(p)
 })
@@ -524,6 +526,7 @@ setMethod("plot", "release_schedule", definition = function(x){
                           date_breaks = '1 month', 
                           expand = c(0,0)) +
     ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
+  main_title <- paste0("Release schedule (days left in each phase) - ", format(lubridate::today(), "%d %B %Y"))
   p <- p + ggrepel::geom_label_repel(data = tmp[!is.na(tmp$due),], 
                                      ggplot2::aes(x = mid, y = project_name, label = due), force = 5,
                                      show.legend = FALSE, size = 3) +
@@ -532,7 +535,7 @@ setMethod("plot", "release_schedule", definition = function(x){
                    panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"),
                    legend.position = c(0.7,0.9), legend.direction = "horizontal",
                    legend.text= ggplot2::element_text(size=8)) +
-    ggplot2::labs(title = "Release schedule and days left in each phase", x = "", y = "", colour = "")
+    ggplot2::labs(title = main_title, x = "", y = "", colour = "")
   
 
   return(p)
