@@ -7,7 +7,7 @@ calculate_start_and_end_dates = function(workplan){
   tmp <- as.data.frame(workplan@projects) %>%
     dplyr::left_join(as.data.frame(workplan@time_estimates)) %>%
     dplyr::filter(time_estimate != 0) %>%
-    dplyr::mutate(time_estimate = ifelse(time_estimate > 1, time_estimate - 1,
+    dplyr::mutate(time_estimate = ifelse(time_estimate > 0, time_estimate - 1,
                                          time_estimate + 1)) #need to include the day of commencement
   
   cals <- bizdays::create.calendar('normal', 
