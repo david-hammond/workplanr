@@ -169,6 +169,11 @@ self_check = function(wp){
               "roles_responsibilities",
               "time_estimates")
   pos <- is.na(mget(inputs, wp))
-  message(paste0("You still need to input:\n", paste(inputs[pos], collapse = "\n"), 
-          "\nbefore project schedules can be calculated"))
+  if(sum(pos)>0){
+    message(paste0("You still need to input:\n", paste(inputs[pos], collapse = "\n"), 
+                   "\nbefore project schedules can be calculated"))
+  }else{
+    message(paste0("Your schedule has been calculated"))
+  }
+  return(NULL)
 }
