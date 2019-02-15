@@ -32,7 +32,7 @@ workplan <- R6Class("workplan", list(
   },
   project_roles = NA,
   addRoles = function(project_role_name){
-    project_roles <- factor(project_role_name, project_role_name, ordered = T)
+    project_role_name <- factor(project_role_name, levels = project_role_name, ordered = T)
     self$project_roles <- data.frame(project_role_name)
     self_check(self)
     invisible(self)
@@ -82,7 +82,10 @@ workplan <- R6Class("workplan", list(
                                                      ordered = T)
     self_check(self)
     invisible(self)
-  })
+  },
+  staff_name_for_unassigned_work = "unassigned",
+  project_assignments = NA,
+  project_unassignments = NA)
 )
 
 
@@ -173,7 +176,45 @@ self_check = function(wp){
     message(paste0("You still need to input:\n", paste(inputs[pos], collapse = "\n"), 
                    "\nbefore project schedules can be calculated"))
   }else{
-    message(paste0("Your schedule has been calculated"))
+    create_project_assignments(wp)
+    message(paste0("Your schedule is ready to be calculated. To begin, use assignStaff()"))
   }
+  return(NULL)
+}
+
+create_project_assignments = function(wp){
+  project_assignments <- expand.grid(staff_name = wp$staff$staff_name, 
+              project_role_name = wp$project_roles$project_role_name,
+              project_phase_name = wp$project_phases$project_phase_name, 
+              project_name = wp$projects$project_name,
+              KEEP.OUT.ATTRS = FALSE)
+  
+  project_assignments$staff_contribution <- 0
+  project_assignments <- project_assignments %>% 
+    dplyr::left_join(wp$time_estimates) %>%
+    dplyr::filter(abs(time_estimate) > 0) %>% 
+    dplyr::select(-time_estimate)
+  
+  project_assignments <- project_assignments %>%
+    dplyr::left_join(wp$roles_responsibilities) %>%
+    dplyr::filter(responsibility_span == 1) %>% 
+    dplyr::select(-responsibility_span)
+  
+  wp$project_assignments <- data.frame(staff_name = as.character(project_assignments$staff_name),
+                                                                project_role_name = project_assignments$project_role_name,
+                                                                project_phase_name = project_assignments$project_phase_name,
+                                                                project_name = project_assignments$project_name,
+                                                                staff_contribution = project_assignments$staff_contribution)
+  
+  project_assignments <- project_assignments %>%
+    dplyr::mutate(staff_name = wp$staff_name_for_unassigned_work,
+                  staff_contribution = 100) %>%
+    dplyr::distinct()
+  
+  wp$project_unassignments <- data.frame(staff_name = as.character(project_assignments$staff_name),
+                                                                  project_role_name = project_assignments$project_role_name,
+                                                                  project_phase_name = project_assignments$project_phase_name,
+                                                                  project_name = project_assignments$project_name,
+                                                                  staff_contribution = project_assignments$staff_contribution)
   return(NULL)
 }
