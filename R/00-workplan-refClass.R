@@ -1,19 +1,105 @@
-library(workplanr)
-data("staff", package = "workplanr")
-data("projects", package = "workplanr")
-data("project_phases", package = "workplanr")
-data("project_roles", package = "workplanr")
-data("out_of_office", package = "workplanr")
-data("public_holidays", package = "workplanr")
-data("time_estimates", package = "workplanr")
-data("roles_responsibilities", package = "workplanr")
+#' Names that are reserved by the Node class.
+#'
+#' These are reserved by the Node class, you cannot use these as 
+#' attribute names.
+#' Note also that all fields starting with a . are reserved.
+#' 
+#' @export
+NODE_RESERVED_NAMES_CONST <- c( "wp_schedule",
+                                "wp_inputs",
+                                "clone",
+                                "plotStaffSchedule",
+                                "plotTeamSchedule",
+                                "plotReleaseSchedule",
+                                "assignStaff",
+                                "addTimeEstimates",
+                                "addResponsibilites",
+                                "addHolidays",
+                                "add_Out_Of_Office",
+                                "addRoles",
+                                "addPhases",
+                                "addProjects",         
+                                "addStaff")
 
+
+#' Create a \code{data.tree} Structure With \code{Nodes}
+#' 
+#' @description \code{Node} is at the very heart of the \code{data.tree} package. All trees are constructed
+#' by tying together \code{Node} objects.
+#' 
+#' @details Assemble \code{Node} objects into a \code{data.tree}
+#' structure and use the traversal methods to set, get, and perform operations on it. Typically, you construct larger tree 
+#' structures by converting from \code{data.frame}, \code{list}, or other formats.
+#' 
+#' @docType class
+#' @importFrom R6 R6Class
+#' @field children A list of child \code{Nodes}
+#' @field parent The node's parent \code{Node}
+#' @section Methods:
+#' 
+#' \describe{
+#'   \item{\code{Node$new(name)}}{Creates a new \code{Node} called \code{name}. Often used to construct the root when creating trees programmatically.}
+#'   \item{\code{AddChild(name)}}{Creates a new \code{Node} called \code{name} and adds it to this \code{Node} as a child.}
+#'   \item{\code{AddChildNode(node)}}{Adds a \code{Node} as a child.}
+#'   \item{\code{AddSibling(name)}}{Creates a new \code{Node} called \code{name} and adds it after this \code{Node} as a sibling.}
+#'   \item{\code{AddSiblingNode(sibling)}}{Adds a new \code{Node} after this \code{Node}, as a sibling.}      
+#'   \item{\code{RemoveChild(name)}}{Remove the child \code{Node} called \code{name} from a \code{Node} and returns it.}
+#'   \item{\code{RemoveAttribute(name, stopIfNotAvailable)}}{Removes attribute called \code{name} from this \code{Node}. Gives an error if \code{stopIfNotAvailable} and the attribute does not exist.}
+#'   \item{\code{\link{Climb}(...)}}{Find a node with path \code{...}, where the \code{...} arguments are the \code{name}s of the \code{Node}s, or other field values.}
+#'   \item{\code{\link{Navigate}(path)}}{Find a node by relative \code{path}}
+#'   \item{\code{\link{FindNode}(name)}}{Find a node with name \code{name}. Especially useful if \code{\link{AreNamesUnique}} is \code{TRUE}}
+#'   \item{\code{\link{Get}(attribute, ..., traversal = c("pre-order", "post-order", "in-order", "level", "ancestor"), pruneFun = NULL, filterFun = NULL, format = NULL, inheritFromAncestors = FALSE, simplify = c(TRUE, FALSE, "array", "regular"))}}{Traverses the tree and collects values along the way.}
+#'   \item{\code{\link{Do}(fun, ..., traversal = c("pre-order", "post-order", "in-order", "level", "ancestor"), pruneFun = NULL, filterFun = NUL)}}{Traverses the tree and call fun on each node.}
+#'   \item{\code{\link{Set}(..., traversal = c("pre-order", "post-order", "in-order", "level", "ancestor"), pruneFun = NULL, filterFun = NULL)}}{Traverses the tree and assigns the args along the way, recycling the args.}
+#'   \item{\code{\link{Sort}(attribute, ..., decreasing = FALSE, recursive = TRUE}}{Sort children of a node with respect to an attribute (field, method, active, function)}
+#'   \item{\code{\link{Revert}(recursive = TRUE)}}{Revert the sort order of a node}
+#'   \item{\code{\link{Prune}(pruneFun)}}{Prune a tree. The pruneFun takes a node as its first argument, and returns TRUE if the node should be kept, FALSE otherwise}
+#'
+#' }
+#' 
+#' @section Actives (aka Properties):
+#'   
+#' \describe{
+#'  \item{\code{name}}{Gets or sets the name of a \code{Node}. For example \code{Node$name <- "Acme"}}
+#'  \item{\code{parent}}{Gets or sets the parent \code{Node} of a \code{Node}. Only set this if you know what you are doing, as you might mess up the tree structure!}
+#'  \item{\code{children}}{Gets or sets the children \code{list} of a \code{Node}. Only set this if you know what you are doing, as you might mess up the tree structure!}
+#'  \item{\code{siblings}}{Returns a list of the siblings of this \code{Node}}
+#'  \item{\code{fields}}{Gets the names of the set properties of a \code{Node}}
+#'  \item{\code{fieldsAll}}{Gets the names of the set properties of a \code{Node} or any of its sub-Nodes}
+#'  \item{\code{isLeaf}}{Returns \code{TRUE} if the \code{Node} is a leaf, \code{FALSE} otherwise}
+#'  \item{\code{isRoot}}{Returns \code{TRUE} if the \code{Node} is the root, \code{FALSE} otherwise}
+#'  \item{\code{count}}{Returns the number of children of a \code{Node}}
+#'  \item{\code{totalCount}}{Returns the total number of \code{Node}s in the tree}
+#'  \item{\code{path}}{Returns a vector of mode \code{character} containing the names of the \code{Node}s in the path from the root to this \code{Node}}
+#'  \item{\code{pathString}}{Returns a string representing the path to this \code{Node}, separated by backslash}
+#'  \item{\code{levelName}}{Returns the name of the \code{Node}, preceded by level times '*'. Useful for printing.}
+#'  \item{\code{leafCount}}{Returns the number of leaves are below a \code{Node} }
+#'  \item{\code{leaves}}{Returns a list containing all the leaf \code{Node}s }
+#'  \item{\code{level}}{Returns an integer representing the level of a \code{Node}. For example, the root has level 1.}
+#'  \item{\code{height}}{Returns max(level) of any of the \code{Nodes} of the tree}
+#'  \item{\code{averageBranchingFactor}}{Returns the average number of crotches below this \code{Node}}
+#'  \item{\code{root}}{Returns the root \code{Node} of a \code{Node}'s tree}
+#'  
+#' }
+#' 
+#' @usage # n1 <- Node$new("Node 1")
+#'
+#' @examples
+#' 
+#' @seealso For more details see the \code{\link{data.tree}} documentations, or the \code{data.tree} vignette: \code{vignette("data.tree")}
+#'
+#'    
+#' @export
+#' @format An \code{\link{R6Class}} generator object
+#' 
 workplan <- R6Class("workplan", 
   public = list(
   wp_inputs = list(staff_name_for_unassigned_work = "unassigned"),
   wp_schedule = list(),
   addStaff = function(staff_name, staff_capacity) {
-    self$wp_inputs$staff <-  data.frame(staff_name, staff_capacity)
+    self$wp_inputs$staff <-  data.frame(staff_name = as.character(staff_name), 
+                                        staff_capacity = as.numeric(staff_capacity),
+                                        stringsAsFactors = FALSE)
     private$self_check()
     invisible(self)
   },
@@ -89,23 +175,26 @@ workplan <- R6Class("workplan",
     private$get_team_schedule()
     invisible(self)
   },
-  printReleaseSchedule = function(){
+  plotReleaseSchedule = function(){
     tmp <- self$wp_schedule$release_schedule
-    ref_dates <- apply(data.frame(lubridate::today(), tmp$phase_start), 1, max)
-    tmp$days_left <- bizdays::bizdays(ref_dates, tmp$phase_end, 'normal')
-    tmp$mid <- tmp$phase_start +(tmp$phase_end - tmp$phase_start)/2
-    tmp$due <- paste0(format(tmp$phase_end, "%d/%m"), " (", tmp$days_left, ")")
+    tmp <- tmp %>%
+      dplyr::rename(start_date = phase_start, end_date = phase_end)
+      
+    ref_dates <- apply(data.frame(lubridate::today(), tmp$start_date), 1, max)
+    tmp$days_left <- bizdays::bizdays(ref_dates, tmp$end_date, 'normal')
+    tmp$mid <- tmp$start_date +(tmp$end_date - tmp$start_date)/2
+    tmp$due <- paste0(format(tmp$start_date, "%d/%m"), " (", tmp$days_left, ")")
     tmp$due <- ifelse(tmp$days_left > 0, tmp$due, NA)
     p <- ggplot2::ggplot(tmp, ggplot2::aes(colour=project_phase_name))
-    p <- p + ggplot2::geom_segment(ggplot2::aes(x=phase_start, 
-                                                xend=phase_end, 
+    p <- p + ggplot2::geom_segment(ggplot2::aes(x=start_date, 
+                                                xend=end_date, 
                                                 y=project_name, 
                                                 yend=project_name), 
                                    size=10) +
       ggplot2::scale_x_date(labels = scales::date_format('%b'), 
                             date_breaks = '1 month', 
-                            expand = c(0,0)) +
-      ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
+                            expand = c(0,0)) 
+    main_title <- paste0("Project Phase Start Dates (days left in each phase) - ", format(lubridate::today(), "%d %B %Y"))
     p <- p + ggrepel::geom_label_repel(data = tmp[!is.na(tmp$due),], 
                                        ggplot2::aes(x = mid, y = project_name, label = due), force = 5,
                                        show.legend = FALSE, size = 3) +
@@ -114,12 +203,12 @@ workplan <- R6Class("workplan",
                      panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"),
                      legend.position = c(0.7,0.9), legend.direction = "horizontal",
                      legend.text= ggplot2::element_text(size=8)) +
-      ggplot2::labs(title = "Release schedule and days left in each phase", x = "", y = "", colour = "")
-    
+      ggplot2::labs(title = main_title, x = "", y = "", colour = "")
+    p <- private$plot_public_holidays_and_today(p)
     
     return(p)
   },
-  printTeamSchedule = function(){
+  plotTeamSchedule = function(){
     tmp <- self$wp_schedule$team_schedule
     pos <- tmp$workload == 0
     tmp$project_confirmed[pos] <- TRUE
@@ -149,24 +238,24 @@ workplan <- R6Class("workplan",
     cols = c(scales::alpha(gg_red, 0.5),   scales::alpha(gg_blue, 0.5),gg_red, gg_blue)
     tmp$group <- gsub("_", " ", tmp$group)
     tmp$group <- private$proper_capitalise(tolower(tmp$group))
-    tmp$group <- factor(tmp$group, levels = rev(c("Planned Work",
+    tmp$group = factor(tmp$group, levels = rev(c("Planned Work",
                                                  "Planned Deficit",
                                                  "Potential Work",
                                                  "Potential Deficit")), ordered = T)
-    
+    main_title <- paste0("Planned Team Workload - ", format(lubridate::today(), "%d %B %Y"))
     # base layer
     p <- ggplot2::ggplot(tmp, ggplot2::aes(x = date, y = value, fill =  group)) +
       ggplot2::geom_bar(stat = 'identity',  show.legend = T) + 
       ggplot2::scale_fill_manual(values = cols) +
       ggplot2::scale_y_continuous(labels = scales::percent) +
-      ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = 'TEAM WORKLOAD', fill = "")  +
+      ggplot2::labs(x='', y = 'TEAM WORKLOAD', title = main_title, fill = "")  +
       ggplot2::scale_x_date(labels = scales::date_format('%b'), 
                             date_breaks = '1 month', 
                             expand = c(0,0))
-    
+    p <- private$plot_public_holidays_and_today(p)
     return(p)
   },
-  printStaffSchedule = function(){
+  plotStaffSchedule = function(){
     tmp <- self$wp_schedule$staff_schedule
     tmp <- tmp %>%
       dplyr::filter(date <= max(date[!is.na(workload)]), 
@@ -198,8 +287,8 @@ workplan <- R6Class("workplan",
       dplyr::filter(!is.na(project_name))
     p <- p + ggrepel::geom_text_repel(data = project_labels, 
                                       ggplot2::aes(x = date, y = staff_name, label = project_name), 
-                                      size = 3, hjust = 1)   +
-      ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
+                                      size = 3, hjust = 1)   
+      
     
     #add leave
     
@@ -220,13 +309,10 @@ workplan <- R6Class("workplan",
                                                             y=staff_name, colour = out_of_office), size=3,
                                  show.legend = FALSE)
     p <- p + ggplot2::labs(fill ="Workload" ,colour="Out of Office")
-    public_holidays <- tmp %>% 
-      dplyr::filter(!is.na(holiday_name)) 
-    p <- p + ggplot2::geom_vline(xintercept = public_holidays$date,
-                                 linetype = "dashed", colour = grey(0.5), alpha = 0.6) +
-      ggplot2::theme_bw() +
+    p <- p + ggplot2::theme_bw() +
       ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
                      panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
+    p <- private$plot_public_holidays_and_today(p)
     return(p)
   }),
   private = list(
@@ -251,12 +337,17 @@ workplan <- R6Class("workplan",
     },
     add_projects = function(project_name, project_confirmed,
                             project_start, project_end){
-      project_name <- factor(project_name, ordered = TRUE)
+      project_name <- as.character(project_name)
       project_confirmed <- as.logical(project_confirmed)
       project_start <- as.Date(project_start)
       project_end <- as.Date(project_end)
       self$wp_inputs$projects <- data.frame(project_name, project_confirmed,
                                             project_start, project_end)
+      self$wp_inputs$projects <- self$wp_inputs$projects %>%
+        dplyr::arrange(project_end) %>% 
+        dplyr::distinct() %>%
+        dplyr::mutate(project_name = factor(project_name, levels = rev(project_name),
+                                            ordered = TRUE))
       invisible(self)
     },
     add_OOO = function(staff_name, out_of_office_start, 
@@ -270,7 +361,8 @@ workplan <- R6Class("workplan",
                                                  staff_name,
                                                  out_of_office_start,
                                                  out_of_office_end,
-                                                 work_related)
+                                                 work_related,
+                                                 stringsAsFactors = FALSE)
       invisible(self)
     },
     add_ph = function(date, holiday_name){
@@ -306,7 +398,7 @@ workplan <- R6Class("workplan",
                                                   project_phase_name, 
                                                   time_estimate)
       self$wp_inputs$time_estimates$project_name <- factor(self$wp_inputs$time_estimates$project_name,
-                                                           levels = self$wp_inputs$projects$project_name,
+                                                           levels = levels(self$wp_inputs$projects$project_name),
                                                            ordered = T)
       self$wp_inputs$time_estimates$project_phase_name <- factor(self$wp_inputs$time_estimates$project_phase_name,
                                                                  levels = self$wp_inputs$project_phases$project_phase_name,
@@ -415,11 +507,11 @@ workplan <- R6Class("workplan",
         dplyr::mutate(date = as.Date(date))
       
       tmp <- tmp %>%
-        dplyr::left_join(rbind(as.data.frame(self$wp_inputs$project_assignments), 
-                               as.data.frame(self$wp_inputs$project_unassignments))) %>%
+        dplyr::left_join(rbind(self$wp_inputs$project_assignments, 
+                               self$wp_inputs$project_unassignments)) %>%
         dplyr::filter(staff_contribution > 0) %>%
         dplyr::mutate(staff_name = as.character(staff_name)) %>%
-        dplyr::left_join(as.data.frame(self$wp_inputs$staff)) %>%
+        dplyr::left_join(self$wp_inputs$staff) %>%
         dplyr::mutate(staff_capacity = ifelse(is.na(staff_capacity), 0, staff_capacity))
       
       self$wp_schedule$schedule <- tmp %>%
@@ -518,45 +610,13 @@ workplan <- R6Class("workplan",
     proper_capitalise = function(string){
       gsub("(?<=\\b)([a-z])", "\\U\\1", tolower(string), perl=TRUE)
     },
-    plot_public_holidays = function(p){
-      
+    plot_public_holidays_and_today = function(p){
+      public_holidays <- self$wp_inputs$public_holidays
+      p <- p + ggplot2::geom_vline(xintercept = public_holidays$date,
+                                   linetype = "dashed", colour = grey(0.5), alpha = 0.6) +
+        ggplot2::geom_vline(xintercept = lubridate::today(), colour = "red", linetype = "dashed")
+      return(p)
     }
   )
 )
-
-
-tmp <- workplan$new()
-tmp$addStaff(staff$staff_name, staff$staff_capacity)
-tmp$addProjects(projects$project_name, projects$project_confirmed,
-                projects$project_start, projects$project_end)
-tmp$addPhases(project_phases$project_phase_name)
-tmp$addRoles(project_roles$project_role_name)
-tmp$add_Out_Of_Office(out_of_office$staff_name,
-                      out_of_office$out_of_office_start,
-                      out_of_office$out_of_office_end,
-                      out_of_office$work_related)
-tmp$addHolidays(public_holidays$date, public_holidays$holiday_name)
-tmp$addResponsibilites(roles_responsibilities$project_role_name, 
-                       roles_responsibilities$project_phase_name,
-                       roles_responsibilities$responsibility_span)
-tmp$addTimeEstimates(time_estimates$project_name, time_estimates$project_phase_name,
-                     time_estimates$time_estimate)
-
-data("project_assignments", package = "workplanr")
-tmp$assignStaff(project_name = project_assignments$project_name,
-                project_role_name = project_assignments$project_role_name,
-                staff_name = project_assignments$staff_name,
-                staff_contribution = project_assignments$staff_contribution)
-
-
-
-self = tmp
-
-tmp$printReleaseSchedule()
-tmp$printTeamSchedule()
-tmp$printStaffSchedule()
-
-
-
-
 
