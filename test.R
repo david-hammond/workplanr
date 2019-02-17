@@ -33,6 +33,8 @@ tmp$assignStaff(project_name = project_assignments$project_name,
 
 tmp$plotTeamSchedule()
 tmp$plotStaffSchedule()
+#Warning message:
+#  Factor `out_of_office` contains implicit NA, consider using `forcats::fct_explicit_na` 
 tmp$plotReleaseSchedule()
 
 
