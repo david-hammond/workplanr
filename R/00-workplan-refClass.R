@@ -534,11 +534,17 @@ workplan <- R6Class("workplan",
         dplyr::group_by(project_name) %>%
         dplyr::filter(date == min(date)) %>%
         dplyr::ungroup() %>%
-        dplyr::left_join(self$wp_schedule$schedule %>% 
+        dplyr::full_join(self$wp_schedule$schedule %>% 
                            dplyr::select(date, staff_name, project_name)) %>%
+        dplyr::group_by(staff_name, project_name) %>%
+        dplyr::filter(date == min(date)) %>%
+        dplyr::ungroup() %>%
         dplyr::group_by(date, staff_name) %>%
-        dplyr::summarise(project_name = paste(project_name, collapse = ", ")) %>%
-        dplyr::ungroup() 
+        dplyr::summarise(project_name = paste(unique(project_name), collapse = ", ")) %>%
+        dplyr::ungroup() %>%
+        dplyr::group_by(staff_name, project_name) %>%
+        dplyr::filter(date == min(date)) %>%
+        dplyr::ungroup()
       
       
       staff_schedule <- staff_schedule %>%
