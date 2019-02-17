@@ -444,7 +444,9 @@ workplan <- R6Class("workplan",
     calculate_start_and_end_dates = function(){
       tmp <- self$wp_inputs$projects %>%
         dplyr::left_join(self$wp_inputs$time_estimates) %>%
-        dplyr::filter(time_estimate != 0)
+        dplyr::filter(time_estimate != 0) %>%
+        dplyr::mutate(time_estimate = ifelse(time_estimate > 0, time_estimate - 1,
+                                             time_estimate + 1)) #need to include the day of commencement
       
       cals <- bizdays::create.calendar('normal', 
                                        weekdays = c('saturday', 'sunday'), 
@@ -464,7 +466,6 @@ workplan <- R6Class("workplan",
                         phase_end = bizdays::offset(project_end, time_from_project_end, 'normal'),
                         phase_start = bizdays::offset(phase_end, time_from_phase_end, 'normal')) %>%
           dplyr::ungroup()
-        
         pre_project_end_phases <- tmp[!pos,]
         pre_project_end_phases <- pre_project_end_phases %>%
           dplyr::group_by(project_name) %>% 
@@ -486,7 +487,7 @@ workplan <- R6Class("workplan",
                         phase_end = bizdays::offset(phase_start, time_from_phase_end, 'normal')) %>%
           dplyr::ungroup()
       }
-      
+   
       #allow for extra time if numbers dont add up
       pos <- tmp$project_phase_name == self$wp_inputs$project_phases$project_phase_name[1] &
         tmp$phase_start > tmp$project_start
