@@ -1,4 +1,3 @@
-#lapply(list.files("./R/", full.names = T), source)
 library(workplanr)
 data("staff", package = "workplanr")
 data("projects", package = "workplanr")
@@ -8,44 +7,36 @@ data("out_of_office", package = "workplanr")
 data("public_holidays", package = "workplanr")
 data("time_estimates", package = "workplanr")
 data("roles_responsibilities", package = "workplanr")
-my_workplan = create_new_workplan(staff = staff,
-                       projects = projects,
-                       project_phases = project_phases,
-                       project_roles = project_roles,
-                       out_of_office = out_of_office,
-                       public_holidays = public_holidays,
-                       time_estimates = time_estimates,
-                       roles_responsibilities = roles_responsibilities,
-                       staff_name_for_unassigned_work = "unassigned")
-plot(my_workplan@release_schedule)
-plot(my_workplan@staff_schedule)
-plot(my_workplan@team_schedule)
+tmp <- workplan$new()
+tmp$addStaff(staff$staff_name, staff$staff_capacity)
+tmp$addProjects(projects$project_name, projects$project_confirmed,
+                projects$project_start, projects$project_end)
+tmp$addPhases(project_phases$project_phase_name)
+tmp$addRoles(project_roles$project_role_name)
+tmp$add_Out_Of_Office(out_of_office$staff_name,
+                      out_of_office$out_of_office_start,
+                      out_of_office$out_of_office_end,
+                      out_of_office$work_related)
+tmp$addHolidays(public_holidays$date, public_holidays$holiday_name)
+tmp$addResponsibilites(roles_responsibilities$project_role_name, 
+                       roles_responsibilities$project_phase_name,
+                       roles_responsibilities$responsibility_span)
+tmp$addTimeEstimates(time_estimates$project_name, time_estimates$project_phase_name,
+                     time_estimates$time_estimate)
+
 data("project_assignments", package = "workplanr")
-my_workplan <- assign_staff(workplan = my_workplan, 
-                             staff_name = project_assignments$staff_name,
-                             project_name = project_assignments$project_name,
-                             project_role_name = project_assignments$project_role_name,
-                             staff_contribution = project_assignments$staff_contribution)
+tmp$assignStaff(project_name = project_assignments$project_name,
+                project_role_name = project_assignments$project_role_name,
+                staff_name = project_assignments$staff_name,
+                staff_contribution = project_assignments$staff_contribution)
 
-plot(my_workplan@release_schedule)
-plot(my_workplan@staff_schedule)
-plot(my_workplan@team_schedule)
-plot(my_workplan@project_dependencies)
-get_project_teams("A", my_workplan)
-project_workplan <- extract_project_schedule(project = "C", my_workplan)
-plot(project_workplan@release_schedule)
-plot(project_workplan@staff_schedule)
-plot(project_workplan@team_schedule)
 
-irene_workplan <- extract_staff_schedule("Irene", my_workplan)
-plot(irene_workplan@staff_schedule)
-plot(irene_workplan@team_schedule)
-plot(irene_workplan@release_schedule)
+tmp$plotTeamSchedule()
+tmp$plotStaffSchedule()
+#Warning message:
+#  Factor `out_of_office` contains implicit NA, consider using `forcats::fct_explicit_na` 
+tmp$plotReleaseSchedule()
 
-plot(my_workplan@release_schedule)
-plot(my_workplan@staff_schedule)
-plot(my_workplan@team_schedule)
-my_workplan <- shift_project(project = "D", by = 40, workplan = my_workplan) #does not work
-plot(my_workplan@release_schedule)
-plot(my_workplan@staff_schedule)
-plot(my_workplan@team_schedule)
+
+
+
