@@ -292,21 +292,18 @@ workplan <- R6Class("workplan",
     
     #add leave
     
-    leave <- tmp %>%
-      dplyr::group_by(staff_name, id_out_of_office, out_of_office) %>%
-      dplyr::summarise(start = min(date), end = max(date), 
-                       workload = tmp$workload[1]) %>%
-      dplyr::filter(!is.na(out_of_office))
+    leave <- self$wp_inputs$out_of_office %>%
+      dplyr::mutate(workload = tmp$workload[1]) 
     
-    p <- p + ggplot2::geom_segment(data = leave, ggplot2::aes(x=start, 
-                                                              xend=end, 
+    p <- p + ggplot2::geom_segment(data = leave, ggplot2::aes(x=out_of_office_start, 
+                                                              xend=out_of_office_end, 
                                                               y=staff_name, 
-                                                              yend=staff_name, colour = out_of_office), size=2, alpha = 0.6)
-    p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=start, 
-                                                            y=staff_name, colour = out_of_office), size=3,
+                                                              yend=staff_name, colour = work_related), size=2, alpha = 0.6)
+    p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=out_of_office_start, 
+                                                            y=staff_name, colour = work_related), size=3,
                                  show.legend = FALSE)
-    p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=end, 
-                                                            y=staff_name, colour = out_of_office), size=3,
+    p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=out_of_office_end,  
+                                                            y=staff_name, colour = work_related), size=3,
                                  show.legend = FALSE)
     p <- p + ggplot2::labs(fill ="Workload" ,colour="Out of Office")
     p <- p + ggplot2::theme_bw() +
