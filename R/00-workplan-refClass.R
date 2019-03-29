@@ -305,7 +305,7 @@ workplan <- R6Class("workplan",
     p <- p + ggplot2::geom_point(data = leave, ggplot2::aes(x=out_of_office_end,  
                                                             y=staff_name, colour = work_related), size=3,
                                  show.legend = FALSE)
-    p <- p + ggplot2::labs(fill ="Workload" ,colour="Leave (Work Related?)")
+    p <- p + ggplot2::labs(fill ="Workload" ,colour="Out of Office\n(Work Related?)")
     p <- p + ggplot2::theme_bw() +
       ggplot2::theme(panel.border = ggplot2::element_blank(), panel.grid.major = ggplot2::element_blank(),
                      panel.grid.minor = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
